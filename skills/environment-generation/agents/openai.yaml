@@ -1,0 +1,4 @@
+interface:
+  display_name: "Environment Generation"
+  short_description: "Create spatially clear 3/4 environment prompts"
+  default_prompt: "Use $environment-generation to create a 3/4-view reference prompt for a room or environment."

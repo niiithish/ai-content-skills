@@ -1,0 +1,4 @@
+interface:
+  display_name: "Character Generation"
+  short_description: "Create split-sheet character reference prompts"
+  default_prompt: "Use $character-generation to create a consistent outfit-and-portrait character reference prompt."

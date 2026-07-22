@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+.claude/
+.agents/
+.grok/
+node_modules/
+skills-lock.json
+.env
+.env.*
+*.log

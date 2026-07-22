@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prop Generation"
+  short_description: "Create dynamic multi-view prop reference prompts"
+  default_prompt: "Use $prop-generation to choose the right views and create a consistent studio reference prompt for a prop."
