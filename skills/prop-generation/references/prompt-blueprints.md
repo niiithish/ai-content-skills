@@ -1,10 +1,10 @@
 # Prompt Blueprints
 
-Use the flexible blueprint for any view count. The older three- and four-view blueprints remain useful shortcuts when those counts genuinely provide complete coverage. Replace every bracketed instruction with concrete details and omit irrelevant clauses. Do not leave placeholders in the final prompt.
+Use the flexible blueprint for a 3- or 4-view sheet. The three- and four-view blueprints below are the standard shortcuts. Keep every sheet to 3-4 views. Replace every bracketed instruction with concrete details and omit irrelevant clauses. Do not leave placeholders in the final prompt.
 
-## Dynamic multi-view sheet (3–8 views)
+## Dynamic multi-view sheet (3-4 views)
 
-Use when the prop requires a view count other than the standard three or four, or whenever a surface-coverage audit is important.
+Use whenever a surface-coverage audit helps you decide between 3 and 4 views.
 
 ```text
 PROP REFERENCE SHEET — [PROP NAME] ([COUNT] views)
@@ -16,10 +16,10 @@ CANONICAL PROP DESIGN
 
 VIEWS
 [GRID POSITION] — [ORIENTATION]: [State camera orientation, visible surface and identity-critical details.]
-[Repeat once per selected view. Use only views that reveal distinct useful information.]
+[Repeat once per selected view. Use 3 views by default and at most 4. Only include a surface the downstream video or ad will actually show.]
 
 LAYOUT
-Wide landscape canvas in a [1x3 / 2x2 / balanced 3-over-2 / 3x2 / 4x2] arrangement. Place the views in a logical inspection sequence. Keep the object at the same visual scale across panels, centered within clear individual areas with balanced margins, no overlap, and no cropping. Let long or tall orientations use their cells efficiently without changing object identity or making one hero panel dominate. [No labels / add only small plain orientation labels.]
+Wide landscape canvas in a [1x3 / 2x2] arrangement. Place the views in a logical inspection sequence. Keep the object at the same visual scale across panels, centered within clear individual areas with balanced margins, no overlap, and no cropping. Let long or tall orientations use their cells efficiently without changing object identity or making one hero panel dominate. No labels, view names, captions, or any overlaid text; the only text allowed is text physically on the prop.
 
 BACKGROUND + LIGHT
 One continuous seamless neutral medium-to-dark grey studio background across the full sheet. Broad soft neutral product lighting, balanced exposure, controlled highlights, and a subtle physically appropriate contact shadow beneath each upright view. No environment or horizon clutter.
@@ -31,29 +31,25 @@ MATERIAL + DETAIL
 [Describe the optical behavior of each main material and render seams, fasteners, controls, tread, texture, wear, and manufacturing details consistently.]
 
 CONSISTENCY LOCKS
-All [COUNT] panels show the same single prop with identical dimensions, silhouette, component placement, colors, materials, markings, asymmetry, condition, and attachments. Every rotated view must agree structurally with all others. No alternate variants, mirrored asymmetry, duplicated or missing components, people, hands, characters, unrelated props, exploded parts, environmental staging, dramatic shadows, shallow focus, motion blur, or cropped edges. [Exact text/logo locks.]
+All [COUNT] panels show the same single prop with identical dimensions, silhouette, component placement, colors, materials, markings, asymmetry, condition, and attachments. Every rotated view must agree structurally with all others. No alternate variants, mirrored asymmetry, duplicated or missing components, people, hands, characters, unrelated props, exploded parts, environmental staging, dramatic shadows, shallow focus, motion blur, cropped edges, orientation labels, view names, or captions. [Exact text/logo locks — only text physically on the prop.]
 ```
 
 ### Grid selection
 
 - 3 views: 1x3 horizontal row.
 - 4 views: 2x2.
-- 5 views: balanced 3-over-2 or 2-over-3; center the shorter row without enlarging it.
-- 6 views: 3x2.
-- 7–8 views: 4x2 when resolution supports clear panels; otherwise use two linked sheets with identical design and lighting locks.
 
 ### Surface-coverage audit
 
-Start with the orientations that reveal the prop's defining silhouette. Add a view only when it resolves a real unknown:
+Start with the orientations that reveal the prop's defining silhouette. Within the 3-4 view cap, add a view only when the shot will actually show that surface and it resolves a real unknown:
 
-- opposite side for lateral/medial asymmetry;
-- top for controls, laces, openings, roof equipment, or plan geometry;
-- bottom for outsole, tread, chassis, mounts, tracks, or mechanisms;
-- rear for heel, closures, exhaust, hinges, ports, or back construction;
+- opposite side for lateral/medial asymmetry the shot reveals;
+- top for controls, openings, or surface layout the audience sees;
+- rear for heel, closures, ports, or back construction the shot shows;
 - controlled three-quarter for connecting width, depth, and layered forms;
 - detail for a small identity-critical feature that cannot read in full-object views.
 
-Stop when remaining unseen information is redundant or safely inferable. Do not add panels merely to fill a grid.
+Skip the underside by default; include a bottom view only when the underside is the actual subject (for example, a shoe outsole). Stop at 3 views unless a 4th earns its place. Never exceed 4 views unless the user explicitly asks. Do not add panels merely to fill a grid.
 
 ## Three-view horizontal sheet
 
@@ -73,7 +69,7 @@ Center — SIDE VIEW: strict [left/right] side profile, edge-on and level, clear
 Right — BACK VIEW: dead-on rear face, [rear-specific visible details].
 
 LAYOUT
-Wide landscape canvas. Arrange the three views left to right on one horizontal baseline, evenly spaced and at equal scale. Center each view in its own area with generous equal margins. No overlap and no cropping. [No labels / add only simple view labels.] The design is identical in all three views.
+Wide landscape canvas. Arrange the three views left to right on one horizontal baseline, evenly spaced and at equal scale. Center each view in its own area with generous equal margins. No overlap and no cropping. No labels, view names, captions, or overlaid text; only text physically on the prop may appear. The design is identical in all three views.
 
 BACKGROUND + LIGHT
 One continuous seamless neutral medium-to-dark grey studio background. Broad soft neutral product lighting, balanced exposure, controlled highlights, and a subtle contact shadow directly beneath each view. No environment or horizon clutter.
@@ -85,12 +81,12 @@ MATERIAL + DETAIL
 [Describe the optical behavior of each main material: matte, satin, glossy, translucent, brushed, woven, painted, weathered, etc.] Render seams, fasteners, controls, texture, wear, and manufacturing details cleanly and plausibly.
 
 CONSISTENCY LOCKS
-One prop only. All three views show the exact same model, silhouette, dimensions, component placement, colors, materials, markings, and condition. Preserve [critical features]. No people, hands, characters, stands, packaging, unrelated accessories, extra objects, exploded parts, environmental staging, dramatic shadows, motion blur, or cropped edges. [Exact text/logo locks.]
+One prop only. All three views show the exact same model, silhouette, dimensions, component placement, colors, materials, markings, and condition. Preserve [critical features]. No people, hands, characters, stands, packaging, unrelated accessories, extra objects, exploded parts, environmental staging, dramatic shadows, motion blur, cropped edges, orientation labels, view names, or captions. [Exact text/logo locks — only text physically on the prop.]
 ```
 
 ## Four-view 2x2 turnaround
 
-Use for vehicles, machinery, furniture, asymmetrical props, or designs with important upper or underside structure.
+Use for vehicles, machinery, furniture, or asymmetrical props whose top or a fourth angle the shot will actually show. Skip the fourth view (drop to three) when it does not appear on camera.
 
 ```text
 PROP REFERENCE SHEET — [PROP NAME] (4 views)
@@ -104,10 +100,10 @@ VIEWS
 Top-left — FRONT VIEW: straight-on and centered, [front-specific geometry and details].
 Top-right — SIDE VIEW: full strict [left/right] broadside profile, [side-specific geometry and details].
 Bottom-left — REAR VIEW: straight-on and centered, [rear-specific geometry and details].
-Bottom-right — [TOP / BOTTOM / DETAIL] VIEW: true orthographic view showing [important hidden structure, controls, roof equipment, chassis, mounting points, mechanism, or detail].
+Bottom-right — [TOP / THREE-QUARTER / DETAIL] VIEW: true orthographic or controlled view showing [top controls, roof equipment, a connecting three-quarter form, or an identity-critical detail the shot will show]. Avoid an underside view unless the bottom is the actual subject.
 
 LAYOUT
-Wide landscape 2x2 grid with clean, equal panel divisions. Keep the prop at a consistent readable scale while allowing a long side view to use its panel efficiently. Center each view with generous margins; no overlap and no cropping. [Use no labels / label only the four views in small plain type.] Every panel depicts one unchanged design.
+Wide landscape 2x2 grid with clean, equal panel divisions. Keep the prop at a consistent readable scale while allowing a long side view to use its panel efficiently. Center each view with generous margins; no overlap and no cropping. No labels, view names, captions, or overlaid text; only text physically on the prop may appear. Every panel depicts one unchanged design.
 
 BACKGROUND + LIGHT
 The same seamless neutral medium-to-dark grey studio background in all four panels. Broad soft neutral studio light, balanced exposure, restrained highlights, and soft contact shadows where physically appropriate. No environment, atmosphere, or scenery.
@@ -119,7 +115,7 @@ MATERIAL + DETAIL
 [Describe how paint, polymer, glass, rubber, metal, fabric, wood, or weathering should read under studio light.] Show plausible seams, joints, fasteners, tread, controls, and mechanical relationships.
 
 CONSISTENCY LOCKS
-All four panels show the same single prop with identical proportions, wheelbase or footprint, components, colors, materials, markings, asymmetry, wear, and attachments. The chosen top/bottom/detail view must agree structurally with the other three views. No people, hands, characters, unrelated props, alternate variants, duplicated components, exploded view, environment, dramatic perspective, shallow focus, motion blur, or cropped edges. [Exact text/logo locks.]
+All four panels show the same single prop with identical proportions, wheelbase or footprint, components, colors, materials, markings, asymmetry, wear, and attachments. The chosen top/detail view must agree structurally with the other three views. No people, hands, characters, unrelated props, alternate variants, duplicated components, exploded view, environment, dramatic perspective, shallow focus, motion blur, cropped edges, orientation labels, view names, or captions. [Exact text/logo locks — only text physically on the prop.]
 ```
 
 ## Reference-image adaptation
@@ -139,11 +135,11 @@ Change only [requested feature]. Keep the prop's silhouette, proportions, camera
 ## Selection examples
 
 - TV remote: front, strict side, back in one row.
-- Running shoe: 6-view 3x2 grid showing lateral side, medial side, top-down/laces, front three-quarter, rear/heel, and bottom/outsole. Define a single left or right shoe and keep that handedness unchanged.
-- Simple slip-on shoe: 5 views may be enough when lateral and medial construction are identical; omit only the truly redundant side.
-- Toy robot: front, side, back; use four views if the backpack or top controls are important.
-- Car or truck: front, full side, rear, and top or undercarriage in a 2x2 grid.
-- Asymmetric utility vehicle: add the opposite side and roof or undercarriage for 5–6 views when doors, tools, or mounted systems differ.
-- Chair: front, side, rear, and top or three-quarter construction view.
-- Hand tool: working face/front, strict side, back/opposite face; add a detail only when the mechanism matters.
+- TV remote: front, strict side, back in one row.
+- Running shoe: 4-view 2x2 grid showing lateral side, medial side, top-down/laces, and front three-quarter. Add a bottom/outsole view only if the outsole is the ad's subject. Define a single left or right shoe and keep that handedness unchanged.
+- Toy robot: front, side, back; use four views only if the top controls actually appear on camera.
+- Car or truck: front, full side, rear, and a front three-quarter in a 2x2 grid. Skip the undercarriage unless it is the subject.
+- Blender or appliance: front, side, and a front three-quarter; add a top view only if the controls or jar opening matter. Never include an underside view.
+- Chair: front, side, rear; add a three-quarter construction view as the fourth only when needed.
+- Hand tool: working face/front, strict side, back/opposite face; add a detail as the fourth only when the mechanism matters.
 - Boxed product: front, side, back; quote all required package text exactly and avoid inventing small print.

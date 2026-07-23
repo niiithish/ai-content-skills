@@ -28,13 +28,13 @@ npx skills add niiithish/ai-content-skills --list
 
 | Skill | Description |
 | --- | --- |
-| [`prop-generation`](./skills/prop-generation) | Multi-view studio prop reference sheets with dynamically chosen views (3–8) on a neutral grey background. |
+| [`prop-generation`](./skills/prop-generation) | Multi-view studio prop reference sheets with a tight 3-4 view set on a neutral grey background. |
 | [`character-generation`](./skills/character-generation) | Two-panel character sheets: invisible-body full outfit (left) + matching shoulder-up identity portrait (right). |
 | [`environment-generation`](./skills/environment-generation) | Spatially clear 3/4-view interior and exterior location references for image and video workflows. |
 
 ### prop-generation
 
-Create one standalone image-generation prompt for a clean, consistent multi-view prop reference sheet. Chooses the smallest view set that fully explains the object (front, sides, rear, top, bottom, three-quarter, detail) and locks identity across every panel.
+Create one standalone image-generation prompt for a clean, consistent multi-view prop reference sheet. Chooses a tight 3-4 view set that shows the surfaces a downstream video or ad will actually put on camera (front, sides, rear, top, three-quarter, detail), skips pointless views like appliance undersides, uses no orientation labels, and locks identity across every panel.
 
 **Use when:** designing products, footwear, toys, tools, vehicles, furniture, or other non-character props; building orthographic turnarounds; remixing a prop from a reference image.
 
