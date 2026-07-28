@@ -31,10 +31,12 @@ Do not ask follow-up questions when a coherent environment can be inferred. Make
 
 Two different images get requested from this skill. Decide which one the user needs before writing, because the composition and aspect ratio differ.
 
-- **Establishing sheet (default).** A wide 16:9 landscape 3/4 view whose job is to explain the whole space to a downstream model. Follow the 3/4-view rules below.
-- **Shot-ready keyframe.** A single frame that will open or seed a video clip. Match the delivery aspect ratio exactly — 9:16 for vertical short-form, 16:9 for landscape — and compose it as the actual shot, not as a survey of the room. State the ratio explicitly in the prompt and again in the locks; a landscape reference will drag a vertical generation back to landscape.
+- **Establishing sheet (default, always wide).** A wide 16:9 landscape 3/4 view whose job is to explain the whole space to a downstream model. Follow the 3/4-view rules below. **Keep this wide even when the final video is vertical.** A wide frame carries more usable spatial information — two adjoining walls, floor depth, opening positions, landmark relationships — and that is exactly what a video model needs in order to place a subject and hold the geometry steady. Cropping the location reference to vertical throws that information away and buys nothing.
+- **Shot-ready keyframe.** A single frame that will open or seed a specific clip, matched to the delivery aspect ratio and composed as the actual shot rather than a survey of the room. State the ratio in the prompt and again in the locks; a landscape reference will drag a vertical generation back to landscape.
 
-When a project needs both, write the establishing sheet first, then derive keyframes that agree with its layout. If the user mentions a vertical platform, a clip, a cut list, or a specific ratio, they want a keyframe at that ratio even if they said "environment".
+**Default to the establishing sheet.** Produce a keyframe only when the user asks for a shot, an opening or first frame, a keyframe, or a specific clip. A vertical delivery platform on its own is not a reason to narrow the environment sheet — vertical projects still want a wide location reference plus separate keyframes for the cuts that need one.
+
+When a project needs both, write the wide establishing sheet first, then derive keyframes that agree with its layout.
 
 ## Require a True 3/4 View
 
