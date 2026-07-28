@@ -3,11 +3,13 @@
   "groupings": [
     {
       "title": "AI Content Generation",
-      "description": "Model-ready image prompts for consistent props, characters, and environments used in AI image and video workflows.",
+      "description": "An end-to-end short-form video pipeline: ad scripts, model-ready image prompts for props, characters and environments, and AI video generation prompts.",
       "skills": [
+        "script-generation",
         "prop-generation",
         "character-generation",
-        "environment-generation"
+        "environment-generation",
+        "video-generation"
       ]
     }
   ]

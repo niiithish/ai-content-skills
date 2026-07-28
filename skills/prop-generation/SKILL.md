@@ -5,6 +5,17 @@ description: Create detailed, model-ready image prompts for consistent multi-vie
 
 # Prop Generation
 
+## Related Skills
+
+| Need | Use |
+|---|---|
+| A human character reference | **character-generation** |
+| A location reference or a shot keyframe | **environment-generation** |
+| The video prompt that consumes this sheet | **video-generation** |
+| The script and cut list that decide which assets are needed | **script-generation** |
+
+For ad work the prop is usually the product, and its sheet becomes the identity source for every clip. Two extra assets are often needed alongside it: a worn or in-use still showing correct placement and scale, and — when the script contrasts the product against a worse alternative — a deliberately distinct sheet for that alternative. Make the alternative differ in form, not merely in condition, so viewers never read it as the product in a worse state.
+
 Create one standalone image-generation prompt for a clean, consistent, multi-view prop reference sheet. Optimize the sheet for reuse as an identity reference in later image generation, photo remixing, and AI video work. Keep the sheet tight: use 3 views by default and 4 only when a fourth genuinely earns its place.
 
 ## Workflow

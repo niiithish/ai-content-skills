@@ -7,6 +7,19 @@ description: Create detailed, model-ready image prompts for photorealistic two-p
 
 Create one standalone image-generation prompt for a landscape character reference sheet. Optimize it as an identity-and-wardrobe reference for later image generation, photo remixing, and AI video work.
 
+## Related Skills
+
+| Need | Use |
+|---|---|
+| A product or object reference sheet | **prop-generation** |
+| A location reference or a shot keyframe | **environment-generation** |
+| The video prompt that consumes this sheet | **video-generation** |
+| The script and cut list that decide which assets are needed | **script-generation** |
+
+This skill produces an identity reference on a neutral studio background, never a finished shot. When the user needs the character standing in a location, generate this sheet first, then use it as the identity reference for a keyframe or video prompt.
+
+Wardrobe defined here becomes the wardrobe for every downstream clip, so keep it plain and repeatable unless the concept demands otherwise. Anything the character must never wear — for example bare ears when a necklace is the product — belongs in the locks.
+
 ## Core Composition
 
 Always create exactly two clearly separated panels:

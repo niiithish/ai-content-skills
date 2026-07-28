@@ -2,6 +2,8 @@
 
 Use the relevant blueprint as a structural guide. Replace every bracketed instruction with concrete details and omit irrelevant clauses. Do not leave placeholders in the final prompt.
 
+Blueprints: interior establishing sheet · large-scale or exterior establishing sheet · shot-ready keyframe.
+
 ## Interior environment
 
 ```text
@@ -52,6 +54,31 @@ LIGHT + ATMOSPHERE
 
 RENDERING + LOCKS
 Photorealistic [or requested style], realistic architecture and scale, crisp spatial detail, deep readable focus, 16:9. Preserve one coherent site plan, boundary shape, landmark placement, entrances, routes, surface materials, season, and weather. Default to no people or crowd; include them only if requested and keep them secondary. No duplicated landmarks, impossible roads or stairs, blocked entrances, floating structures, warped architecture, contradictory shadows, accidental extra buildings, invented branding, or visible text.
+```
+
+## Shot-ready keyframe
+
+Use when the image seeds a video clip rather than documenting the space. Match the delivery aspect ratio and compose the actual shot.
+
+```text
+SHOT KEYFRAME — [LOCATION NAME], [ASPECT RATIO]
+
+Create a single [9:16 vertical / stated ratio] frame inside [location]. This frame opens a video clip, so compose it as the shot itself rather than as a survey of the room.
+
+FRAMING
+[State shot size and what fills the frame. Vertical framing puts the subject on the centre vertical and uses the upper and lower thirds deliberately. Name anything that must stay clear — for example, keep the upper right quadrant plain wall for a composited graphic.]
+
+SUBJECT + PLACEMENT
+[Who or what is in frame, where they stand relative to fixed features, orientation, gaze. Reference tags for identity go here.]
+
+SPACE VISIBLE IN FRAME
+[Only the part of the location the frame actually sees, consistent with the establishing sheet: foreground, midground, background layers.]
+
+LIGHT
+[Motivated source, direction, colour temperature in Kelvin, matching the establishing sheet.]
+
+RENDERING + LOCKS
+Photorealistic, [ratio] [vertical/landscape] frame at [resolution]. [Restate the ratio here — this is the lock that keeps the output from reverting to landscape.] Preserve the location's established layout, materials, and light direction. [Subject and wardrobe locks.] No visible text, captions, watermarks, logos, or interface graphics.
 ```
 
 ## Reference-image adaptation

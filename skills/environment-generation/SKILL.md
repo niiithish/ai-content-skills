@@ -7,6 +7,15 @@ description: Create detailed, model-ready image prompts for spatially clear 3/4-
 
 Create one standalone image-generation prompt for a coherent environment reference image. Optimize the image to establish the location clearly enough that a downstream AI video model can understand its depth, boundaries, adjoining surfaces, entrances, landmarks, and object placement.
 
+## Related Skills
+
+| Need | Use |
+|---|---|
+| A human character reference | **character-generation** |
+| A product or object reference sheet | **prop-generation** |
+| The video prompt that consumes this reference | **video-generation** |
+| The script and cut list that decide which locations are needed | **script-generation** |
+
 ## Workflow
 
 1. Identify the environment, intended mood or function, era, rendering style, and required details.
@@ -18,7 +27,18 @@ Create one standalone image-generation prompt for a coherent environment referen
 
 Do not ask follow-up questions when a coherent environment can be inferred. Make restrained, specific choices and state them directly. Ask only when a missing decision would fundamentally change the location.
 
+## Choose the Output Type First
+
+Two different images get requested from this skill. Decide which one the user needs before writing, because the composition and aspect ratio differ.
+
+- **Establishing sheet (default).** A wide 16:9 landscape 3/4 view whose job is to explain the whole space to a downstream model. Follow the 3/4-view rules below.
+- **Shot-ready keyframe.** A single frame that will open or seed a video clip. Match the delivery aspect ratio exactly — 9:16 for vertical short-form, 16:9 for landscape — and compose it as the actual shot, not as a survey of the room. State the ratio explicitly in the prompt and again in the locks; a landscape reference will drag a vertical generation back to landscape.
+
+When a project needs both, write the establishing sheet first, then derive keyframes that agree with its layout. If the user mentions a vertical platform, a clip, a cut list, or a specific ratio, they want a keyframe at that ratio even if they said "environment".
+
 ## Require a True 3/4 View
+
+This section governs the establishing sheet. A shot-ready keyframe uses the framing the shot calls for instead.
 
 Make the main image a wide landscape 3/4-angle establishing view. This is mandatory for the reference workflow, including when another angle might look more dramatic.
 
@@ -62,7 +82,7 @@ Include these elements in a logical order:
 6. Rendering style, rectilinear optics, depth of field, detail level, and aspect ratio.
 7. Spatial consistency locks and exclusions.
 
-Default to photorealistic 16:9 unless the user requests another style or ratio. Keep the whole environment sharp enough to read; avoid portrait-like shallow focus. Use visible text or logos only when supplied or essential, quote exact required wording, and do not invent branding. When text is not needed, explicitly exclude logos, brand names, and visible writing.
+Default to photorealistic 16:9 for an establishing sheet. For a shot-ready keyframe, use the delivery ratio the user named and state it in the prompt. Keep the whole environment sharp enough to read; avoid portrait-like shallow focus. Use visible text or logos only when supplied or essential, quote exact required wording, and do not invent branding. When text is not needed, explicitly exclude logos, brand names, and visible writing.
 
 ## Final Check
 
@@ -74,4 +94,5 @@ Before returning the prompt, verify:
 - foreground objects do not hide essential spatial information;
 - décor, materials, condition, season, weather, and lighting tell one coherent story;
 - no duplicated fixtures, impossible geometry, malformed architecture, or accidental extra spaces are encouraged;
-- the framing is wide, rectilinear, level, sharp, and suitable as an AI image/video location reference.
+- the framing is rectilinear, level, sharp, and suitable as an AI image/video location reference;
+- the aspect ratio matches the output type — 16:9 for an establishing sheet, the stated delivery ratio for a keyframe — and appears in the prompt text.

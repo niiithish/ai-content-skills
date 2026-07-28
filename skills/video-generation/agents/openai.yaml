@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Generation"
+  short_description: "Write cinematic AI video generation prompts"
+  default_prompt: "Use $video-generation to turn this shot idea into an AI video prompt."
