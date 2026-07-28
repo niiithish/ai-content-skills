@@ -39,7 +39,9 @@ Failing pace is fixed by deleting beats, never by reading faster.
 ## Production feasibility
 
 - Every cut is generatable: no readable on-screen text, no crowds, no complex hand interaction with small objects unless it is a macro.
-- No cut depends on lip-sync when the ad uses voiceover.
+- No cut depends on a character speaking on camera, and no cut requires lip-sync.
+- Every cut survives the muted test: with the audio off, something visible is still happening in it.
+- Every shot description states what the body, hands, or camera do, not just who is in frame.
 - Wardrobe and framing pass content moderation. Nothing that stacks water, swimwear, bathroom, and intimacy cues together.
 - Each generation fits the engine's clip cap.
 - Continuity details that must survive across generations are listed explicitly.

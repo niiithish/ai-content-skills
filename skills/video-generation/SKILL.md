@@ -1,6 +1,6 @@
 ---
 name: video-generation
-description: Write model-ready prompts for AI video generation engines such as Seedance, Veo, Kling, Sora, Runway, and Hailuo. Outputs prompt text only and never generates the video itself. Use when the user wants a video prompt, a cinematic shot or scene, a clip built from a script beat or storyboard, b-roll or product footage, a multi-cut sequence inside one generation, or asks how to prompt an AI video model; also use when turning character, prop, or environment reference images into a clip. Trigger on phrases like "video prompt", "write a Seedance prompt", "make a clip where...", "build this shot", "generate this scene", "turn this script into clips".
+description: Write model-ready prompts for AI video generation engines such as Seedance, Veo, Kling, Sora, Runway, and Hailuo. Outputs prompt text only and never generates the video itself, and writes silent footage with no on-camera dialogue by default since generated lip-sync is unreliable. Use when the user wants a video prompt, a cinematic shot or scene, a clip built from a script beat or storyboard, b-roll or product footage, a multi-cut sequence inside one generation, or asks how to prompt an AI video model; also use when turning character, prop, or environment reference images into a clip. Trigger on phrases like "video prompt", "write a Seedance prompt", "make a clip where...", "build this shot", "generate this scene", "turn this script into clips".
 ---
 
 # Video Generation
@@ -118,6 +118,21 @@ Across internal cuts hold the same character set, geometry, screen direction, ga
 - **No readable UI text, captions, or logos** unless the user supplies exact wording. Composite graphics in the edit.
 - **English prompts only.**
 
+## No Talking On Camera
+
+Default to silent footage in every prompt, ads and everything else. Characters do not speak, mouth words, or address the camera. Lip-sync on generated video still reads as wrong — mouth shapes drift out of step with audio, and the artifact is the single fastest way for a clip to look AI-made. Silent footage sidesteps it entirely, and it also lets any clip be regenerated later without re-recording audio.
+
+What to write instead:
+
+- **State the mouth.** A closed mouth needs saying, since a character framed on the face tends to drift into talking. Put "lips closed" or "mouth relaxed and closed" in PERFORMANCE, and repeat it in POSITIVE LOCKS for any shot tighter than a medium.
+- **Give the face something else to do.** Silent does not mean blank. A slow blink, a small exhale, eyes moving to the product, a faint smile at the corner of the mouth — expression carries the beat where dialogue would have.
+- **Give the hands and body the work.** Silent clips live on action. She touches the chain, turns her head, walks into frame, dries her hands. Blocking replaces speech.
+- **Keep AUDIO ambient.** Room tone, water, footsteps, fabric. No voice line, even on engines with native audio, since a generated voice will not match the voiceover laid over it in the edit.
+
+Voiceover gets recorded separately and placed in the edit, so the script's words never enter the video prompt.
+
+When the user explicitly asks for a talking clip, write it — but say plainly that lip-sync is the weak point and that a silent take with voiceover over it is more reliable.
+
 ## Optics
 
 Shot sizes, the FOV anchor table, and optical recipes for hidden-camera, broadcast, snake-cam and tele-compression looks: [references/optics.md](references/optics.md). Read it before writing the OPTICS block.
@@ -130,9 +145,8 @@ Clip length caps, aspect ratio handling, reference-image support, audio behaviou
 
 When the clip belongs to a short-form ad, the script comes first and the visuals serve it. Use **script-generation** for the script and cut list, then write one video prompt per generation from that cut list.
 
-Two rules override normal cinematic instinct in this context:
+These rules override normal cinematic instinct in this context. Silent footage is covered above and applies here too.
 
-- **Generate silent b-roll by default.** Do not have characters speak on camera. Voiceover recorded separately and laid over in the edit avoids lip-sync mismatch and voice drift between generations. Keep native ambient audio only.
 - **Respect content moderation.** Water, swimwear, bathrooms, and intimacy stack into silent rejections. Keep wardrobe plain, framing tight and practical, expressions neutral, and describe the action flatly: "water running over her neck at the sink," not a shower scene. Avoid piling up suggestive adjectives.
 - **Keep clothing solid.** The common failure is not a sheer garment being asked for; it is a plain opaque top rendering semi-transparently on its own, so the body reads through it. Name the fabric weight in WARDROBE ("heavyweight opaque ribbed cotton, nothing showing through"), keep the key light frontal or side rather than behind the subject in LIGHTING, and lock it in POSITIVE LOCKS: "the top stays solid uniform white with no underlying shape visible through it". Water and stretch amplify it, so a clip with water on the body needs the lock stated even when the sheet was clean.
 - **Minors: describe, never upload.** A real photograph of a child as a reference image is typically blocked, while a text description usually generates and produces a synthetic child, which is the safer route. So for any clip involving a minor, write the description into the prompt and attach no reference image for that character.

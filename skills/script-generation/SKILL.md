@@ -1,6 +1,6 @@
 ---
 name: script-generation
-description: Write short-form video ad scripts built for AI generation — TikTok, Reels and Shorts UGC, product ads, hooks, and voiceover copy delivered as a numbered cut list with a shot per cut. Use when the user wants a script, hook, ad concept, voiceover, or storyboard for a short vertical video, wants an existing script made faster or less ad-like, or is turning a product page into an ad. Trigger on phrases like "write a script", "UGC script", "TikTok script", "ad script", "give me hooks", "script for this product", "write the voiceover".
+description: Write short-form video ad scripts built for AI generation — TikTok, Reels and Shorts UGC, product ads, hooks, and voiceover copy delivered as a numbered cut list with a shot per cut. Writes voiceover over silent footage by default, with no on-camera dialogue, since generated lip-sync is unreliable. Use when the user wants a script, hook, ad concept, voiceover, or storyboard for a short vertical video, wants an existing script made faster or less ad-like, or is turning a product page into an ad. Trigger on phrases like "write a script", "UGC script", "TikTok script", "ad script", "give me hooks", "script for this product", "write the voiceover".
 ---
 
 # Script Generation
@@ -82,11 +82,21 @@ Handoff         cut 11      into the offer
 
 **Handoff.** When the user is attaching their own offer clip, end mid-sentence on the setup line and let the attached clip complete the thought. Never speak price in the AI-generated portion.
 
-## Voiceover, not on-camera dialogue
+## Voiceover, never on-camera dialogue
 
-Default to voiceover over silent b-roll for AI-generated ads. Lip-sync on generated video is unreliable, and voice character drifts between separate generations. One continuous voiceover take, sliced across the cuts, stays consistent and lets any cut be regenerated without re-recording.
+Every script is voiceover over silent footage. Nobody speaks on camera. Lip-sync on generated video still reads as wrong, and it is the fastest tell that a clip was AI-made, so the script is written to be *heard over* footage rather than *performed in* it.
 
-Write the voiceover as one block first so the rhythm is continuous, then map it to cuts. Line breaks are breath pauses. Include delivery notes: accent, age, energy, and stability if the user is using a synthesis tool.
+This changes what a cut can be, which matters more than it sounds:
+
+- **No cut depends on a face delivering a line.** A talking-head script produces cuts that collapse without the talking — a held close-up with nothing happening in it is dead footage once the mouth is closed.
+- **Every cut needs a visual event.** An action, a hand, a product detail, a change of place. Ask of each cut: with the audio muted, is there still something to watch? If not, rewrite the cut.
+- **The words and the visuals are independent tracks.** The voiceover carries the argument; the footage carries attention. They align in the edit rather than being locked together, which is also what lets any single clip be regenerated without touching the audio.
+
+Write the voiceover as one continuous block first so the rhythm holds, then map it to cuts. Line breaks are breath pauses. Include delivery notes: accent, age, energy, and stability if the user is using a synthesis tool.
+
+One continuous take sliced across cuts also avoids voice character drifting between separate generations.
+
+If the user explicitly wants a talking-head clip, write it — but say plainly that lip-sync is the weak point and offer the silent-plus-voiceover version as the more reliable option.
 
 ## Numbers and claims
 
