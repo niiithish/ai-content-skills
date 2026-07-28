@@ -1,6 +1,6 @@
 ---
 name: prop-generation
-description: Write detailed, model-ready image prompts for consistent multi-view prop reference sheets on a neutral grey studio background, choosing a tight set of 3-4 views that explain the object for video and ad workflows. Outputs prompt text only and never generates the image itself. Use when the user wants to design, visualize, or remix a product, object, footwear item, toy, appliance, tool, vehicle, weapon, furniture item, or other non-character prop; turn a written concept or reference image into front, side, rear, three-quarter, or detail views; or create an orthographic prop turnaround for AI image or video workflows.
+description: Write detailed, model-ready image prompts for consistent multi-view prop and product reference sheets on a neutral grey studio background, choosing a tight set of 3-4 views that explain the object for video and ad workflows. Outputs prompt text only and never generates the image itself. Use whenever a physical product or object must appear in AI images or video — jewellery, apparel, footwear, cosmetics, packaging, gadgets, toys, appliances, tools, vehicles, furniture, or any other non-character item — including for a product ad, campaign, or video clip. Also use to design or remix a product, turn a concept or reference photo into front, side, rear, three-quarter, or detail views, or lock a product's exact appearance across shots. Trigger on "prompt for my product", "reference sheet for this necklace", or an uploaded product photo that needs consistent views.
 ---
 
 # Prop Generation

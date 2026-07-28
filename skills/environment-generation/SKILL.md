@@ -1,6 +1,6 @@
 ---
 name: environment-generation
-description: Write detailed, model-ready image prompts for spatially clear 3/4-view environments used as references in AI image generation, photo remixing, and AI video. Outputs prompt text only and never generates the image itself. Use when the user wants to design, visualize, establish, or remix an interior or exterior location such as a bedroom, kitchen, living room, office, shop, warehouse, stadium, arena, street, courtyard, garden, landscape, or fantasy/sci-fi environment from a written concept or reference image.
+description: Write detailed, model-ready image prompts for spatially clear wide 3/4-view environment references used in AI image generation, photo remixing, and AI video. Outputs prompt text only and never generates the image itself. Use whenever a scene needs a place — a location, setting, backdrop, background, set, room, or venue — for an AI image, product ad, or video clip, including a bedroom, bathroom, kitchen, living room, office, shop, gym, cafe, warehouse, stadium, street, poolside, courtyard, garden, landscape, or fantasy and sci-fi environment. Also use to establish or remix a location from a concept or reference photo, or to keep one place consistent across several shots. Trigger on "where should this be shot", "background for this clip", or a cut list naming places that need references.
 ---
 
 # Environment Generation

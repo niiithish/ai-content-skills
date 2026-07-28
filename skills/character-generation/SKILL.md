@@ -1,6 +1,6 @@
 ---
 name: character-generation
-description: Write detailed, model-ready image prompts for photorealistic two-panel character reference sheets on a neutral dark-grey studio background. Outputs prompt text only and never generates the image itself. Use when the user wants to design, visualize, or remix a human character for AI images or video; establish a consistent face, hairstyle, clothing, footwear, and accessories; or turn a written concept or reference image into a landscape sheet with an invisible-body full outfit on the left and a matching shoulder-up identity portrait on the right.
+description: Write image prompts for photorealistic two-panel character reference sheets — an invisible-body outfit on the left, a matching shoulder-up identity portrait on the right — on a neutral dark-grey studio background. Outputs prompt text only and never generates the image. Use whenever a person must appear in AI images or video, including an AI model, virtual model, spokesmodel, brand model, creator, influencer, UGC creator, presenter, talent, avatar, persona, or any human character, for a product ad, jewellery or fashion shoot, campaign, or video clip. Also use to design or remix a character, or to lock a consistent face, hair, wardrobe, and accessories across shots. Trigger on "I want an AI model", "give me a model for my brand", "creator for this ad", "character for a jewelry ad", or a bare mention of a model, girl, guy, or person who needs generating.
 ---
 
 # Character Generation
