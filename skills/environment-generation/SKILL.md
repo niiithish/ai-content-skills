@@ -27,20 +27,13 @@ Create one standalone image-generation prompt for a coherent environment referen
 
 Do not ask follow-up questions when a coherent environment can be inferred. Make restrained, specific choices and state them directly. Ask only when a missing decision would fundamentally change the location.
 
-## Choose the Output Type First
+## Always Deliver a Wide Landscape Sheet
 
-Two different images get requested from this skill. Decide which one the user needs before writing, because the composition and aspect ratio differ.
+This skill produces one thing: a clean wide 16:9 landscape 3/4 view of the location. Keep it wide even when the final video is vertical.
 
-- **Establishing sheet (default, always wide).** A wide 16:9 landscape 3/4 view whose job is to explain the whole space to a downstream model. Follow the 3/4-view rules below. **Keep this wide even when the final video is vertical.** A wide frame carries more usable spatial information — two adjoining walls, floor depth, opening positions, landmark relationships — and that is exactly what a video model needs in order to place a subject and hold the geometry steady. Cropping the location reference to vertical throws that information away and buys nothing.
-- **Shot-ready keyframe.** A single frame that will open or seed a specific clip, matched to the delivery aspect ratio and composed as the actual shot rather than a survey of the room. State the ratio in the prompt and again in the locks; a landscape reference will drag a vertical generation back to landscape.
-
-**Default to the establishing sheet.** Produce a keyframe only when the user asks for a shot, an opening or first frame, a keyframe, or a specific clip. A vertical delivery platform on its own is not a reason to narrow the environment sheet — vertical projects still want a wide location reference plus separate keyframes for the cuts that need one.
-
-When a project needs both, write the wide establishing sheet first, then derive keyframes that agree with its layout.
+A wide frame carries more usable spatial information — two adjoining walls, floor depth, opening positions, landmark relationships — and that is exactly what a video model needs to place a subject and hold the geometry steady. Cropping the location reference to vertical throws that away and buys nothing. A vertical delivery platform is not a reason to narrow the sheet.
 
 ## Require a True 3/4 View
-
-This section governs the establishing sheet. A shot-ready keyframe uses the framing the shot calls for instead.
 
 Make the main image a wide landscape 3/4-angle establishing view. This is mandatory for the reference workflow, including when another angle might look more dramatic.
 
@@ -84,7 +77,7 @@ Include these elements in a logical order:
 6. Rendering style, rectilinear optics, depth of field, detail level, and aspect ratio.
 7. Spatial consistency locks and exclusions.
 
-Default to photorealistic 16:9 for an establishing sheet. For a shot-ready keyframe, use the delivery ratio the user named and state it in the prompt. Keep the whole environment sharp enough to read; avoid portrait-like shallow focus. Use visible text or logos only when supplied or essential, quote exact required wording, and do not invent branding. When text is not needed, explicitly exclude logos, brand names, and visible writing.
+Default to photorealistic 16:9. Keep the whole environment sharp enough to read; avoid portrait-like shallow focus. Use visible text or logos only when supplied or essential, quote exact required wording, and do not invent branding. When text is not needed, explicitly exclude logos, brand names, and visible writing.
 
 ## Final Check
 
@@ -97,4 +90,4 @@ Before returning the prompt, verify:
 - décor, materials, condition, season, weather, and lighting tell one coherent story;
 - no duplicated fixtures, impossible geometry, malformed architecture, or accidental extra spaces are encouraged;
 - the framing is rectilinear, level, sharp, and suitable as an AI image/video location reference;
-- the aspect ratio matches the output type — 16:9 for an establishing sheet, the stated delivery ratio for a keyframe — and appears in the prompt text.
+- the sheet is wide 16:9 landscape and that ratio appears in the prompt text.
