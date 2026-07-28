@@ -1,11 +1,13 @@
 ---
 name: character-generation
-description: Create detailed, model-ready image prompts for photorealistic two-panel character reference sheets on a neutral dark-grey studio background. Use when the user wants to design, generate, visualize, or remix a human character for AI images or video; establish a consistent face, hairstyle, clothing, footwear, and accessories; or turn a written concept or reference image into a landscape sheet with an invisible-body full outfit on the left and a matching shoulder-up identity portrait on the right.
+description: Write detailed, model-ready image prompts for photorealistic two-panel character reference sheets on a neutral dark-grey studio background. Outputs prompt text only and never generates the image itself. Use when the user wants to design, visualize, or remix a human character for AI images or video; establish a consistent face, hairstyle, clothing, footwear, and accessories; or turn a written concept or reference image into a landscape sheet with an invisible-body full outfit on the left and a matching shoulder-up identity portrait on the right.
 ---
 
 # Character Generation
 
 Create one standalone image-generation prompt for a landscape character reference sheet. Optimize it as an identity-and-wardrobe reference for later image generation, photo remixing, and AI video work.
+
+**Output is prompt text only. Do not generate the image.** No image tool calls, no rendering, no previews, no offering to generate. The user takes the prompt to their own platform.
 
 ## Related Skills
 
@@ -117,6 +119,8 @@ For every other character, one or two small restrained pieces are fine when they
 This applies to the product category, not just the exact item: a character modelling earrings still gets a bare neck, since necklaces will be composited or shot later.
 
 ## Write the Prompt
+
+**The deliverable is prompt text, never an image.** Return the finished prompt in a code block and stop. Do not call an image generation tool, do not render or preview the sheet, and do not offer to generate it — the user runs generation themselves on their own platform, where the model, settings, and reference stack are under their control. Wording like "generating now" means the skill has been misread.
 
 Return only the finished prompt unless the user asks for an explanation or alternatives. Use natural language and concrete visual descriptions rather than keyword stuffing.
 

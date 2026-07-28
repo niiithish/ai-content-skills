@@ -1,6 +1,6 @@
 ---
 name: video-generation
-description: Write model-ready prompts for AI video generation engines such as Seedance, Veo, Kling, Sora, Runway, and Hailuo. Use when the user wants a video prompt, a cinematic shot or scene, a clip built from a script beat or storyboard, b-roll or product footage, a multi-cut sequence inside one generation, or asks how to prompt an AI video model; also use when turning character, prop, or environment reference images into a clip. Trigger on phrases like "video prompt", "write a Seedance prompt", "make a clip where...", "build this shot", "generate this scene", "turn this script into clips".
+description: Write model-ready prompts for AI video generation engines such as Seedance, Veo, Kling, Sora, Runway, and Hailuo. Outputs prompt text only and never generates the video itself. Use when the user wants a video prompt, a cinematic shot or scene, a clip built from a script beat or storyboard, b-roll or product footage, a multi-cut sequence inside one generation, or asks how to prompt an AI video model; also use when turning character, prop, or environment reference images into a clip. Trigger on phrases like "video prompt", "write a Seedance prompt", "make a clip where...", "build this shot", "generate this scene", "turn this script into clips".
 ---
 
 # Video Generation
@@ -8,6 +8,8 @@ description: Write model-ready prompts for AI video generation engines such as S
 Turn a script beat, storyboard frame, or loose idea into one standalone AI video prompt. Block, light, and pace each shot like a director, not a copywriter.
 
 **Output: one prompt per generation, in a code block, nothing else** unless the user asks for options or explanation.
+
+**Do not generate the video.** No video or image tool calls, no rendering, no previews, no offering to generate. The user runs every generation themselves on their own platform, then pastes results back for review.
 
 > Prompt-craft technique adapted from free Higgsfield Academy material. No authorship claimed.
 

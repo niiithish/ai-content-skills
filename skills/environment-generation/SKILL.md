@@ -1,11 +1,13 @@
 ---
 name: environment-generation
-description: Create detailed, model-ready image prompts for spatially clear 3/4-view environments used as references in AI image generation, photo remixing, and AI video. Use when the user wants to design, generate, visualize, establish, or remix an interior or exterior location such as a bedroom, kitchen, living room, office, shop, warehouse, stadium, arena, street, courtyard, garden, landscape, or fantasy/sci-fi environment from a written concept or reference image.
+description: Write detailed, model-ready image prompts for spatially clear 3/4-view environments used as references in AI image generation, photo remixing, and AI video. Outputs prompt text only and never generates the image itself. Use when the user wants to design, visualize, establish, or remix an interior or exterior location such as a bedroom, kitchen, living room, office, shop, warehouse, stadium, arena, street, courtyard, garden, landscape, or fantasy/sci-fi environment from a written concept or reference image.
 ---
 
 # Environment Generation
 
 Create one standalone image-generation prompt for a coherent environment reference image. Optimize the image to establish the location clearly enough that a downstream AI video model can understand its depth, boundaries, adjoining surfaces, entrances, landmarks, and object placement.
+
+**Output is prompt text only. Do not generate the image.** No image tool calls, no rendering, no previews, no offering to generate. The user takes the prompt to their own platform.
 
 ## Related Skills
 
@@ -64,6 +66,8 @@ Treat supplied images as evidence for the location's identity. Preserve recogniz
 Infer unseen areas conservatively from visible geometry and design language. Do not silently expand the location, move doors or windows, redesign architecture, or combine incompatible spaces. For a remix, name the requested change and explicitly lock the layout and all unaffected features.
 
 ## Write the Prompt
+
+**The deliverable is prompt text, never an image.** Return the finished prompt in a code block and stop. Do not call an image generation tool, do not render or preview the sheet, and do not offer to generate it — the user runs generation themselves on their own platform.
 
 Return only the finished prompt unless the user asks for explanation or alternatives. Use cohesive natural language or concise titled sections; match the density and direct style of the user's examples. Do not expose placeholders or planning notes.
 

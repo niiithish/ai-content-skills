@@ -1,9 +1,13 @@
 ---
 name: prop-generation
-description: Create detailed, model-ready image prompts for consistent multi-view prop reference sheets on a neutral grey studio background, choosing a tight set of 3-4 views that explain the object for video and ad workflows. Use when the user wants to design, generate, visualize, or remix a product, object, footwear item, toy, appliance, tool, vehicle, weapon, furniture item, or other non-character prop; turn a written concept or reference image into front, side, rear, three-quarter, or detail views; or create an orthographic prop turnaround for AI image or video workflows.
+description: Write detailed, model-ready image prompts for consistent multi-view prop reference sheets on a neutral grey studio background, choosing a tight set of 3-4 views that explain the object for video and ad workflows. Outputs prompt text only and never generates the image itself. Use when the user wants to design, visualize, or remix a product, object, footwear item, toy, appliance, tool, vehicle, weapon, furniture item, or other non-character prop; turn a written concept or reference image into front, side, rear, three-quarter, or detail views; or create an orthographic prop turnaround for AI image or video workflows.
 ---
 
 # Prop Generation
+
+Create one standalone image-generation prompt for a multi-view prop reference sheet.
+
+**Output is prompt text only. Do not generate the image.** No image tool calls, no rendering, no previews, no offering to generate. The user takes the prompt to their own platform.
 
 ## Related Skills
 
@@ -67,6 +71,8 @@ Treat all panels as views of one physical object, not variants.
 - When editing or remixing a supplied prop, name what changes and explicitly lock everything else.
 
 ## Write the Prompt
+
+**The deliverable is prompt text, never an image.** Return the finished prompt in a code block and stop. Do not call an image generation tool, do not render or preview the sheet, and do not offer to generate it — the user runs generation themselves on their own platform.
 
 Return only the finished prompt unless the user asks for explanation or alternatives. Use natural language and concrete visual descriptions rather than keyword stuffing.
 
