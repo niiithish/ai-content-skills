@@ -31,7 +31,7 @@ The left panel explains the complete wardrobe without introducing a body for the
 
 ## Workflow
 
-1. Identify the character's identity, age range, presentation, physical features, hairstyle, expression, and distinctive details. When ethnicity is unspecified, apply the default below.
+1. Identify the character's identity, age range, presentation, physical features, hairstyle, and expression. Build distinctiveness from face structure, hair, and eyes rather than skin marks. When ethnicity is unspecified, apply the default below.
 2. Check what the character is for. If she will model a product, decide what must stay bare so the product reads cleanly later.
 3. Define one canonical outfit: every garment, layer, color, material, opacity, fit, graphic, accessory, and item of footwear.
 4. Decide which accessories belong with the outfit display and which belong in the head-and-shoulders portrait. Do not duplicate an item inconsistently.
@@ -44,13 +44,23 @@ Do not ask follow-up questions when a coherent choice can be inferred. Make rest
 
 When a character reference image is supplied, treat it as the identity source.
 
-- Preserve recognizable facial structure, skin tone, eye shape and color, nose, lips, eyebrows, hairline, hairstyle, facial hair, age, and distinctive marks.
+- Preserve recognizable facial structure, skin tone, eye shape and color, nose, lips, eyebrows, hairline, hairstyle, facial hair, age, and any skin marks that are actually visible in the reference. Preserving a mark that exists is required; adding one that does not is not.
 - Use the platform reference token, such as `@image_1`, when available; otherwise say `the supplied character reference`.
 - Do not beautify, age-shift, gender-shift, or redesign the person unless requested.
 - If the user requests a change, name that change and explicitly preserve every unrelated identity feature.
 - If several references show the same person, reconcile them into one identity. Prioritize the user-designated primary image when references conflict.
 
 When no reference is supplied, define a visually specific but plausible identity. State visible features directly instead of relying on vague labels.
+
+### Do not invent skin marks
+
+Never add a scar, mole, beauty mark, birthmark, freckle pattern, tattoo, piercing, or blemish that the user did not ask for. These read as clutter, they draw the eye in close-ups, and every one of them becomes a continuity liability — a mark placed on the sheet has to be reproduced in the same spot in every downstream clip, and it will drift or vanish.
+
+Get specificity from structure instead: face shape, bone structure, hair colour and texture, eye colour, brow shape, lip fullness, nose profile. Those hold up across generations and carry the identity far better than a mole does.
+
+Keep the skin clean and even. Realistic texture — pores, natural shine, fine lines — is still wanted, since that is what separates a real face from a filtered one. Clean skin does not mean airbrushed skin.
+
+Two exceptions. When the user asks for a specific mark, include it with exact placement and lock it. When a reference image shows one, preserve it, since removing it changes the person.
 
 ### Default identity when unspecified
 
@@ -132,6 +142,7 @@ Default to:
 - a straight-on full-outfit view on the left and an eye-level shoulder-up portrait on the right;
 - photorealistic reference photography, sharp focus, realistic skin, and clearly readable fabric weave, construction, and wear;
 - calm neutral expression and direct gaze unless the user specifies otherwise;
+- clean even skin with realistic pores and shine, carrying no invented scars, moles, or freckles;
 - opaque, practical, fully covering garments with stated fabric weight, lit from the front or side so nothing reads through;
 - no jewellery on a product-modelling character, and restraint otherwise;
 - a white American identity when the user has not specified one;
@@ -147,6 +158,7 @@ Before returning the prompt, verify:
 - the outfit is dimensional and naturally worn, not a flat lay or pile of clothing;
 - the right panel is shoulder-and-above, with no hands or arms in frame;
 - the face follows the supplied reference when one exists;
+- no skin mark appears that the user did not request or the reference did not show;
 - the upper outfit in the portrait exactly matches the left panel;
 - colors, materials, graphics, layers, jewelry, and asymmetrical details remain consistent;
 - the outfit and footwear are uncropped and readable;

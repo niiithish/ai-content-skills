@@ -32,7 +32,7 @@ ACTION
 [Events at the precision the shot needs. Camera motion and subject motion stated separately.]
 
 PERFORMANCE
-[Acting plus skin micro-realism: muscle-level emotion, eye-line, catch-lights, breath, pore-level detail.]
+[Acting plus skin micro-realism: muscle-level emotion, eye-line, catch-lights, breath, pore-level detail. Texture and shine only — do not introduce scars, moles, beauty marks, or freckles that the character reference does not have.]
 
 PHYSICS
 [Mass, inertia, contact shadows, fluids, particles.]
