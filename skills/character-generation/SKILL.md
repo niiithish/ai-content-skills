@@ -31,11 +31,12 @@ The left panel explains the complete wardrobe without introducing a body for the
 
 ## Workflow
 
-1. Identify the character's identity, age range, presentation, physical features, hairstyle, expression, and distinctive details.
-2. Define one canonical outfit: every garment, layer, color, material, fit, graphic, accessory, and item of footwear.
-3. Decide which accessories belong with the outfit display and which belong in the head-and-shoulders portrait. Do not duplicate an item inconsistently.
-4. Read [references/prompt-blueprint.md](references/prompt-blueprint.md) and follow its section order.
-5. Write the final prompt and check that the two panels describe one character and one unchanged outfit.
+1. Identify the character's identity, age range, presentation, physical features, hairstyle, expression, and distinctive details. When ethnicity is unspecified, apply the default below.
+2. Check what the character is for. If she will model a product, decide what must stay bare so the product reads cleanly later.
+3. Define one canonical outfit: every garment, layer, color, material, opacity, fit, graphic, accessory, and item of footwear.
+4. Decide which accessories belong with the outfit display and which belong in the head-and-shoulders portrait. Do not duplicate an item inconsistently.
+5. Read [references/prompt-blueprint.md](references/prompt-blueprint.md) and follow its section order.
+6. Write the final prompt and check that the two panels describe one character and one unchanged outfit.
 
 Do not ask follow-up questions when a coherent choice can be inferred. Make restrained, specific decisions that fit the user's concept. Ask only when a missing detail would substantially change the requested identity.
 
@@ -51,6 +52,30 @@ When a character reference image is supplied, treat it as the identity source.
 
 When no reference is supplied, define a visually specific but plausible identity. State visible features directly instead of relying on vague labels.
 
+### Default identity when unspecified
+
+When the user does not state ethnicity, nationality, or appearance, default to a white American character. State the visible features concretely — skin tone, hair colour and texture, eye colour — rather than writing a nationality label, which image models interpret inconsistently.
+
+This is only a default. Any user-specified ethnicity, nationality, or feature set overrides it completely, and a supplied reference image always wins.
+
+## Generation-Safety Constraints
+
+These prevent silent rejections downstream. A character sheet that generates cleanly can still produce an unusable sheet, or block the video generation that consumes it.
+
+### Wardrobe must be opaque
+
+Never write sheer, transparent, translucent, mesh, see-through, or lingerie-style garments, and never leave a fabric's opacity unstated. Video generation models flag this material regardless of intent, and the flag lands on the clip rather than on the sheet.
+
+Describe every garment as opaque by material and weight: "opaque ribbed cotton", "heavy matte jersey", "lined woven fabric". When a concept calls for a delicate or dressy look, get it through cut, drape, and colour rather than transparency, and state the lining explicitly. Keep coverage ordinary and practical unless the user asks otherwise, and put opacity in the locks so it survives regeneration.
+
+### Minors
+
+Image models are asymmetric here, and the asymmetry is worth stating plainly to the user rather than letting them hit it blind: prompts for young boys generally generate, while equivalent prompts for young girls are frequently refused. When a user asks for a young girl character sheet, tell them the refusal is likely before spending a generation on it.
+
+Video generation adds a second constraint that runs the other way. Uploading a real photograph of a minor as a reference is typically blocked outright, but describing a child in the prompt text is usually allowed — the model then invents a synthetic child, which is the safer path anyway. So for any clip involving a minor, describe the child in words and skip the reference image.
+
+Practical consequence: a character sheet is the wrong asset for a minor. Skip the sheet and carry the description into the video prompt as text.
+
 ## Lock the Outfit Across Panels
 
 Define the complete outfit once, then preserve it exactly in both panels.
@@ -60,7 +85,18 @@ Define the complete outfit once, then preserve it exactly in both panels.
 - Make the right portrait show the same neckline, collar, upper garment, layers, fabric, graphic placement, and head/neck accessories as the left outfit display.
 - Keep required words or logos in quotation marks with exact spelling and capitalization. Do not invent branding or small text.
 - Keep footwear, belts, bags, jewelry, and other requested styling items with the outfit. Floating wearable accessories are acceptable only when positioned naturally as worn and when no body parts or mannequin become visible.
+- State the opacity and weight of every fabric. See the wardrobe rule under Generation-Safety Constraints.
 - Do not let the left panel become a flat lay. Garments must hold realistic worn volume on a fully invisible body.
+
+### Jewellery is a deliberate decision
+
+Do not add jewellery by reflex. Decide it, and default to restraint.
+
+**When the character will model a jewellery product, give her none at all.** Bare ears, bare neck, bare wrists, bare fingers. The product gets added later by the video or shot prompt, and anything already on the sheet competes with it, changes how it reads, or shows up in a clip where it does not belong. Put the bare state in the locks explicitly — "ears bare, neck bare, no rings or bracelets" — because models add earrings unprompted.
+
+For every other character, one or two small restrained pieces are fine when they serve the character. Ask whether the piece says something about who she is; if not, leave it off.
+
+This applies to the product category, not just the exact item: a character modelling earrings still gets a bare neck, since necklaces will be composited or shot later.
 
 ## Write the Prompt
 
@@ -88,6 +124,9 @@ Default to:
 - a straight-on full-outfit view on the left and an eye-level shoulder-up portrait on the right;
 - photorealistic reference photography, sharp focus, realistic skin, and clearly readable fabric weave, construction, and wear;
 - calm neutral expression and direct gaze unless the user specifies otherwise;
+- opaque, practical, fully covering garments;
+- no jewellery on a product-modelling character, and restraint otherwise;
+- a white American identity when the user has not specified one;
 - no decorative design, scene, furniture, typography, labels, or props beyond requested wearable items.
 
 Adapt styling, age, expression, pose, or rendering medium when requested, but retain the two-panel outfit-and-identity structure unless the user explicitly asks to change it.
@@ -103,6 +142,8 @@ Before returning the prompt, verify:
 - the upper outfit in the portrait exactly matches the left panel;
 - colors, materials, graphics, layers, jewelry, and asymmetrical details remain consistent;
 - the outfit and footwear are uncropped and readable;
+- every fabric is stated opaque, with nothing sheer, mesh, or see-through;
+- a product-modelling character carries no jewellery, and the bare state is in the locks;
 - both panels use the same neutral dark-grey background and compatible studio lighting;
 - the divider and panel hierarchy are clear;
 - no extra people, duplicate garments, unrelated objects, scenery, or text have appeared.

@@ -132,6 +132,8 @@ Two rules override normal cinematic instinct in this context:
 
 - **Generate silent b-roll by default.** Do not have characters speak on camera. Voiceover recorded separately and laid over in the edit avoids lip-sync mismatch and voice drift between generations. Keep native ambient audio only.
 - **Respect content moderation.** Water, swimwear, bathrooms, and intimacy stack into silent rejections. Keep wardrobe plain, framing tight and practical, expressions neutral, and describe the action flatly: "water running over her neck at the sink," not a shower scene. Avoid piling up suggestive adjectives.
+- **Keep wardrobe opaque.** Never write sheer, transparent, translucent, mesh, or see-through fabric. Video models flag it regardless of intent. Name the material and its weight — "opaque ribbed cotton" — and repeat the opacity in POSITIVE LOCKS.
+- **Minors: describe, never upload.** A real photograph of a child as a reference image is typically blocked, while a text description usually generates and produces a synthetic child, which is the safer route. So for any clip involving a minor, write the description into the prompt and attach no reference image for that character.
 
 ## Final check
 
