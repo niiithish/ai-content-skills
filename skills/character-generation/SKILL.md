@@ -62,11 +62,19 @@ This is only a default. Any user-specified ethnicity, nationality, or feature se
 
 These prevent silent rejections downstream. A character sheet that generates cleanly can still produce an unusable sheet, or block the video generation that consumes it.
 
-### Wardrobe must be opaque
+### Nothing shows through the clothing
 
-Never write sheer, transparent, translucent, mesh, see-through, or lingerie-style garments, and never leave a fabric's opacity unstated. Video generation models flag this material regardless of intent, and the flag lands on the clip rather than on the sheet.
+The failure to prevent is not a sheer garment being requested. It is an ordinary opaque garment — a plain white t-shirt or tank top — that the model renders semi-transparently on its own, so nipples or underwear read through the fabric. This happens with no such instruction in the prompt, it happens most often with thin light-coloured tops, and it makes the sheet unusable and gets the downstream clip flagged.
 
-Describe every garment as opaque by material and weight: "opaque ribbed cotton", "heavy matte jersey", "lined woven fabric". When a concept calls for a delicate or dressy look, get it through cut, drape, and colour rather than transparency, and state the lining explicitly. Keep coverage ordinary and practical unless the user asks otherwise, and put opacity in the locks so it survives regeneration.
+Silence is what causes it. A garment whose opacity is never stated gets rendered however the model's training leans, and for a white t-shirt that lean is toward visible-through. So state it every time, in three places:
+
+- **In the garment description**, as a physical property: "opaque white ribbed cotton tank top, thick enough that nothing shows through, fabric reads solid white against the skin". Give the fabric weight and body — heavyweight, densely knit, substantial, matte — since weight is what the model actually renders.
+- **In the locks**, positively: "the top stays fully opaque, a solid uniform white with no skin tone or underlying shape visible through it".
+- **In the exclusions**, naming the artifact directly: no visible nipples, no areolae, no breast or underwear outline through the fabric, no wet or clinging fabric, no fabric turning translucent where it stretches over the body.
+
+Two amplifiers to control. Backlight is the main one — a window or light source behind the subject will make almost any thin top go translucent, so keep the key light frontal or side and say so. Stretch is the second: fabric pulled tight over the chest thins in the render, so specify a relaxed skim rather than a tight fit.
+
+Separately, do not write sheer, transparent, translucent, mesh, or lingerie-style garments even when a concept seems to call for one. Video models flag that material regardless of intent, and the flag lands on the clip rather than on the sheet. Get a delicate or dressy look from cut, drape, and colour, and state the lining explicitly.
 
 ### Minors
 
@@ -124,7 +132,7 @@ Default to:
 - a straight-on full-outfit view on the left and an eye-level shoulder-up portrait on the right;
 - photorealistic reference photography, sharp focus, realistic skin, and clearly readable fabric weave, construction, and wear;
 - calm neutral expression and direct gaze unless the user specifies otherwise;
-- opaque, practical, fully covering garments;
+- opaque, practical, fully covering garments with stated fabric weight, lit from the front or side so nothing reads through;
 - no jewellery on a product-modelling character, and restraint otherwise;
 - a white American identity when the user has not specified one;
 - no decorative design, scene, furniture, typography, labels, or props beyond requested wearable items.
@@ -142,7 +150,7 @@ Before returning the prompt, verify:
 - the upper outfit in the portrait exactly matches the left panel;
 - colors, materials, graphics, layers, jewelry, and asymmetrical details remain consistent;
 - the outfit and footwear are uncropped and readable;
-- every fabric is stated opaque, with nothing sheer, mesh, or see-through;
+- every fabric is stated opaque with its weight named, the light is frontal or side rather than behind, and the exclusions name the show-through artifact directly;
 - a product-modelling character carries no jewellery, and the bare state is in the locks;
 - both panels use the same neutral dark-grey background and compatible studio lighting;
 - the divider and panel hierarchy are clear;
