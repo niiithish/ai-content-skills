@@ -1,8 +1,6 @@
 # Tracker
 
-For any project spanning more than a couple of clips, write a single markdown file at the project root and keep it current as work progresses. It survives context loss, prevents regenerating approved clips, and gives the user one place to see what is left.
-
-Update it in the same turn as the work it records. A stale tracker is worse than none.
+For projects with more than a couple of clips, keep one markdown file at the project root. Update it in the same turn as the work it records.
 
 ## Template
 
@@ -14,8 +12,8 @@ Voiceover generated separately and laid over silent video.
 
 ## Product facts
 
-- [spec, sourced from the product page]
-- NOTE: [any contradiction in the source, and how the script avoids it]
+- [spec from product page]
+- NOTE: [source contradiction, if any, and how the script avoids it]
 
 ## Voiceover — [status], ~[N]s
 
@@ -62,4 +60,6 @@ Restate in every video prompt:
 
 ## Status values
 
-Use `todo`, `written`, `generated`, `approved`, or `regenerate — [reason]`. Recording the reason matters: "regenerate — came out 16:9" tells the next session exactly what to fix, while "regenerate" does not.
+`todo` · `written` · `generated` · `approved` · `regenerate — [reason]`
+
+Always record the reason: `regenerate — came out 16:9` helps the next session; bare `regenerate` does not.

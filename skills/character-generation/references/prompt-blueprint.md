@@ -1,49 +1,49 @@
-# Character Reference Prompt Blueprint
+# Character prompt blueprint
 
-Replace every bracketed instruction with concrete details and remove irrelevant clauses. Do not leave placeholders in the final prompt.
+Replace every bracketed instruction with concrete detail. Drop irrelevant clauses. No placeholders in the final prompt.
 
 ```text
 SUBJECT (RIGHT panel — large head)
-[Use @image_1 / the supplied character reference as the identity source, if applicable.] Create a large shoulder-and-above portrait of [character description]. Preserve [facial structure, skin tone, eyes, nose, lips, eyebrows, hairline, hairstyle, facial hair, age]. Skin is clean and even with realistic texture — visible pores, natural shine, no beauty-filter smoothing — and carries no scars, moles, beauty marks, birthmarks, freckles, tattoos, or blemishes [unless the user requested one or the reference shows one, in which case state it with exact placement]. [Expression and gaze]. [Head and neck accessories with exact left/right placement]. The character wears the exact same upper outfit shown in the left panel: [matching neckline, collar, layers, colors, material, graphic placement, and visible jewelry]. Hands and arms are not in frame; keep a clean head-and-shoulders crop.
+[Use @image_1 / the supplied character reference as the identity source, if applicable.] Create a large shoulder-and-above portrait of [character description] in a slight 3/4 head turn — face angled a little off camera, not a dead-on frontal passport angle [unless the user asked front-facing]. Preserve [facial structure, skin tone, eyes, nose, lips, eyebrows, hairline, hairstyle, facial hair, age]. Natural no-makeup skin: visible pores, natural oil and shine, fine lines, subtle uneven tone and light texture variation — a real bare face, not beauty-filter smooth or airbrushed. Small catch-light in each eye. No moles, beauty marks, scars, freckle clusters, tattoos, or piercings [unless the user requested one or the reference shows one, in which case state it with exact placement]. [Expression and gaze]. [Head and neck accessories with exact left/right placement]. The character wears the exact same upper outfit shown in the left panel: [matching neckline, collar, layers, colors, material, graphic placement, and visible jewelry]. Hands and arms are not in frame; keep a clean head-and-shoulders crop.
 
 LEFT panel — OUTFIT ONLY, ghost-mannequin
-Show the complete outfit as naturally worn by a fully invisible person: [describe upper garments in layering order, cut, fit, color, material, texture, seams, closures, graphics, and wear]. [Describe belt, bag, waist accessories, clips, or charms]. [Describe bottoms, fit, construction, length, and hem behavior]. [Describe socks and footwear, including material, color, sole, and how the hem meets the shoes]. [Describe naturally positioned wearable accessories]. The clothing has convincing three-dimensional worn volume, drape, folds, openings, and contact between layers, but there is no person and no visible support. No head, face, hair, neck, skin, shoulders, chest, torso, arms, hands, fingers, legs, ankles, feet, anatomy, mannequin, mannequin surface, hanger, stand, or wire frame. Do not present the clothing as a flat lay. Keep the entire outfit and footwear visible and uncropped.
+Show the complete outfit as naturally worn by a fully invisible person: [upper garments in layering order — cut, fit, color, material, seams, closures, graphics, wear]. [Belt, bag, waist accessories]. [Bottoms — fit, length, hem]. [Socks and footwear]. [Wearable accessories positioned as worn]. Convincing three-dimensional worn volume, drape, and layer contact — no person and no support. No head, face, hair, neck, skin, shoulders, chest, torso, arms, hands, fingers, legs, ankles, feet, anatomy, mannequin, hanger, stand, or wire frame. Not a flat lay. Entire outfit and footwear visible and uncropped.
 
 IDENTITY + WARDROBE LOCKS
-Both panels define one canonical character and one canonical outfit. The portrait identity remains [identity locks]. The upper outfit in the right panel is identical to the left panel in garment design, neckline, collar, layering, fit, colors, materials, wear, graphics, and accessory placement. Every garment stays fully opaque: [name the fabric, its weight and density], reading as a solid uniform [colour] with no skin tone and no underlying body shape visible through it. Preserve [exact asymmetry and exact quoted text]. [For a product-modelling character: ears bare, neck bare, wrists and fingers bare, no jewellery of any kind.] No mirrored details, substitutions, alternate styling, color drift, or wardrobe redesign.
+Both panels define one canonical character and one canonical outfit. The portrait identity remains [identity locks]. The upper outfit in the right panel is identical to the left in garment design, neckline, collar, layering, fit, colors, materials, wear, graphics, and accessory placement. Every garment stays fully opaque: [fabric, weight, density], solid uniform [colour] with no skin tone or body shape visible through it. Preserve [asymmetry and exact quoted text]. [Product-modelling: ears bare, neck bare, wrists and fingers bare, no jewellery.] No substitutions, color drift, or wardrobe redesign.
 
 LAYOUT
-Wide 16:9 landscape character-reference sheet with two clearly separated panels and a thin clean vertical divider. LEFT occupies roughly 42% of the canvas and shows the complete outfit in a full-length straight-on view with generous margins. RIGHT occupies roughly 58% and shows the much larger shoulder-and-above identity portrait. Keep both panels balanced, uncluttered, and easy to use as AI image and video references. No labels or decorative border.
+Wide 16:9 landscape character-reference sheet, two panels, thin clean vertical divider. LEFT ~42% full-length straight-on outfit with generous margins. RIGHT ~58% larger shoulder-up portrait. No labels or decorative border.
 
 BACKGROUND + LIGHT
-One continuous seamless neutral dark-grey studio backdrop across both panels. Broad soft neutral studio lighting from the front and slightly to the side, balanced exposure, natural skin tones, restrained highlights, gentle dimensional shadows, and approximately 5500K neutral white balance. Light reaches the clothing from the camera side so garments stay solid and evenly lit, with no backlight or rim light passing through fabric. No environmental setting or horizon clutter.
+One seamless neutral dark-grey studio backdrop across both panels. Broad soft neutral studio light from front and slightly to the side, balanced exposure, natural skin tones, restrained highlights, gentle shadows, ~5500K. Light from the camera side so garments stay solid — no backlight or rim light through fabric. No environment or horizon.
 
 CAMERA + FRAMING
-Straight, eye-level reference photography with normal-lens perspective and rectilinear geometry. The left outfit is centered, fully visible from its empty neck opening through the soles, with no crop. The right portrait faces the camera and is framed from the shoulders upward, with the hair and shoulders comfortably inside the panel. Deep enough focus for the face, garments, accessories, and footwear to remain sharp. No wide-angle distortion, dramatic perspective, or tilted camera.
+Straight eye-level reference photography, normal-lens, rectilinear. Left: centered full-length straight-on outfit from empty neck opening through soles, no crop. Right: shoulders upward, slight 3/4 head turn (not frontal unless requested), hair and shoulders inside frame. Deep enough focus for face, garments, and footwear. No wide-angle distortion or tilt.
 
 STYLE + DETAIL
-Clean photorealistic studio character-reference sheet. Render natural pores, hair strands, and facial details without beauty-filter smoothing. Render fabric weave, stitching, fading, print integration, hardware, jewelry, leather, suede, rubber, and garment wear accurately under soft studio light. Keep the result polished but physically believable.
+Clean photorealistic studio character-reference sheet. Natural no-makeup skin (pores, shine, fine lines, subtle unevenness), hair strands, fabric weave, stitching, hardware, and wear under soft studio light. Believable, not retouched.
 
 EXCLUSIONS
-No visible body or body part in the left panel; no mannequin, support, hanger, stand, or flat lay. No hands or arms in the right portrait. No sheer, transparent, translucent, mesh, or see-through fabric anywhere in the outfit. Nothing shows through the clothing: no visible nipples, areolae, breast outline, or underwear outline through the fabric, no fabric turning translucent where it stretches over the body, no wet or clinging fabric. No invented scars, moles, beauty marks, birthmarks, freckle clusters, tattoos, piercings, acne, or blemishes on the face, neck, chest, arms, or hands. No extra people, alternate faces, duplicate garments, spare shoes, unrelated props, environmental staging, labels, captions, watermarks, decorative graphics, identity drift, wardrobe drift, mirrored asymmetry, cropped outfit, harsh shadows, shallow-focus blur, or motion blur.
+No body or mannequin in the left panel; no flat lay. No hands or arms in the right portrait. No sheer, transparent, translucent, mesh, or see-through fabric. Nothing shows through clothing: no visible nipples, areolae, breast or underwear outline, no translucent stretch, no wet clinging fabric. No moles, beauty marks, scars, freckle clusters, tattoos, or piercings unless requested or on the reference. No beauty-filter / airbrushed skin. No extra people, alternate faces, duplicate garments, unrelated props, scenery, labels, watermarks, identity or wardrobe drift, mirrored asymmetry, cropped outfit, harsh shadows, shallow blur, or motion blur.
 ```
 
-## Reference-image adaptation
+## Reference adaptations
 
-For an identity reference, add:
+**Identity reference**
 
 ```text
-Use @image_1 as the sole identity source. Match the visible face and hair faithfully without beautifying or redesigning the person. Infer only details that are not visible and keep those inferences conservative.
+Use @image_1 as the sole identity source. Match the visible face and hair faithfully without beautifying or redesigning. Infer only non-visible details, and keep those conservative.
 ```
 
-For an outfit reference, add:
+**Outfit reference**
 
 ```text
-Use @image_2 as the wardrobe source. Preserve its recognizable garments, layering, fit, colors, materials, graphics, wear, footwear, and accessory placement. Reconstruct the outfit on a fully invisible body in the left panel and show the same upper outfit on the character in the right panel.
+Use @image_2 as the wardrobe source. Preserve garments, layering, fit, colors, materials, graphics, wear, footwear, and accessory placement. Reconstruct on a fully invisible body in the left panel; same upper outfit on the character in the right panel.
 ```
 
-For a requested edit, add:
+**Scoped edit**
 
 ```text
-Change only [requested feature]. Keep the character's remaining identity features and every unrelated wardrobe detail unchanged in both panels.
+Change only [requested feature]. Keep remaining identity features and every unrelated wardrobe detail unchanged in both panels.
 ```

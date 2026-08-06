@@ -1,54 +1,52 @@
 # Audit
 
-Run this before showing the user a script. Each failure has a specific fix, not a general "make it better".
+Run before showing the user. Each failure has a specific fix.
 
 ## Pace
 
-- No cut longer than 3 seconds.
-- Cut count matches duration: roughly one cut per 2.5 seconds of runtime.
-- Environment or subject changes at least every other cut.
-- No two consecutive cuts show the same framing of the same thing.
+- No cut longer than 3s
+- ~1 cut per 2.5s of runtime
+- Environment or subject changes at least every other cut
+- No two consecutive cuts with the same framing of the same thing
 
-Failing pace is fixed by deleting beats, never by reading faster.
+Fix pace by **deleting beats**, never reading faster.
 
 ## Clarity
 
-- Every pronoun has exactly one possible referent when heard once, with no rewind.
-- Any villain product is separated from the hero by explicit noun phrase, temporal boundary, and terminal verdict.
-- The villain looks physically different from the hero on screen, not just older or dirtier.
-- The pivot from problem to product is unmistakable in a single listen.
-- No sentence requires the viewer to hold two clauses in memory to parse.
+- Every pronoun has one referent when heard once
+- Villain separated by noun phrase + temporal boundary + terminal verdict
+- Villain looks physically different from hero on screen
+- Pivot from problem to product is unmistakable in one listen
+- No sentence that needs two clauses held in memory
 
 ## Voice
 
-- Read aloud, every line sounds like speech.
-- No marketing register: introducing, revolutionary, game-changing, obsessed, elevate, effortless.
-- No stacked adjectives.
-- Contractions throughout.
-- Sentence fragments allowed and encouraged — people speak in fragments.
-- Enthusiasm is grounded in a specific detail rather than asserted.
+- Every line sounds like speech when read aloud
+- No marketing register: introducing, revolutionary, game-changing, obsessed, elevate, effortless
+- No stacked adjectives; contractions throughout; fragments allowed
+- Enthusiasm grounded in a specific detail
 
 ## Structure
 
-- Hook is answerable only by watching, and pays off later in the script.
-- One central claim, not a feature list. Two or three supporting details maximum.
-- Mechanism explained physically, no spec-sheet numbers.
-- Proof escalates rather than repeating.
-- Ending sets up the offer without speaking price when an offer clip is attached.
+- Hook only answerable by watching, and pays off later
+- One central claim; 2–3 supporting details max
+- Mechanism physical, no contradictory specs
+- Proof escalates rather than repeats
+- Ending sets up offer without speaking price when offer clip attaches
 
 ## Production feasibility
 
-- Every cut is generatable: no readable on-screen text, no crowds, no complex hand interaction with small objects unless it is a macro.
-- No cut depends on a character speaking on camera, and no cut requires lip-sync.
-- Every cut survives the muted test: with the audio off, something visible is still happening in it.
-- Every shot description states what the body, hands, or camera do, not just who is in frame.
-- Wardrobe and framing pass content moderation. Nothing that stacks water, swimwear, bathroom, and intimacy cues together.
-- Each generation fits the engine's clip cap.
-- Continuity details that must survive across generations are listed explicitly.
+- Every cut generatable: no readable on-screen text, no crowds, no complex tiny hand interaction unless macro
+- No cut requires on-camera speech or lip-sync
+- Muted test passes: something visible still happens
+- Shot states what body, hands, or camera do
+- Wardrobe/framing pass moderation (do not stack water + swimwear + bathroom + intimacy)
+- Each generation fits engine clip cap
+- Cross-generation continuity details listed
 
 ## Claims
 
-- Every duration, location, and result is flagged for the user to confirm.
-- No invented review counts, ratings, certifications, or test results.
-- Claims the source page contradicts are omitted rather than resolved by guessing.
-- Health and safety wording stays inside what the source actually says.
+- Every duration, location, result flagged for user confirm
+- No invented reviews, ratings, certifications, test results
+- Source contradictions omitted, not guessed
+- Health/safety wording stays inside source language

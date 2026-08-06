@@ -1,6 +1,6 @@
 # AI Content Skills
 
-Agent skills for the whole short-form video pipeline: write the **script**, generate consistent **prop**, **character** and **environment** references, then write the **AI video** prompts that turn them into clips.
+Agent skills for the short-form video pipeline: **script** → **character / prop / environment** references → **AI video** prompts.
 
 Compatible with the [Agent Skills](https://agentskills.io/) open standard and installable via [skills.sh](https://skills.sh).
 
@@ -30,15 +30,13 @@ npx skills add niiithish/ai-content-skills --list
 
 | Skill | Description |
 | --- | --- |
-| [`script-generation`](./skills/script-generation) | Short-form ad scripts delivered as a numbered cut list, paced for AI generation. |
-| [`prop-generation`](./skills/prop-generation) | Multi-view studio prop reference sheets with a tight 3-4 view set on a neutral grey background. |
-| [`character-generation`](./skills/character-generation) | Two-panel character sheets: invisible-body full outfit (left) + matching shoulder-up identity portrait (right). |
-| [`environment-generation`](./skills/environment-generation) | Spatially clear 3/4-view interior and exterior location references for image and video workflows. |
-| [`video-generation`](./skills/video-generation) | Block-structured AI video prompts for Seedance, Veo, Kling and similar engines. |
+| [`script-generation`](./skills/script-generation) | Short-form ad scripts as a numbered cut list, paced for AI generation. |
+| [`prop-generation`](./skills/prop-generation) | Multi-view prop sheets (3–4 views) on neutral grey. |
+| [`character-generation`](./skills/character-generation) | Two-panel sheets: invisible-body outfit + matching identity portrait. |
+| [`environment-generation`](./skills/environment-generation) | Wide 3/4-view location references for image and video. |
+| [`video-generation`](./skills/video-generation) | Block-structured AI video prompts (Seedance, Veo, Kling, etc.). |
 
 ## Pipeline
-
-The skills chain in one direction. Each stage hands a concrete artifact to the next.
 
 ```text
 script-generation      →  voiceover + numbered cut list
@@ -49,37 +47,17 @@ environment-generation
 video-generation       →  one prompt per generation, chained by last frame
 ```
 
-### script-generation
+| Stage | Delivers |
+| --- | --- |
+| **script-generation** | Edit-ready cut list (≤3s cuts, environment changes, silent + VO). |
+| **prop-generation** | Studio multi-view product identity sheet. |
+| **character-generation** | Outfit + face identity sheet for consistent talent. |
+| **environment-generation** | Spatially clear 3/4 location sheet. |
+| **video-generation** | One model-ready prompt per generation from the cut list. |
 
-Write the script as an edit, not an essay: a numbered cut list with the spoken line and shot for each cut, capped at 3 seconds per cut, one environment change per cut, grouped into generations that fit the video engine's clip limit. Encodes the awareness-stage diagnosis, hook patterns, a pre-delivery audit, and the anti-confusion rule for scripts that contrast the product against a worse alternative.
+## Layout
 
-**Use when:** writing a TikTok, Reels or Shorts ad script; writing hooks or voiceover copy; making an existing script faster or less ad-like.
-
-### prop-generation
-
-Create one standalone image-generation prompt for a clean, consistent multi-view prop reference sheet. Chooses a tight 3-4 view set that shows the surfaces a downstream video or ad will actually put on camera (front, sides, rear, top, three-quarter, detail), skips pointless views like appliance undersides, uses no orientation labels, and locks identity across every panel.
-
-**Use when:** designing products, footwear, toys, tools, vehicles, furniture, or other non-character props; building orthographic turnarounds; remixing a prop from a reference image.
-
-### character-generation
-
-Create one landscape character reference sheet prompt with two panels: complete worn outfit with no body visible, and a large matching head-and-shoulders identity portrait.
-
-**Use when:** establishing a consistent face, wardrobe, and accessories for AI images or video; remixing a character from a reference image.
-
-### environment-generation
-
-Create one establishing environment prompt with a true 3/4 camera angle that reveals depth, boundaries, openings, and landmarks so downstream models understand the space.
-
-**Use when:** designing rooms, streets, stadiums, landscapes, or other interiors/exteriors as stable location references.
-
-### video-generation
-
-Turn a cut list into standalone AI video prompts using a fixed block order, FOV in degrees from an anchor table, positive-only phrasing, and measurable atmosphere. Covers reference tagging, timed multishot cuts, per-engine clip caps, and the moderation and silent-b-roll rules that short-form ad work needs.
-
-**Use when:** writing a prompt for Seedance, Veo, Kling, Sora, Runway or Hailuo; building a shot or multi-cut sequence; turning reference sheets into clips.
-
-## Repository layout
+Each skill is a focused agent prompt (`SKILL.md`) plus optional load-on-demand references:
 
 ```text
 skills/
@@ -105,10 +83,8 @@ skills/
     └── references/{prompt-blocks,optics,engine-notes}.md
 ```
 
-Each skill follows the Agent Skills format:
-
-- `SKILL.md` — name, description, and instructions
-- `references/` — prompt blueprints loaded when the skill runs
+- `SKILL.md` — name, description (auto-invoke triggers), actionable instructions
+- `references/` — blueprints and tables loaded when the skill runs
 - `agents/openai.yaml` — optional agent UI metadata
 
 ## License
