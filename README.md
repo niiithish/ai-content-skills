@@ -20,6 +20,7 @@ npx skills add niiithish/ai-content-skills --skill environment-generation
 npx skills add niiithish/ai-content-skills --skill video-generation
 npx skills add niiithish/ai-content-skills --skill clay-animation-video-prompt
 npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
+npx skills add niiithish/ai-content-skills --skill simple-talking-head
 npx skills add niiithish/ai-content-skills --skill video-breakdown
 ```
 
@@ -40,6 +41,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`video-generation`](./skills/video-generation) | Block-structured AI video prompts (Seedance, Veo, Kling, etc.). |
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
+| [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
 | [`video-breakdown`](./skills/video-breakdown) | Shot list, cuts, actions, and spoken lines from 2fps contact sheets plus a transcript. |
 
 ## Pipeline
@@ -61,6 +63,7 @@ video-generation       →  one prompt per generation, chained by last frame
 | **environment-generation** | Spatially clear 3/4 location sheet. |
 | **video-generation** | One model-ready prompt per generation from the cut list. |
 | **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
+| **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
 | **video-breakdown** | 6-second contact sheets + transcript → cuts, actions, and lines. |
 
 ## Layout
@@ -97,6 +100,9 @@ skills/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   └── references/{beat-map,still-prompts,clip-prompts,failure-locks}.md
+├── simple-talking-head/
+│   ├── SKILL.md
+│   └── agents/openai.yaml
 └── video-breakdown/
     ├── SKILL.md
     ├── agents/openai.yaml

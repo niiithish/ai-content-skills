@@ -1,0 +1,4 @@
+interface:
+  display_name: "Simple Talking Head"
+  short_description: "Raw iPhone 9:16 talking-head prompt — one line, selfie or tripod"
+  default_prompt: "Use $simple-talking-head to write a talking-head prompt of this person saying the line."

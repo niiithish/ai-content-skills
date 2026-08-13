@@ -20,6 +20,13 @@
       ]
     },
     {
+      "title": "Simple talking head",
+      "description": "Short raw-iPhone talking-head prompts: one line, selfie or tripod, no product in hand.",
+      "skills": [
+        "simple-talking-head"
+      ]
+    },
+    {
       "title": "Video analysis",
       "description": "Shot-by-shot breakdowns of local clips: cuts, actions, and spoken lines from 2fps contact sheets plus a transcript.",
       "skills": [
