@@ -34,7 +34,7 @@ npx skills add niiithish/ai-content-skills --list
 
 | Skill | Description |
 | --- | --- |
-| [`script-generation`](./skills/script-generation) | Short-form ad scripts as a numbered cut list, paced for AI generation. |
+| [`script-generation`](./skills/script-generation) | Spoken TikTok/Reels UGC scripts. Cut list only when you ask for AI video. |
 | [`prop-generation`](./skills/prop-generation) | Multi-view prop sheets (3–4 views) on neutral grey. |
 | [`character-generation`](./skills/character-generation) | Three-panel sheets: headless front + back bodies, large 3/4 portrait. |
 | [`environment-generation`](./skills/environment-generation) | Wide 3/4-view location references for image and video. |
@@ -47,7 +47,7 @@ npx skills add niiithish/ai-content-skills --list
 ## Pipeline
 
 ```text
-script-generation      →  voiceover + numbered cut list
+script-generation      →  spoken UGC script (+ cut list if AI video)
     ↓
 character / prop /     →  reference images per cut
 environment-generation
@@ -57,7 +57,7 @@ video-generation       →  one prompt per generation, chained by last frame
 
 | Stage | Delivers |
 | --- | --- |
-| **script-generation** | Edit-ready cut list (≤3s cuts, environment changes, silent + VO). |
+| **script-generation** | Spoken UGC script for TikTok/Reels. Optional ≤3s cut list for AI video. |
 | **prop-generation** | Studio multi-view product identity sheet. |
 | **character-generation** | Front/back wardrobe + large face sheet for consistent talent. |
 | **environment-generation** | Spatially clear 3/4 location sheet. |

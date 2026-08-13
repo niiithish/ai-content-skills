@@ -1,5 +1,7 @@
 # Tracker
 
+Only when producing a multi-clip AI cut list. Skip this file for a spoken UGC script.
+
 For projects with more than a couple of clips, keep one markdown file at the project root. Update it in the same turn as the work it records.
 
 ## Template

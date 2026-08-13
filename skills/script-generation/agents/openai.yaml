@@ -1,4 +1,4 @@
 interface:
   display_name: "Script Generation"
-  short_description: "Write short-form ad scripts for AI video"
-  default_prompt: "Use $script-generation to write a short-form ad script for this product."
+  short_description: "Spoken TikTok UGC scripts that hold a scroll"
+  default_prompt: "Use $script-generation to write a TikTok UGC script for this product."

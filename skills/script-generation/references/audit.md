@@ -2,51 +2,51 @@
 
 Run before showing the user. Each failure has a specific fix.
 
-## Pace
-
-- No cut longer than 3s
-- ~1 cut per 2.5s of runtime
-- Environment or subject changes at least every other cut
-- No two consecutive cuts with the same framing of the same thing
-
-Fix pace by **deleting beats**, never reading faster.
-
-## Clarity
-
-- Every pronoun has one referent when heard once
-- Villain separated by noun phrase + temporal boundary + terminal verdict
-- Villain looks physically different from hero on screen
-- Pivot from problem to product is unmistakable in one listen
-- No sentence that needs two clauses held in memory
-
 ## Voice
 
 - Every line sounds like speech when read aloud
-- No marketing register: introducing, revolutionary, game-changing, obsessed, elevate, effortless
+- Hook is unchanged from the pick
+- No marketing register: introducing, revolutionary, game-changing, obsessed, elevate, effortless, "I can't believe this worked"
 - No stacked adjectives; contractions throughout; fragments allowed
 - Enthusiasm grounded in a specific detail
 
+## Hook and retention
+
+- Hook is a complete thought in under 8 words
+- Hook opens a loop the script closes
+- Pattern interrupt exists around 8–10s
+- Core tension is not resolved before proof
+- Product name appears before the last 3 seconds
+- Brand name is not the first thing spoken
+
 ## Structure
 
-- Hook only answerable by watching, and pays off later
-- One central claim; 2–3 supporting details max
-- Mechanism physical, no contradictory specs
-- Proof escalates rather than repeats
-- Ending sets up offer without speaking price when offer clip attaches
+- 21–45s spoken, roughly 50–120 words
+- One problem; 2–3 proofs max
+- Soft CTA (invitation, bio, or "tell me if…") — not shop-now / only-3-left
+- Every pronoun has one referent when heard once
+- Villain separated by noun phrase + temporal boundary + terminal verdict
+- Claims stay inside the source; invented reviews/ratings/certs are gone
 
-## Production feasibility
+## Caption
 
-- Every cut generatable: no readable on-screen text, no crowds, no complex tiny hand interaction unless macro
-- No cut requires on-camera speech or lip-sync
-- Muted test passes: something visible still happens
-- Shot states what body, hands, or camera do
-- Wardrobe/framing pass moderation (do not stack water + swimwear + bathroom + intimacy)
-- Each generation fits engine clip cap
-- Cross-generation continuity details listed
+- Under 150 characters
+- 3–5 niche hashtags, not a dump
+- Matches the hook; no clickbait the video does not pay off
 
-## Claims
+## Production notes (visual pairing)
 
-- Every duration, location, result flagged for user confirm
-- No invented reviews, ratings, certifications, test results
-- Source contradictions omitted, not guessed
-- Health/safety wording stays inside source language
+- First frame has a visual event
+- 3–5 overlays that carry the story with sound off
+- Lived-in room, not a white sweep
+
+## AI cut list only
+
+Run this block only when a cut list was requested.
+
+- No cut longer than 3s
+- Environment or subject changes at least every other cut
+- No two consecutive cuts with the same framing of the same thing
+- No cut depends on a face delivering a line
+- Muted test passes
+- Fix pace by deleting beats, never reading faster
