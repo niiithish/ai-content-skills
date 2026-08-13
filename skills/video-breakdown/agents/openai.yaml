@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Breakdown"
+  short_description: "Shot list, cuts, actions, and spoken lines from a local video"
+  default_prompt: "Use $video-breakdown to break down this video: shots, cuts, her actions, scene changes, and what she is saying."

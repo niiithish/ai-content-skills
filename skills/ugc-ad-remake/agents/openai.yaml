@@ -1,0 +1,4 @@
+interface:
+  display_name: "UGC Ad Remake"
+  short_description: "Remake winning talking-head UGC ads"
+  default_prompt: "Use $ugc-ad-remake to start or continue a talking-head remake of this winning ad with a new product and talent."

@@ -1,6 +1,6 @@
 # AI Content Skills
 
-Agent skills for the short-form video pipeline: **script** → **character / prop / environment** references → **AI video** prompts.
+Agent skills for the short-form video pipeline: **script** → **character / prop / environment** references → **AI video** prompts, plus a talking-head remake path for cloning winning UGC ads and a cheap shot-by-shot video breakdown.
 
 Compatible with the [Agent Skills](https://agentskills.io/) open standard and installable via [skills.sh](https://skills.sh).
 
@@ -18,6 +18,9 @@ npx skills add niiithish/ai-content-skills --skill prop-generation
 npx skills add niiithish/ai-content-skills --skill character-generation
 npx skills add niiithish/ai-content-skills --skill environment-generation
 npx skills add niiithish/ai-content-skills --skill video-generation
+npx skills add niiithish/ai-content-skills --skill clay-animation-video-prompt
+npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
+npx skills add niiithish/ai-content-skills --skill video-breakdown
 ```
 
 List without installing:
@@ -32,9 +35,12 @@ npx skills add niiithish/ai-content-skills --list
 | --- | --- |
 | [`script-generation`](./skills/script-generation) | Short-form ad scripts as a numbered cut list, paced for AI generation. |
 | [`prop-generation`](./skills/prop-generation) | Multi-view prop sheets (3–4 views) on neutral grey. |
-| [`character-generation`](./skills/character-generation) | Two-panel sheets: invisible-body outfit + matching identity portrait. |
+| [`character-generation`](./skills/character-generation) | Three-panel sheets: headless front + back bodies, large 3/4 portrait. |
 | [`environment-generation`](./skills/environment-generation) | Wide 3/4-view location references for image and video. |
 | [`video-generation`](./skills/video-generation) | Block-structured AI video prompts (Seedance, Veo, Kling, etc.). |
+| [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
+| [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
+| [`video-breakdown`](./skills/video-breakdown) | Shot list, cuts, actions, and spoken lines from 2fps contact sheets plus a transcript. |
 
 ## Pipeline
 
@@ -51,9 +57,11 @@ video-generation       →  one prompt per generation, chained by last frame
 | --- | --- |
 | **script-generation** | Edit-ready cut list (≤3s cuts, environment changes, silent + VO). |
 | **prop-generation** | Studio multi-view product identity sheet. |
-| **character-generation** | Outfit + face identity sheet for consistent talent. |
+| **character-generation** | Front/back wardrobe + large face sheet for consistent talent. |
 | **environment-generation** | Spatially clear 3/4 location sheet. |
 | **video-generation** | One model-ready prompt per generation from the cut list. |
+| **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
+| **video-breakdown** | 6-second contact sheets + transcript → cuts, actions, and lines. |
 
 ## Layout
 
@@ -77,10 +85,22 @@ skills/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   └── references/prompt-blueprints.md
-└── video-generation/
+├── video-generation/
+│   ├── SKILL.md
+│   ├── agents/openai.yaml
+│   └── references/{prompt-blocks,optics,engine-notes}.md
+└── clay-animation-video-prompt/
     ├── SKILL.md
     ├── agents/openai.yaml
-    └── references/{prompt-blocks,optics,engine-notes}.md
+    └── references/{prompt-blueprint,ad-reference-pack}.md
+├── ugc-ad-remake/
+│   ├── SKILL.md
+│   ├── agents/openai.yaml
+│   └── references/{beat-map,still-prompts,clip-prompts,failure-locks}.md
+└── video-breakdown/
+    ├── SKILL.md
+    ├── agents/openai.yaml
+    └── scripts/contact-sheets.sh
 ```
 
 - `SKILL.md` — name, description (auto-invoke triggers), actionable instructions

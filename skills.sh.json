@@ -11,6 +11,20 @@
         "environment-generation",
         "video-generation"
       ]
+    },
+    {
+      "title": "UGC Remakes",
+      "description": "Clone a winning talking-head UGC ad with a new product and talent: beat map, product-swap stills, then locked Gemini Omni clips.",
+      "skills": [
+        "ugc-ad-remake"
+      ]
+    },
+    {
+      "title": "Video analysis",
+      "description": "Shot-by-shot breakdowns of local clips: cuts, actions, and spoken lines from 2fps contact sheets plus a transcript.",
+      "skills": [
+        "video-breakdown"
+      ]
     }
   ]
 }

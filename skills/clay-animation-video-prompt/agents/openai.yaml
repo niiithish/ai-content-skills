@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clay Animation Video Prompt"
+  short_description: "Build claymation performance ad prompts"
+  default_prompt: "Use $clay-animation-video-prompt to build a claymation product ad with reference-image prompts, voiceover timing, and one video prompt per generation."
