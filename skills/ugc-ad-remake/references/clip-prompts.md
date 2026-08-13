@@ -1,8 +1,51 @@
 # Clip prompts
 
-Load this after an approved still exists, or when the user asks for a Gemini Omni / "she says" prompt. Output one prompt in a code block.
+Load this when the user asks for a Gemini Omni / "she says" prompt.
 
-## Engine
+Two modes. Do not mix them.
+
+| Mode | When | Still required? |
+|---|---|---|
+| **Simple talking head** | One line, no product in hand, selfie or tripod | No |
+| **Locked remake** | Product in hands, zip/hold, remake of a winning ad | Yes — approved still first |
+
+Output one prompt in a code block.
+
+## Simple talking head
+
+Use this when they want a raw iPhone talking-head and **no product in the hands**. Talking *about* a product is fine. Holding it is not — that is locked remake.
+
+Pick **one** camera. Default: **tripod** unless they say they are holding the phone / selfie / front camera.
+
+Voice: American ~20-year-old UGC tone unless talent is already locked. Use he/she to match the talent. Quote the line once. Do not pad it.
+
+Keep the prompt short. These locks are the ones that work — do not add zooms, cuts, cinema grade, or a product in hand.
+
+### Holding the phone
+
+```
+natural and realistic arm movements, subtle lean forward, looks directly at the lens the whole time
+
+[he/she] says in an american 20 year old ugc tone:
+"[line]"
+
+Ambient Sound. No cuts. No zooms. No transitions. Raw iPhone footage, expressive ugc movements, UGC aesthetic. Vertical 9:16. NO PRODUCT IN HAND. ONE CONTINUOUS SHOT
+```
+
+### Not holding the phone (tripod)
+
+```
+Static tripod shot, natural and realistic arm movements, subtle lean forward, looks directly at the lens the whole time
+
+[he/she] says in an american 20 year old ugc tone:
+"[line]"
+
+Ambient Sound. No cuts. No zooms. No transitions. Raw iPhone footage, expressive ugc movements, UGC aesthetic. Vertical 9:16. NO PRODUCT IN HAND. ONE CONTINUOUS SHOT
+```
+
+Swap only the line, the he/she, and the voice if talent is locked. Leave the rest.
+
+## Engine (locked remake)
 
 Gemini Omni. 720p. 9:16. 24fps. 4s or 6s only.
 

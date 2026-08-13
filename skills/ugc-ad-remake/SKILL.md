@@ -1,6 +1,6 @@
 ---
 name: ugc-ad-remake
-description: Run a still-first talking-head remake of a winning TikTok/Reels UGC ad with a new product and talent. Use when the user wants to clone, copy, remake, or recreate a winning ad, start a new UGC project from a reference video, swap a different model/product into an existing talking-head structure, write Gemini Omni 720p "she says" clips, or continue a product-swap still + locked-frame clip workflow. Trigger on clone this ad, remake this TikTok, copy this UGC, different model different product, talking-head review, Gemini Omni, yappy, silent hold, product swap, same frame, zip-hold, or name the clips. Do not use for silent cinematic b-roll, claymation, three-panel character sheets, multi-view prop sheets, environment plates, or writing a brand-new silent voiceover script from scratch.
+description: Run a still-first talking-head remake of a winning TikTok/Reels UGC ad with a new product and talent, or write a simple 9:16 talking-head "she says" clip with no product in hand (selfie / holding the phone, or static tripod). Use when the user wants to clone, copy, remake, or recreate a winning ad, start a new UGC project from a reference video, swap a different model/product into an existing talking-head structure, write Gemini Omni 720p "she says" clips, continue a product-swap still + locked-frame clip workflow, or get a raw iPhone talking-head prompt. Trigger on clone this ad, remake this TikTok, copy this UGC, different model different product, talking-head review, Gemini Omni, yappy, silent hold, product swap, same frame, zip-hold, holding the phone, selfie ugc, tripod talking head, no product in hand, or name the clips. Do not use for silent cinematic b-roll, claymation, three-panel character sheets, multi-view prop sheets, environment plates, or writing a brand-new silent voiceover script from scratch.
 ---
 
 # UGC Ad Remake
@@ -14,7 +14,8 @@ This skill overrides **script-generation** and **video-generation** for talking-
 ## Working style
 
 - Short. Prompt-only. One next step.
-- Still first, then the clip. Never write a talking clip before an approved still exists.
+- Remakes: still first, then the clip. Never write a product-in-hands talking clip before an approved still exists.
+- Simple talking head (no product in hand, selfie or tripod): skip the still. Load [references/clip-prompts.md](references/clip-prompts.md) **Simple talking head** and write that prompt.
 - User uploads images as **identity refs**, not start frames, unless they say start-frame.
 - Match the winning ad's *structure* (beats, angles, hand jobs, zip/open/hold). Change talent, product, colorway, brand, and nouns that the new still cannot support.
 - Fast yappy UGC. Line once, then silent hold. Never time the line to fill 4s/6s.
@@ -54,7 +55,8 @@ If they give a winning ad (video, screenshots, or transcript):
 | Room plate | **environment-generation** |
 | Listing images | Download chosen variant only |
 | New still / product swap | Load [references/still-prompts.md](references/still-prompts.md) |
-| "she says" / Omni clip | Still first, then [references/clip-prompts.md](references/clip-prompts.md) |
+| Simple talking head / selfie / tripod / no product in hand | [references/clip-prompts.md](references/clip-prompts.md) **Simple talking head**. No still. |
+| "she says" / Omni clip with product in hands | Still first, then [references/clip-prompts.md](references/clip-prompts.md) **Locked remake** |
 | Last still/clip is wrong | Patch one lock. [references/failure-locks.md](references/failure-locks.md) |
 | Transcribe / name clips | **voxtype-transcribe** → `clip-01-slug.mp4` + `CLIP_INDEX.txt` |
 
@@ -67,7 +69,9 @@ If they give a winning ad (video, screenshots, or transcript):
 
 Never mix them. The old product must not leak. The grey studio must not replace the room.
 
-## Clip locks
+## Clip locks (locked remake only)
+
+Simple talking head uses the selfie/tripod templates in clip-prompts.md instead. Do not apply still-locks to that mode.
 
 Locked frame = the approved still. No zoom, pan, extra walls, or lighting change.
 
@@ -83,4 +87,4 @@ Rewrite unused script nouns to match the still. Do not keep two clips that speak
 
 ## Output
 
-One prompt in a fenced code block. If the still is missing, say that in one sentence and give the still prompt only.
+One prompt in a fenced code block. Locked remake with no still: say that in one sentence and give the still prompt only. Simple talking head: just write the selfie or tripod prompt.
