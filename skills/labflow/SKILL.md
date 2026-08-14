@@ -43,11 +43,12 @@ Look at every local file they name before writing the prompt.
 
 ```bash
 flow image "PROMPT" --aspect portrait \
-  --ingredient /abs/path/ref-a.png \
-  --ingredient /abs/path/ref-b.png \
-  -o /abs/path/out.jpg
+  --ingredient ./ref-a.png \
+  --ingredient ./ref-b.png \
+  --name scene1.jpg
 ```
 
+- Files land in the directory you ran `flow` from. `--name scene1.jpg` sets the filename (`-o` is the same, also accepts a path).
 - `--aspect`: `landscape` `portrait` `square` `4:3` `3:4`. Default portrait for UGC/product-in-hand; otherwise match the brief.
 - Repeat `--ingredient` for each reference (max 10). Character sheet, product sheet, room plate — each is one file.
 - Images are 0 credits. Still wait for the JPEG/PNG and open it.
@@ -79,8 +80,8 @@ Read `credits` (or `subscriptionCredits`). Cost (Pro): 4s=7, 6s=10, 8s=12, 10s=1
 
 ```bash
 flow generate "PROMPT" --aspect portrait --duration 4 \
-  --ingredient /abs/path/still.jpg \
-  -o /abs/path/out.mp4
+  --ingredient ./still.jpg \
+  --name clip.mp4
 ```
 
 - `--ingredient` = reference images (max 7), not start/end frames.
