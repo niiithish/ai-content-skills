@@ -16,8 +16,8 @@ description: >
 
 Run the unofficial `flow` CLI. Do the generation. Do not stop at a prompt unless they ask for prompt-only.
 
-Image = **Nano Banana Pro** (`GEM_PIX_2`) at **1K**. Never upsample to 2K/4K.
-Video = **Omni Flash** (`abra`). Costs credits. Confirm duration/count before spending.
+Image = **Nano Banana Pro** (`GEM_PIX_2`) at **1K**. Never upsample to 2K/4K. Images cost **0** — skip the credit check.
+Video = **Omni Flash** (`abra`). Costs credits. Do **not** ask permission to spend. Before every `flow generate`, run `flow credits` and report remaining vs this run's cost. Stop only if remaining is below the cost.
 
 ## First check
 
@@ -69,7 +69,13 @@ Do not describe the character-sheet layout (headless body, panels). The model wi
 
 ## Video
 
-Confirm before spend (Pro): 4s=7, 6s=10, 8s=12, 10s=15. `--count` multiplies.
+Before every video run:
+
+```bash
+flow credits
+```
+
+Read `credits` (or `subscriptionCredits`). Cost (Pro): 4s=7, 6s=10, 8s=12, 10s=15. `--count` multiplies. Tell the user remaining and this run's cost, then generate. Do not wait for approval. If remaining < cost, stop and say so.
 
 ```bash
 flow generate "PROMPT" --aspect portrait --duration 4 \
