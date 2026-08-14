@@ -57,9 +57,9 @@ flow generate --prompt-file /ABS/path/clip1.md \
 
 Hard rules:
 
-- `--prompt-file` with an **absolute** path. Never `$(cat clip.md)` from a random cwd.
+- `--prompt-file` and `--ingredient` are **absolute** paths. Never `$(cat clip.md)` from a random cwd.
 - `--ingredient` = identity / cut refs (max 7), **not** start/end frames.
-- Flags can be in any order. `--name` / `--rename` / `-o` write into the current directory.
+- Flags can be in any order. `--name` / `--rename` / `-o` write **in the cwd**. If they want `clips/clip1.mp4`, either `cd` into `clips/` first or pass `--name /ABS/path/clips/clip1.mp4`.
 - `flow credits` first. Say remaining vs cost. Do not ask permission. Stop if remaining < cost.
 - Freemium uses the same cost table.
 
@@ -94,6 +94,7 @@ Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha ca
 | Symptom | Do |
 |---|---|
 | Empty / garbage prompt, `cat: ... No such file` | Use `--prompt-file /absolute/path`. |
+| Clip saved in the wrong folder | `--name clip1.mp4` is cwd. `cd` to `clips/` or use an absolute `--name`. |
 | `RECAPTCHA_FAILED` / `UNUSUAL_ACTIVITY` | Retry once. `flow recaptcha-close` then retry. Open labs.google/fx/tools/flow in Chromium once. |
 | `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | **Stop.** Image/video caps are real. Switch account (`flow sync`) or wait. Resume later; do not keep submitting. |
 | Wrong Google account | `flow whoami` → `flow sync` or `flow login`. |
