@@ -77,11 +77,10 @@ Prompt a **single composed frame**, not a character-sheet layout.
 
 ## Recaptcha / Chromium
 
-API calls are HTTP. Recaptcha needs a **headed** labs.google tab (`agent-browser` session `flow-recaptcha`). It **closes when the command finishes** (success, fail, or Ctrl-C).
+API calls are HTTP. Recaptcha needs a **headed** labs.google tab (`agent-browser` session `flow-recaptcha`). The window **stays open** so the next generate/image a few seconds later does not flash Chrome.
 
-- `flow generate` / `flow image`: one window for that job, then close.
-- `flow images`: one window for the whole batch, then close.
-- Leftover after a crash: `flow recaptcha-close`
+- `flow generate` / `flow image` / `flow images`: reuse the same window.
+- When you are done: `flow recaptcha-close`
 
 Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha call.
 
@@ -97,7 +96,7 @@ Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha ca
 | `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | **Stop.** Image/video caps are real. Switch account (`flow sync`) or wait. Resume later; do not keep submitting. |
 | Wrong Google account | `flow whoami` → `flow sync` or `flow login`. |
 | 404 on `flowMedia` after generate accepted | Generate used the **wrong FLOW_PROJECT** (old account’s UUID). Job may still have spent credits. `flow sync` so project follows the session `.env`. New project UUID is in **this** account’s Flow URL. Re-run generate. |
-| Chrome left open after generate | Update labflow. Current CLI closes the window when the command exits. `flow recaptcha-close` for leftovers. |
+| Chrome flashing every job | Old CLI, or you closed the session. Leave the window until `flow recaptcha-close`. |
 | Leftover Chromiums | `flow recaptcha-close` |
 
 Unofficial backend. Their Google account. Google’s terms.
