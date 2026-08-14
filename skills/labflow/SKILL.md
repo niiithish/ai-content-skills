@@ -59,6 +59,7 @@ Hard rules:
 
 - `--prompt-file` and `--ingredient` are **absolute** paths. Never `$(cat clip.md)` from a random cwd.
 - `--ingredient` = identity / cut refs (max 7), **not** start/end frames.
+- In the prompt, tag a still with `@scene2` (filename stem), `@image1` (first `--ingredient`), or `@{media-uuid}`. That becomes a structured mention (the website `@` chip). Bare `@image1` text without `--ingredient` does nothing.
 - Flags can be in any order. `--name` / `--rename` / `-o` write **in the cwd**. If they want `clips/clip1.mp4`, either `cd` into `clips/` first or pass `--name /ABS/path/clips/clip1.mp4`.
 - `flow credits` first. Say remaining vs cost. Do not ask permission. Stop if remaining < cost.
 - Freemium uses the same cost table.
