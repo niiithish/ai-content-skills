@@ -35,6 +35,7 @@ Edited a `.env` with a different account → `flow sync` (uses the newest `FLOW_
 | They want | Command |
 |---|---|
 | Still / image / Nano Banana / 1K | `flow image` |
+| Many scene*.md stills | `flow images DIR --out DIR --rpm 6` (skips existing jpgs) |
 | Clip / Omni Flash / Flow video | `flow generate` |
 | Prompt text only | do **not** run this skill |
 
