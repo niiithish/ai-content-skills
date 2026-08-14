@@ -108,7 +108,7 @@ Read `flow errors` first (`~/.config/labflow/errors.jsonl`, tokens redacted). Th
 | `SESSION_EXPIRED` / `SESSION_MISSING` / wrong Google account | `flow whoami` (check `source`). If they edited `.env`: `flow sync` then `whoami` again. Else `flow login` and paste `__Secure-next-auth.session-token` (Application → Cookies → labs.google). Logout in Chromium usually kills the saved cookie. Never print the token. |
 | 404 / `NOT_FOUND` on generate after switching accounts | `FLOW_PROJECT` is still the other account’s UUID. New UUID is in **this** account’s Flow project URL. Put it in `.env`, `flow sync`. |
 | `unrecognized arguments: --rename` | Alias of `--name`. Update labflow if their CLI is old (`cd ~/Work/labflow && pip install -e .`). |
-| Freemium / `PAYGATE_TIER_NOT_PAID` | Images still 0 credits. Video costs from `flow credits` (`credits` field). Stop video if remaining < cost. |
+| Freemium / `PAYGATE_TIER_NOT_PAID` / `QUOTA` | Image gen is **not** unlimited. `flow images` **stops on the first failure**. Switch account (`flow sync`), wait, or use another project, then run the same command to resume. |
 | Leftover Chromiums | Recaptcha window. `agent-browser --session flow-recaptcha close`. Killing them does not stop an already-submitted job. |
 | Generate hung / no file | Images often have no `mediaStatus`; a `fifeUrl` means ready. `flow status MEDIA_ID` then `flow download MEDIA_ID --name out.jpg`. |
 
