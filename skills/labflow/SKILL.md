@@ -49,7 +49,7 @@ flow image "PROMPT" --aspect portrait \
   --name scene1.jpg
 ```
 
-- Files land in the directory you ran `flow` from. `--name scene1.jpg` sets the filename (`-o` is the same, also accepts a path).
+- Files land in the directory you ran `flow` from. `--name scene1.jpg` / `--rename scene1.jpg` / `-o` are the same. Flags can be in any order.
 - `--aspect`: `landscape` `portrait` `square` `4:3` `3:4`. Default portrait for UGC/product-in-hand; otherwise match the brief.
 - Repeat `--ingredient` for each reference (max 10). Character sheet, product sheet, room plate — each is one file.
 - Images are 0 credits. Still wait for the JPEG/PNG and open it.
@@ -93,6 +93,24 @@ flow generate "PROMPT" --aspect portrait --duration 4 \
 
 Read the result image/video. If identity, product, or hands are wrong: one tighter lock, one new generate. Do not spam retries.
 
-Recaptcha uses `agent-browser` (`IMAGE_GENERATION` / `VIDEO_GENERATION`). Leftover headless Chromium: `agent-browser --session flow-recaptcha close`. Failures: `flow errors` (`~/.config/labflow/errors.jsonl`, tokens redacted).
+## How it works
 
-Unofficial backend. Use their Google account. Respect credits and Google’s terms.
+Most commands are HTTPS to `aisandbox-pa.googleapis.com` (cookie → `/fx/api/auth/session` → bearer token). Recaptcha is the exception: `agent-browser` opens labs.google **headed** (a window flashes), injects the session cookie, runs `grecaptcha.enterprise.execute` (`IMAGE_GENERATION` / `VIDEO_GENERATION`), then the generate is still an API POST. Do not replace this with a raw recaptcha HTTP call.
+
+## When it breaks
+
+Read `flow errors` first (`~/.config/labflow/errors.jsonl`, tokens redacted). Then:
+
+| Symptom | Do |
+|---|---|
+| `RECAPTCHA_FAILED` / `PUBLIC_ERROR_UNUSUAL_ACTIVITY` | Retry once. Confirm `agent-browser` is installed (`flow doctor`). Close leftovers: `agent-browser --session flow-recaptcha close`. Ask them to open labs.google/fx/tools/flow in Chromium once. Headless mint is rejected — the CLI must stay headed. |
+| `SESSION_EXPIRED` / `SESSION_MISSING` / wrong Google account | `flow whoami` (check `source`). If they edited `.env`: `flow sync` then `whoami` again. Else `flow login` and paste `__Secure-next-auth.session-token` (Application → Cookies → labs.google). Logout in Chromium usually kills the saved cookie. Never print the token. |
+| 404 / `NOT_FOUND` on generate after switching accounts | `FLOW_PROJECT` is still the other account’s UUID. New UUID is in **this** account’s Flow project URL. Put it in `.env`, `flow sync`. |
+| `unrecognized arguments: --rename` | Alias of `--name`. Update labflow if their CLI is old (`cd ~/Work/labflow && pip install -e .`). |
+| Freemium / `PAYGATE_TIER_NOT_PAID` | Images still 0 credits. Video costs from `flow credits` (`credits` field). Stop video if remaining < cost. |
+| Leftover Chromiums | Recaptcha window. `agent-browser --session flow-recaptcha close`. Killing them does not stop an already-submitted job. |
+| Generate hung / no file | Images often have no `mediaStatus`; a `fifeUrl` means ready. `flow status MEDIA_ID` then `flow download MEDIA_ID --name out.jpg`. |
+
+If the payload itself drifted (400 `INVALID_ARGUMENT`), keep the journaled body and fix `labflow` — do not invent a new endpoint.
+
+Unofficial backend. Use their Google account. Respect Google’s terms.
