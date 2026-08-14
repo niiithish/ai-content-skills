@@ -32,6 +32,13 @@
       "skills": [
         "video-breakdown"
       ]
+    },
+    {
+      "title": "Google Flow",
+      "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images and Omni Flash videos from a prompt plus ingredient images.",
+      "skills": [
+        "labflow"
+      ]
     }
   ]
 }
