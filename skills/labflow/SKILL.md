@@ -104,7 +104,7 @@ Read `flow errors` first (`~/.config/labflow/errors.jsonl`, tokens redacted). Th
 
 | Symptom | Do |
 |---|---|
-| `RECAPTCHA_FAILED` / `PUBLIC_ERROR_UNUSUAL_ACTIVITY` | Retry once. Confirm `agent-browser` is installed (`flow doctor`). Close leftovers: `agent-browser --session flow-recaptcha close`. Ask them to open labs.google/fx/tools/flow in Chromium once. Headless mint is rejected — the CLI must stay headed. |
+| `RECAPTCHA_FAILED` / `PUBLIC_ERROR_UNUSUAL_ACTIVITY` | Retry once. `flow images` keeps **one** headed Flow window for the batch. Confirm `agent-browser` (`flow doctor`). Leftovers: `agent-browser --session flow-recaptcha close`. Open labs.google/fx/tools/flow in Chromium once if it keeps failing. Do not mint recaptcha headless. |
 | `SESSION_EXPIRED` / `SESSION_MISSING` / wrong Google account | `flow whoami` (check `source`). If they edited `.env`: `flow sync` then `whoami` again. Else `flow login` and paste `__Secure-next-auth.session-token` (Application → Cookies → labs.google). Logout in Chromium usually kills the saved cookie. Never print the token. |
 | 404 / `NOT_FOUND` on generate after switching accounts | `FLOW_PROJECT` is still the other account’s UUID. New UUID is in **this** account’s Flow project URL. Put it in `.env`, `flow sync`. |
 | `unrecognized arguments: --rename` | Alias of `--name`. Update labflow if their CLI is old (`cd ~/Work/labflow && pip install -e .`). |
