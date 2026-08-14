@@ -28,6 +28,7 @@ command -v flow && flow doctor
 If `flow` is missing: install from https://github.com/niiithish/labflow (`pip install -e .` in that repo). Session + project live in `FLOW_SESSION_TOKEN` and `FLOW_PROJECT` (`.env` or `~/.config/labflow/.env`). Never print those values.
 
 Session expired → `flow login` (paste `__Secure-next-auth.session-token` from Chromium → Application → Cookies → `labs.google`).
+Edited a `.env` with a different account → `flow sync` (uses the newest `FLOW_SESSION_TOKEN`, then `flow whoami`).
 
 ## Route
 
