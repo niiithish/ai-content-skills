@@ -39,7 +39,7 @@ flow rotate --need 12
 flow account use nithish
 ```
 
-Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts. `--no-rotate` pins the current account.
+Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts. `--no-rotate` pins the current account. An active named account beats a leftover `./.env` cookie; `flow sync` clears the pin.
 
 ## Route
 
