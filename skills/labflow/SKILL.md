@@ -67,7 +67,7 @@ Hard rules:
 ## Images
 
 ```bash
-flow image "PROMPT" --aspect portrait --ingredient ./ref.png --name scene1.jpg
+flow image "PROMPT" --aspect 9:16 --ingredient ./ref.png --name scene1.jpg
 flow images ./scripts --out ./new-images --aspect portrait --rpm 6
 ```
 
