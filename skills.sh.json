@@ -28,14 +28,14 @@
     },
     {
       "title": "Video analysis",
-      "description": "Shot-by-shot breakdowns of local clips: cuts, actions, and spoken lines from 2fps contact sheets plus a transcript.",
+      "description": "Decode a local clip via Gemini 3.1 Pro: compact JSON of cuts, transcript, and action beats.",
       "skills": [
         "video-breakdown"
       ]
     },
     {
       "title": "Google Flow",
-      "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images and Omni Flash videos from a prompt plus ingredient images.",
+      "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images and Omni Flash videos. The CLI rotates saved Google accounts on quota; agents must not switch mid-job.",
       "skills": [
         "labflow"
       ]

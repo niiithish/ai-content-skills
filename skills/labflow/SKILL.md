@@ -30,13 +30,7 @@ flow credits
 
 Never print `FLOW_SESSION_TOKEN`. Expired cookie → `flow login` (HttpOnly cookie from Chromium → Application → Cookies → labs.google → `__Secure-next-auth.session-token`).
 
-Several Google accounts: setup **once**, then never switch during a job.
-
-```bash
-flow account add nithish --project PROJECT_UUID
-```
-
-Do **not** run `flow account use`, `flow rotate`, or `flow sync` while `flow image` / `flow images` / `flow generate` is running — including from another agent. Those commands switch internally and print `accountSwitch`. `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
+**Accounts:** `flow account add NAME --project UUID` is setup only. After that, **never** `flow account use`, `flow rotate`, or `flow sync` — not mid-job, not from another agent. `flow image` / `flow images` / `flow generate` switch internally and print `accountSwitch` (ignore it, let the command finish). `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
 
 ## Route
 
@@ -69,9 +63,8 @@ Hard rules:
 - `--ingredient` = identity / cut refs (max 7), **not** start/end frames.
 - In the prompt, tag a still with `@scene2` (filename stem), `@image1` (first `--ingredient`), or `@{media-uuid}`. That becomes a structured mention (the website `@` chip). Bare `@image1` text without `--ingredient` does nothing.
 - Flags can be in any order. `--name` / `--rename` / `-o` write **in the cwd**. If they want `clips/clip1.mp4`, either `cd` into `clips/` first or pass `--name /ABS/path/clips/clip1.mp4`.
-- `flow credits` first. Say remaining vs cost. Do not ask permission. Stop if remaining < cost.
+- `flow credits` first. Say remaining vs cost. Then run `flow generate` — the CLI rotates or refuses. Do not pick an account.
 - Freemium uses the same cost table.
-- Do not pick an account mid-job. `flow generate` rotates itself.
 
 ## Images
 
@@ -106,7 +99,7 @@ Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha ca
 | `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | If the same command printed `accountSwitch`, it already continued. If it **stopped**, every saved account is empty — wait, then the **same** command. Do not `flow account use`. |
 | `BUSY` | Another flow job holds the account lock. Wait. Same command. Do not switch accounts. |
 | Wrong Google account | `flow whoami`. Setup only: `flow account add`. Do not switch mid-job. |
-| 404 on `flowMedia` after generate accepted | Generate used the **wrong FLOW_PROJECT** (old account’s UUID). Job may still have spent credits. `flow sync` so project follows the session `.env`. New project UUID is in **this** account’s Flow URL. Re-run generate. |
+| 404 on `flowMedia` after generate accepted | Project UUID is not this account’s. Job may have spent credits. Do **not** `flow sync` mid-job. Re-run the same `flow generate` (pinned account+project). If it 404s again, `flow account add NAME --project UUID --force` (setup), then the same generate. |
 | Chrome flashing every job | Old CLI, or you closed the session. Leave the window until `flow recaptcha-close`. |
 | Leftover Chromiums | `flow recaptcha-close` |
 

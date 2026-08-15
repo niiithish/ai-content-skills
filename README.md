@@ -1,6 +1,6 @@
 # AI Content Skills
 
-Agent skills for the short-form video pipeline: **script** → **character / prop / environment** references → **AI video** prompts, plus a talking-head remake path for cloning winning UGC ads and a cheap shot-by-shot video breakdown.
+Agent skills for the short-form video pipeline: **script** → **character / prop / environment** references → **AI video** prompts, plus a talking-head remake path for cloning winning UGC ads and a Gemini 3.1 Pro JSON video decode.
 
 Compatible with the [Agent Skills](https://agentskills.io/) open standard and installable via [skills.sh](https://skills.sh).
 
@@ -43,8 +43,8 @@ npx skills add niiithish/ai-content-skills --list
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
-| [`video-breakdown`](./skills/video-breakdown) | Shot list, cuts, actions, and spoken lines from 2fps contact sheets plus a transcript. |
-| [`labflow`](./skills/labflow) | Run Google Flow via the unofficial `flow` CLI: Nano Banana Pro 1K images and Omni Flash video. |
+| [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON: form, one detailed scene per cut, start/end states. |
+| [`labflow`](./skills/labflow) | Run Google Flow via the unofficial `flow` CLI: Nano Banana Pro 1K images and Omni Flash video. Rotates saved accounts on quota; do not switch mid-job. |
 
 ## Pipeline
 
@@ -66,7 +66,7 @@ video-generation       →  one prompt per generation, chained by last frame
 | **video-generation** | One model-ready prompt per generation from the cut list. |
 | **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
 | **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
-| **video-breakdown** | 6-second contact sheets + transcript → cuts, actions, and lines. |
+| **video-breakdown** | Gemini 3.1 Pro JSON → form + one rebuildable scene per hard cut (not a props dump). |
 | **labflow** | Generate the still/clip on Google Flow (`flow image` / `flow generate`). |
 
 ## Layout
@@ -109,7 +109,7 @@ skills/
 └── video-breakdown/
     ├── SKILL.md
     ├── agents/openai.yaml
-    └── scripts/contact-sheets.sh
+    └── references/gemini-prompt.md
 ├── labflow/
     ├── SKILL.md
     └── agents/openai.yaml
