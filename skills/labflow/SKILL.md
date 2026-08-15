@@ -30,6 +30,17 @@ flow credits
 
 Never print `FLOW_SESSION_TOKEN`. Wrong account after editing `.env` → `flow sync`. Expired → `flow login` (HttpOnly cookie from Chromium → Application → Cookies → labs.google → `__Secure-next-auth.session-token`).
 
+Several Google accounts: one Chromium profile each. Save each cookie as a named account. `flow generate` switches to one that can afford the clip.
+
+```bash
+flow account add nithish --project PROJECT_UUID
+flow account ls
+flow rotate --need 12
+flow account use nithish
+```
+
+Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts. `--no-rotate` pins the current account.
+
 ## Route
 
 | They want | Do |
@@ -61,8 +72,9 @@ Hard rules:
 - `--ingredient` = identity / cut refs (max 7), **not** start/end frames.
 - In the prompt, tag a still with `@scene2` (filename stem), `@image1` (first `--ingredient`), or `@{media-uuid}`. That becomes a structured mention (the website `@` chip). Bare `@image1` text without `--ingredient` does nothing.
 - Flags can be in any order. `--name` / `--rename` / `-o` write **in the cwd**. If they want `clips/clip1.mp4`, either `cd` into `clips/` first or pass `--name /ABS/path/clips/clip1.mp4`.
-- `flow credits` first. Say remaining vs cost. Do not ask permission. Stop if remaining < cost.
+- `flow credits` first (or `flow account ls` when several accounts are saved). Say remaining vs cost. Do not ask permission. Stop if remaining < cost.
 - Freemium uses the same cost table.
+- If a named account is saved, `flow generate` rotates by itself. Use `--no-rotate` to pin.
 
 ## Images
 
@@ -93,8 +105,8 @@ Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha ca
 | Empty / garbage prompt, `cat: ... No such file` | Use `--prompt-file /absolute/path`. |
 | Clip saved in the wrong folder | `--name clip1.mp4` is cwd. `cd` to `clips/` or use an absolute `--name`. |
 | `RECAPTCHA_FAILED` / `UNUSUAL_ACTIVITY` | Retry once. `flow recaptcha-close` then retry. Open labs.google/fx/tools/flow in Chromium once. |
-| `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | **Stop.** Image/video caps are real. Switch account (`flow sync`) or wait. Resume later; do not keep submitting. |
-| Wrong Google account | `flow whoami` → `flow sync` or `flow login`. |
+| `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | **Stop.** Image/video caps are real. `flow rotate --need N` or `flow account use NAME`, then retry. Wait if every account is empty. Do not keep submitting. |
+| Wrong Google account | `flow whoami` → `flow account ls` / `flow account use NAME` or `flow sync`. |
 | 404 on `flowMedia` after generate accepted | Generate used the **wrong FLOW_PROJECT** (old account’s UUID). Job may still have spent credits. `flow sync` so project follows the session `.env`. New project UUID is in **this** account’s Flow URL. Re-run generate. |
 | Chrome flashing every job | Old CLI, or you closed the session. Leave the window until `flow recaptcha-close`. |
 | Leftover Chromiums | `flow recaptcha-close` |
