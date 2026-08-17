@@ -30,7 +30,7 @@ flow credits
 
 Never print `FLOW_SESSION_TOKEN`. Expired cookie → `flow login` (HttpOnly cookie from Chromium → Application → Cookies → labs.google → `__Secure-next-auth.session-token`).
 
-**Accounts:** `flow account add NAME --project UUID` is setup only. After that, **never** `flow account use`, `flow rotate`, or `flow sync` — not mid-job, not from another agent. `flow image` / `flow images` / `flow generate` switch internally and print `accountSwitch` (ignore it, let the command finish). `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
+**Accounts:** `flow account add NAME --project UUID` is setup only. After that, **never** `flow account use`, `flow rotate`, or `flow sync` — not mid-job, not from another agent. Cookies last ~24h. Renew them with `flow account refresh` (opens Flow in each Chromium profile, pulls the new cookie). `flow image` / `flow images` / `flow generate` switch internally and print `accountSwitch` (ignore it, let the command finish). `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
 
 ## Route
 
@@ -96,6 +96,7 @@ Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha ca
 | Empty / garbage prompt, `cat: ... No such file` | Use `--prompt-file /absolute/path`. |
 | Clip saved in the wrong folder | `--name clip1.mp4` is cwd. `cd` to `clips/` or use an absolute `--name`. |
 | `RECAPTCHA_FAILED` / `UNUSUAL_ACTIVITY` | Retry once. `flow recaptcha-close` then retry. Open labs.google/fx/tools/flow in Chromium once. |
+| `SESSION_EXPIRED` | `flow account refresh`, then the **same** command. Do not paste cookies. Do not `flow account use`. |
 | `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | If the same command printed `accountSwitch`, it already continued. If it **stopped**, every saved account is empty — wait, then the **same** command. Do not `flow account use`. |
 | `BUSY` | Another flow job holds the account lock. Wait. Same command. Do not switch accounts. |
 | Wrong Google account | `flow whoami`. Setup only: `flow account add`. Do not switch mid-job. |
