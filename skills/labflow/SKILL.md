@@ -30,7 +30,7 @@ flow credits
 
 Never print `FLOW_SESSION_TOKEN`. Expired cookie → `flow login` (HttpOnly cookie from Chromium → Application → Cookies → labs.google → `__Secure-next-auth.session-token`).
 
-**Accounts:** `flow account add NAME --project UUID` is setup only. After that, **never** `flow account use`, `flow rotate`, or `flow sync` — not mid-job, not from another agent. Cookies last ~24h. Renew them with `flow account refresh` (opens Flow in each Chromium profile, pulls the new cookie). `flow image` / `flow images` / `flow generate` switch internally and print `accountSwitch` (ignore it, let the command finish). `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
+**Accounts:** `flow account add NAME --project UUID` is setup only. After that, **never** `flow account use`, `flow rotate`, or `flow sync` — not mid-job, not from another agent. Cookies last ~24h. Renew them with `flow account refresh` (one Chromium window per profile: wait until Flow is signed in, save cookie, close, next). `flow image` / `flow images` / `flow generate` switch internally and print `accountSwitch` (ignore it, let the command finish). `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
 
 ## Route
 
