@@ -1,4 +1,4 @@
 interface:
   display_name: "labflow (Google Flow)"
-  short_description: "Generate Nano Banana Pro 1K images and Omni Flash videos with the flow CLI"
-  default_prompt: "Use $labflow. Run flow image / flow images / flow generate. Do not flow account use, rotate, or sync — the CLI switches accounts itself."
+  short_description: "Generate Nano Banana Pro 1K images and Omni Flash 1.1 videos with the flow CLI"
+  default_prompt: "Use $labflow to generate the requested Flow media directly; let the CLI manage sessions, credits, accounts, and browser state."

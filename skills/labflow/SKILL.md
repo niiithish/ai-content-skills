@@ -1,107 +1,42 @@
 ---
 name: labflow
 description: >
-  Run the unofficial `flow` CLI to generate Google Flow stills (Nano Banana Pro)
-  and Omni Flash videos. Use when the user says Flow, labflow, labs.google,
-  Omni Flash, Nano Banana, flow image, flow generate, flow images, or wants
-  clips from existing scene stills. Use when they run /labflow.
-  Do NOT use video-generation (that skill is prompt-only for other engines).
-  Do NOT use ugc-ad-remake for silent clay ads.
+  Generate Google Flow images and videos with the local `flow` CLI. Use for
+  Flow, labflow, Nano Banana Pro, Omni Flash, `flow image`, `flow images`, or
+  `flow generate`. Do not use for prompt-only requests targeting other engines.
 ---
 
 # labflow
 
-Run `flow`. Do the generation. Do not stop at a prompt unless they ask for prompt-only.
+Run `flow` and deliver the requested media. Do not stop after writing a prompt unless the user explicitly asks for prompt text only.
 
-| Kind | Model | Credits |
-|---|---|---|
-| Still | Nano Banana Pro `GEM_PIX_2` 1K | often 0, **not unlimited** (daily quota) |
-| Video | Omni Flash `abra` | 4s=7 · 6s=10 · 8s=12 · 10s=15 × `--count` |
+## Let the CLI manage itself
 
-Never upsample 2K/4K. Never invent a new endpoint.
+Run the requested generation command directly. Labflow owns session validation and repair, recognized Google re-login, credit checks, account selection, project alignment, and browser reuse.
 
-## Before anything
+- Do not preflight with `flow account ls`, `flow whoami`, `flow credits`, or `flow doctor` unless the user explicitly asks for account diagnostics.
+- Do not run `flow account use`, `flow rotate`, `flow sync`, or `flow account refresh` during ordinary generation.
+- Never expose or request session tokens, cookies, passwords, recovery data, or vault credentials.
+- Treat progress and `accountSwitch` output as informational; let the command finish.
+- On `BUSY`, wait for the active job and retry the exact command once. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
 
-```bash
-flow doctor
-flow whoami
-flow credits
-```
-
-Never print `FLOW_SESSION_TOKEN`. Expired cookie → `flow login` (HttpOnly cookie from Chromium → Application → Cookies → labs.google → `__Secure-next-auth.session-token`).
-
-**Accounts:** `flow account add NAME --project UUID` is setup only. After that, **never** `flow account use`, `flow rotate`, or `flow sync` — not mid-job, not from another agent. Cookies last ~24h. Renew them with `flow account refresh` (one Chromium window per profile: wait until Flow is signed in, save cookie, close, next). `flow image` / `flow images` / `flow generate` switch internally and print `accountSwitch` (ignore it, let the command finish). `--no-rotate` pins. `BUSY` = another flow job; wait; retry the **same** command. Do not reuse `FLOW_PROJECT` or ingredient media IDs across accounts.
-
-## Route
-
-| They want | Do |
-|---|---|
-| One still | `flow image` |
-| Folder of `scene1.md`… | `flow images DIR --out DIR --aspect portrait --rpm 6` |
-| **Video from existing stills** | `flow generate --prompt-file ABS.md` + `--ingredient` each still |
-| Prompt text they will paste elsewhere | **video-generation**, not this skill |
-| Talking-head remake of a winning UGC | **ugc-ad-remake**, not this skill |
-
-Look at every still they name before writing the prompt.
-
-## Still → video (this is the usual remake)
-
-Do **one** `flow generate` for the first N scenes that fit in 8s or 10s. Do **not** make one 4s clip per still and stitch.
+## Commands
 
 ```bash
-flow generate --prompt-file /ABS/path/clip1.md \
-  --aspect portrait --duration 8 \
-  --ingredient /ABS/path/scene1.jpg \
-  --ingredient /ABS/path/scene2.jpg \
-  --ingredient /ABS/path/scene3.jpg \
-  --name clip1.mp4
+# One image
+flow image "PROMPT" --aspect 9:16 --ingredient /ABS/ref.png --name /ABS/scene.jpg
+
+# A folder containing scene1.md, scene2.md, ...
+flow images /ABS/scripts --out /ABS/images --aspect portrait --rpm 6
+
+# One video, optionally using existing stills as references
+flow generate --prompt-file /ABS/clip.md --aspect portrait --duration 8 \
+  --ingredient /ABS/scene1.jpg --ingredient /ABS/scene2.jpg \
+  --name /ABS/clip.mp4
 ```
 
-Hard rules:
+Use absolute paths for prompt files, ingredients, and outputs. Inspect every referenced still before writing the video prompt. Ingredients are identity/cut references, not start/end frames; tag them in a prompt with `@scene1` or `@image1` when the shot needs an explicit reference.
 
-- `--prompt-file` and `--ingredient` are **absolute** paths. Never `$(cat clip.md)` from a random cwd.
-- `--ingredient` = identity / cut refs (max 7), **not** start/end frames.
-- In the prompt, tag a still with `@scene2` (filename stem), `@image1` (first `--ingredient`), or `@{media-uuid}`. That becomes a structured mention (the website `@` chip). Bare `@image1` text without `--ingredient` does nothing.
-- Flags can be in any order. `--name` / `--rename` / `-o` write **in the cwd**. If they want `clips/clip1.mp4`, either `cd` into `clips/` first or pass `--name /ABS/path/clips/clip1.mp4`.
-- `flow credits` first. Say remaining vs cost. Then run `flow generate` — the CLI rotates or refuses. Do not pick an account.
-- Freemium uses the same cost table.
+Prefer one coherent multi-scene generation over one tiny clip per still. Flow generates video at 720p by default or 360p with `--resolution 360p`; do not request 1080p/2K/4K generation or invent endpoints. Image prompts should describe one composed frame, not a reference-sheet layout.
 
-## Images
-
-```bash
-flow image "PROMPT" --aspect 9:16 --ingredient ./ref.png --name scene1.jpg
-flow images ./scripts --out ./new-images --aspect portrait --rpm 6
-```
-
-`flow images` skips complete jpgs (resume). On daily stills `QUOTA` it switches saved account, new Flow tab, same job. Stops only when every account is empty or a non-quota error hits. Same command resumes. `--force` regenerates.
-
-Prompt a **single composed frame**, not a character-sheet layout.
-
-## Recaptcha / Chromium
-
-API calls are HTTP. Recaptcha needs a **headed** labs.google tab (`agent-browser` session `flow-recaptcha`). The window **stays open** so the next generate/image a few seconds later does not flash Chrome.
-
-- `flow generate` / `flow image` / `flow images`: reuse the same window.
-- Mid-job account switch is the only time the CLI closes and reopens that tab.
-- When you are done: `flow recaptcha-close`
-
-Do not mint recaptcha headless. Do not replace this with a raw HTTP recaptcha call.
-
-## When it breaks
-
-`flow errors` first.
-
-| Symptom | Do |
-|---|---|
-| Empty / garbage prompt, `cat: ... No such file` | Use `--prompt-file /absolute/path`. |
-| Clip saved in the wrong folder | `--name clip1.mp4` is cwd. `cd` to `clips/` or use an absolute `--name`. |
-| `RECAPTCHA_FAILED` / `UNUSUAL_ACTIVITY` | Retry once. `flow recaptcha-close` then retry. Open labs.google/fx/tools/flow in Chromium once. |
-| `SESSION_EXPIRED` | `flow account refresh`, then the **same** command. Do not paste cookies. Do not `flow account use`. |
-| `QUOTA` / `PER_MODEL_DAILY_QUOTA_REACHED` | If the same command printed `accountSwitch`, it already continued. If it **stopped**, every saved account is empty — wait, then the **same** command. Do not `flow account use`. |
-| `BUSY` | Another flow job holds the account lock. Wait. Same command. Do not switch accounts. |
-| Wrong Google account | `flow whoami`. Setup only: `flow account add`. Do not switch mid-job. |
-| 404 on `flowMedia` after generate accepted | Project UUID is not this account’s. Job may have spent credits. Do **not** `flow sync` mid-job. Re-run the same `flow generate` (pinned account+project). If it 404s again, `flow account add NAME --project UUID --force` (setup), then the same generate. |
-| Chrome flashing every job | Old CLI, or you closed the session. Leave the window until `flow recaptcha-close`. |
-| Leftover Chromiums | `flow recaptcha-close` |
-
-Unofficial backend. Their Google account. Google’s terms.
+The CLI opens and reuses its required headed Flow tab. Do not close it with `flow recaptcha-close` unless the user asks.
