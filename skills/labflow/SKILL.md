@@ -12,15 +12,15 @@ Run `flow` and deliver the requested media. Do not stop after writing a prompt u
 
 ## Let the CLI manage itself
 
-Run the requested generation command directly. Labflow owns session validation and repair, recognized Google re-login, credit checks, account selection, project alignment, and browser reuse.
+Run the requested generation command directly. Labflow owns session validation and repair, recognized Google re-login, credit checks, account selection, project alignment, browser reuse, FIFO queueing, and durable job resume.
 
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits`, or `flow doctor` unless the user explicitly asks for account diagnostics.
 - Do not run `flow account use`, `flow rotate`, `flow sync`, or `flow account refresh` during ordinary generation.
 - Never expose or request session tokens, cookies, passwords, recovery data, or vault credentials.
-- Treat progress and `accountSwitch` output as informational; let the command finish.
-- On `BUSY`, wait for the active job and retry the exact command once. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
+- Treat queue and resume progress as informational; let the command finish.
+- On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
 
-For multi-clip work, run clips sequentially and continue after each successful download. `remainingCredits` is only the submitting account's balance; the next `flow generate` automatically selects another funded saved account. A final `QUOTA` means the CLI checked the usable account pool; a final `RECAPTCHA_FAILED` means it exhausted safe pre-submission verification retries and funded-account rotation. If a command emitted a media ID but later timed out, do not submit that clip again: run `flow wait MEDIA_ID`, then `flow download MEDIA_ID`. The CLI remembers or discovers the submitting account.
+For multi-clip work, run clips sequentially and continue after each successful download. `remainingCredits` is only the submitting account's balance; the next `flow generate` automatically selects another funded saved account. A final `QUOTA` means the CLI checked the usable account pool; a final `RECAPTCHA_FAILED` means it exhausted safe pre-submission verification retries and funded-account rotation. If a command times out after acceptance, rerun that exact command: its durable fingerprint resumes the accepted job rather than submitting a duplicate. If the exact owner later proves that accepted media was lost, the CLI permits one controlled regeneration; do not add another retry loop.
 
 ## Commands
 
@@ -41,4 +41,4 @@ Use absolute paths for prompt files, ingredients, and outputs. Inspect every ref
 
 Prefer one coherent multi-scene generation over one tiny clip per still. Flow generates video at 720p by default or 360p with `--resolution 360p`; do not request 1080p/2K/4K generation or invent endpoints. Image prompts should describe one composed frame, not a reference-sheet layout.
 
-The CLI opens the active account's mapped Chromium profile for verification, reuses it within the command, and closes it when the command exits. Let the CLI handle that window.
+The CLI keeps a profile-bound Flow browser session for verification. Let the CLI handle it; `flow browser status` and `flow browser close` manage only Labflow-owned sessions.
