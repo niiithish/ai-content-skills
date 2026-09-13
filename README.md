@@ -44,7 +44,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
 | [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON: form, one detailed scene per cut, start/end states. |
-| [`labflow`](./skills/labflow) | Run Google Flow via the unofficial `flow` CLI: Nano Banana Pro 1K images and Omni Flash video. Rotates saved accounts on quota; do not switch mid-job. |
+| [`flow`](./skills/flow) | Run Google Flow via the local Labflow `flow` CLI: Nano Banana Pro 1K images and Omni Flash video. Rotates saved accounts on quota; do not switch mid-job. |
 
 ## Pipeline
 

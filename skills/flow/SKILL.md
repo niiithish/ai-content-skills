@@ -1,12 +1,12 @@
 ---
-name: labflow
+name: flow
 description: >
-  Generate Google Flow images and videos with the local `flow` CLI. Use for
-  Flow, labflow, Nano Banana Pro, Omni Flash, `flow image`, `flow images`, or
+  Generate Google Flow images and videos with the local Labflow `flow` CLI. Use for
+  Flow, Labflow, Nano Banana Pro, Omni Flash, `flow image`, `flow images`, or
   `flow generate`. Do not use for prompt-only requests targeting other engines.
 ---
 
-# labflow
+# Flow
 
 Run `flow` and deliver the requested media. Do not stop after writing a prompt unless the user explicitly asks for prompt text only.
 
