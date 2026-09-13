@@ -20,7 +20,7 @@ Run the requested generation command directly. Labflow owns session validation a
 - Treat queue and resume progress as informational; let the command finish.
 - On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
 
-For multi-clip work, run clips sequentially and continue after each successful download. `remainingCredits` is only the submitting account's balance; the next `flow generate` automatically selects another funded saved account. A final `QUOTA` means the CLI checked the usable account pool; a final `RECAPTCHA_FAILED` means it exhausted safe pre-submission verification retries and funded-account rotation. A timeout remains resumable and must not be resubmitted. If Flow later proves that accepted media vanished, the CLI quarantines its account and permits one replacement-account regeneration; do not add another retry loop.
+For multi-clip work, run clips sequentially and continue after each successful download. `remainingCredits` is only the submitting account's balance; the next `flow generate` automatically selects another funded saved account. A final `QUOTA` means the CLI checked the usable account pool; a final `RECAPTCHA_FAILED` means it exhausted safe pre-submission verification retries and funded-account rotation. A timeout remains resumable and must not be resubmitted. If accepted media vanishes, the CLI tries the identical payload once on another account. If that also vanishes, `PROMPT_REJECTED` means rewrite or simplify the prompt; do not add another retry loop.
 
 ## Commands
 
@@ -41,4 +41,4 @@ Use absolute paths for prompt files, ingredients, and outputs. Inspect every ref
 
 Prefer one coherent multi-scene generation over one tiny clip per still. Flow generates video at 720p by default or 360p with `--resolution 360p`; do not request 1080p/2K/4K generation or invent endpoints. Image prompts should describe one composed frame, not a reference-sheet layout.
 
-The CLI keeps a profile-bound Flow browser session for verification. Let the CLI handle it; `flow browser status` and `flow browser close` manage only Labflow-owned sessions.
+The CLI uses a profile-bound headless Flow browser for verification and closes its owned process after the command. Let the CLI handle it; `flow browser status` and `flow browser close` manage only Labflow-owned sessions.
