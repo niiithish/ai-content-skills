@@ -13,3 +13,11 @@ skills-lock.json
 .env
 .env.*
 *.log
+
+# Local prompt research and generated client tests
+/trash/
+/examples/photoreal-still-test/
+
+# Superseded image-generation attempts; keep only the final named examples
+/examples/flow-skill-samples/*-v*.jpg
+/examples/flow-skill-samples/*-v*.json

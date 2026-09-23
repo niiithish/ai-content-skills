@@ -13,6 +13,8 @@ Turn a script beat, storyboard frame, or idea into **one standalone AI video pro
 
 The model reacts to what is **visible and measurable**, not mood words.
 
+In the output prompt, do not use `realistic`, `photorealistic`, or `cinematic` as a style label. Convert those requests into observable camera position and movement, lens/FOV, material and skin detail, physical motion, exposure, light direction, shadow behavior, and restrained color treatment. If the brief leaves lighting open, use light from the actual location (neutral daylight or practical fixtures), not automatic amber sunset, golden-hour glow, orange rim light, or warm haze. Use a warm low sun only when the user or reference calls for it.
+
 - "tense" → freezes, slowly closes fist, side light, half face in shadow
 - "epic car shot" → low track alongside wet curve, spray off tyres, buffeting shake
 

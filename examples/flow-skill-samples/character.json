@@ -1,0 +1,62 @@
+{
+  "prompt_type": "photorealistic_character_reference_sheet",
+  "objective": "Generate exactly one composite 16:9 landscape studio image of one adult woman in three adjacent panels, with only the right portrait showing her face.",
+  "canvas": {
+    "output_image_count": 1,
+    "aspect_ratio": "16:9 landscape",
+    "layout": "A single image divided left to right into three panels, approximately 30%, 30%, and 40% width, with two thin solid #d1d1d2 vertical lines. All panels use the same solid #504f50 studio background. No margins, captions, labels, or separate images."
+  },
+  "panels": [
+    {
+      "position": "left",
+      "view": "full-body front",
+      "subject": "Full-length adult woman, relaxed standing pose, complete arms, hands, legs, and shoes. Her head and neck are entirely omitted: the sweatshirt crewneck is the topmost visible edge of this figure, with uninterrupted gray studio background immediately above it. No skin, neck stump, chin, hair, or face above the collar.",
+      "wardrobe_visible": "Fully opaque heavyweight cream cotton crewneck sweatshirt, straight dark indigo denim jeans, and plain white low-top canvas sneakers."
+    },
+    {
+      "position": "center",
+      "view": "full-body back",
+      "subject": "The same adult woman standing from behind, full length and uncropped. The back of her shoulder-length dark brown hair is visible; no face or profile.",
+      "wardrobe_visible": "Exact same cream sweatshirt, dark indigo straight jeans, and white sneakers; rear seams and hems align with the front."
+    },
+    {
+      "position": "right",
+      "view": "large shoulder-up three-quarter portrait",
+      "subject": "Same adult woman, about 30 years old, fair neutral skin, oval face, straight dark eyebrows, brown eyes, medium straight nose, natural lips, shoulder-length dark brown hair parted near middle. Turn her head and shoulders 30 degrees toward viewer-left; one cheek and one ear are more visible than the other, with a clear three-quarter perspective, not a frontal passport pose. Neutral closed mouth; natural skin pores, subtle texture, small eye catch-lights. No hands or arms.",
+      "wardrobe_visible": "Exact same cream crewneck sweatshirt and neckline."
+    }
+  ],
+  "identity": {
+    "source": "Original fictional adult character with the fixed features described in the portrait.",
+    "distinctive_features": "No moles, tattoos, piercings, scars, or jewelry.",
+    "expression": "Neutral, closed mouth."
+  },
+  "wardrobe": {
+    "canonical_outfit": "Heavyweight fully opaque cream cotton crewneck sweatshirt, straight dark indigo denim jeans, plain white low-top canvas sneakers; identical in all views.",
+    "text_and_logos": "None.",
+    "product_modeling_zones": "Bare ears, neck, wrists, and fingers."
+  },
+  "background_and_lighting": {
+    "background": "Uniform solid #504f50 studio backdrop in all three panels.",
+    "light": "Broad soft neutral frontal studio light around 5500K, balanced exposure, gentle shadows, no backlight through clothing."
+  },
+  "camera_and_style": {
+    "camera": "Eye-level, normal lens, rectilinear studio reference photography; deep focus.",
+    "detail": "Photoreal skin, hair strands, fabric weave, seams, and drape, without beauty retouching or cinematic color grade."
+  },
+  "consistency_locks": [
+    "Exactly one output image, 16:9 landscape, with three adjacent panels and two #d1d1d2 separators.",
+    "The left front body is completely headless; center back body has no readable face; right portrait is the only face source.",
+    "All panels show the same person wearing the same outfit with matching fabric, cut, colors, and footwear.",
+    "All fabrics are fully opaque."
+  ],
+  "negative_prompt": [
+    "separate images, portrait canvas, extra panels, labels, watermarks",
+    "head or face on the front body, face on the back body, hands in portrait",
+    "cropped shoes, mannequins, flat lays, multiple people",
+    "sheer clothing, visible underwear, jewelry, logos, airbrushed skin",
+    "any exposed neck above front-panel crewneck",
+    "frontal right portrait; portrait must show obvious 30-degree head rotation"
+  ],
+  "final_generation_instruction": "ONE single 16:9 landscape composite image only: three side-by-side panels, separated by thin solid #d1d1d2 lines; solid uniform #504f50 background in every panel. Left: full-length front body in cream sweatshirt with no head and no neck above its collar. Center: full-length back body with hair seen only from behind. Right: large shoulder-up portrait of the same woman visibly turned 30 degrees into a three-quarter angle. Same clothes, no labels, no extra images."
+}

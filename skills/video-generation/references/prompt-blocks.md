@@ -48,7 +48,7 @@ AUDIO
 [Only sound actually needed. Ambient only for silent b-roll.]
 
 STYLE
-[Technical suffix: look in words, photoreal, format, grain.]
+[Technical suffix: visible capture texture and format only when needed; avoid style adjectives.]
 
 OUTPUT SETTINGS
 [Resolution, aspect ratio, real-time vs slow-mo per segment.]
@@ -151,7 +151,7 @@ AUDIO
 Running tap and light room reverb only.
 
 STYLE
-Photoreal handheld phone-camera footage, fine natural grain, no stylized grade.
+Handheld phone-camera footage with skin texture, soft highlight roll-off, slight sensor grain, and no stylized grade.
 
 OUTPUT SETTINGS
 9:16 vertical, 1080x1920, real time throughout.

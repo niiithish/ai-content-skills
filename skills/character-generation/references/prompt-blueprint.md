@@ -1,58 +1,76 @@
-# Character prompt blueprint
+# Character JSON prompt blueprint
 
-Replace every bracketed instruction with concrete detail. Drop irrelevant clauses. No placeholders in the final prompt.
+Write a valid JSON image prompt using this structure. Replace all bracketed values with concrete details, remove irrelevant optional fields, and output the completed object in one `json` code block. Add enough detail to lock identity and wardrobe; avoid inventing measurements or marks absent from the brief.
 
-```text
-PANEL 1 — FRONT BODY, head removed
-Full-body front view of [character body type / build / approximate height cues], standing straight, arms relaxed at the sides. The head is completely removed: empty neck opening at the collar only — no head, face, hair, neck, mannequin, stump, or floating features. Natural body under the clothes: shoulders, arms, hands, torso volume, legs, ankles, feet. Wearing [upper garments in layering order — cut, fit, color, material, seams, closures, graphics, wear]. [Belt, bag, waist accessories]. [Bottoms — fit, length, hem]. [Socks and footwear]. [Wearable accessories positioned as worn]. Convincing worn volume and drape. Entire outfit and footwear visible and uncropped. Not a flat lay.
-
-PANEL 2 — BACK BODY, no face
-Full-body back view of the same person and the exact same outfit, standing straight. No face visible — no profile, no three-quarter face. [Back-of-head and hair from behind only if hair is part of the silhouette: length, color, style as seen from rear.] Same garments, materials, fit, graphics, footwear, and accessories as panel 1, correctly shown from behind (seams, vents, back pockets, hem, sole shape). Full length uncropped.
-
-PANEL 3 — PORTRAIT (large head)
-[Use @image_1 / the supplied character reference as the identity source, if applicable.] Large shoulder-and-above portrait of [character description] in a slight 3/4 head turn — face angled a little off camera, not a dead-on frontal passport angle [unless the user asked front-facing]. Preserve [facial structure, skin tone, eyes, nose, lips, eyebrows, hairline, hairstyle, facial hair, age]. Natural no-makeup skin: visible pores, natural oil and shine, fine lines, subtle uneven tone and light texture variation — a real bare face, not beauty-filter smooth or airbrushed. Small catch-light in each eye. No moles, beauty marks, scars, freckle clusters, tattoos, or piercings [unless the user requested one or the reference shows one, in which case state it with exact placement]. [Expression and gaze — default relaxed neutral, mouth closed, no smile unless the user wants a smiling character; if smiling, lock this character’s own mouth shape and teeth]. [Head and neck accessories with exact left/right placement]. Exact same upper outfit as the body panels: [matching neckline, collar, layers, colors, material, graphic placement, and visible jewelry]. Hands and arms not in frame; clean head-and-shoulders crop.
-
-IDENTITY + WARDROBE LOCKS
-All three panels define one canonical character and one canonical outfit. Facial identity exists only in panel 3 and remains [identity locks]. Panel 1 has no head; panel 2 has no face. Upper outfit on the portrait matches the body panels in garment design, neckline, collar, layering, fit, colors, materials, wear, graphics, and accessory placement. Front and back body panels are the same wardrobe. Every garment stays fully opaque: [fabric, weight, density], solid uniform [colour] with no skin tone or body shape visible through fabric. Preserve [asymmetry and exact quoted text]. [Product-modelling: ears bare, neck bare, wrists and fingers bare, no jewellery.] No substitutions, color drift, or wardrobe redesign.
-
-LAYOUT
-Wide 16:9 landscape character-reference sheet, three panels left to right, thin clean vertical dividers. Panel 1 ~30% headless front full body. Panel 2 ~30% back full body. Panel 3 ~40% larger shoulder-up portrait. Generous margins on body panels so feet and shoulders are not cropped. No labels or decorative border.
-
-BACKGROUND + LIGHT
-One seamless neutral dark-grey studio backdrop across all panels. Broad soft neutral studio light from front and slightly to the side, balanced exposure, natural skin tones, restrained highlights, gentle shadows, ~5500K. Light from the camera side so garments stay solid — no backlight or rim light through fabric. No environment, horizon, or cinematic grade.
-
-CAMERA + FRAMING
-Straight eye-level reference photography, normal-lens, rectilinear. Panels 1–2: centered full-length standing figures, headless front / no-face back, no crop of footwear. Panel 3: shoulders upward, slight 3/4 head turn (not frontal unless requested), hair and shoulders inside frame. Deep enough focus for face, garments, and footwear. No wide-angle distortion or tilt.
-
-STYLE + DETAIL
-Clean photorealistic studio character-reference sheet — intentionally plain. Natural no-makeup skin (pores, shine, fine lines, subtle unevenness), hair strands, fabric weave, stitching, hardware, and wear under soft studio light. Believable, not retouched. No film grain, no cinema look, no heavy color grade.
-
-EXCLUSIONS
-No head or face on panel 1. No face on panel 2. No two-panel or four-panel layout. No hands or arms in the portrait panel. No sheer, transparent, translucent, mesh, or see-through fabric. Nothing shows through clothing: no visible nipples, areolae, breast or underwear outline, no translucent stretch, no wet clinging fabric. No moles, beauty marks, scars, freckle clusters, tattoos, or piercings unless requested or on the reference. No beauty-filter / airbrushed skin. No extra people, alternate faces, duplicate garments, unrelated props, scenery, labels, watermarks, identity or wardrobe drift, mirrored asymmetry, cropped outfit or feet, harsh shadows, shallow blur, motion blur, or cinematic grading on the sheet.
+```json
+{
+  "prompt_type": "character_reference_sheet",
+  "objective": "Generate exactly one composite landscape image containing a three-panel studio reference sheet of [one adult character] with one canonical outfit and the face visible only in the portrait panel.",
+  "canvas": {
+    "output_image_count": 1,
+    "aspect_ratio": "16:9 landscape",
+    "composite_rule": "All three views share one image canvas; do not create separate images or files for individual panels.",
+    "layout": "Three panels left to right with thin solid #d1d1d2 vertical separators: headless front body about 30%, no-face back body about 30%, shoulder-up portrait about 40%.",
+    "framing": "Full outfit and footwear uncropped in body panels; portrait hair and shoulders inside frame with no hands or arms.",
+    "labels": "No captions, panel names, decorative border, or watermark."
+  },
+  "panels": [
+    {
+      "position": "left",
+      "view": "full-body front",
+      "subject": "[Build and stance], with natural body volume and arms relaxed. Head and neck completely absent. The garment collar is the topmost visible edge, with #504f50 background directly above and inside its opening; no skin above the collar, chin, stump, mannequin, or floating features.",
+      "wardrobe_visible": "[Upper layers, bottoms, footwear, and accessories with cut, fit, color, material, weight, opacity, and placement]."
+    },
+    {
+      "position": "center",
+      "view": "full-body back",
+      "subject": "Same body and outfit from behind. No readable face or profile. [Rear hair silhouette if needed].",
+      "wardrobe_visible": "[Rear seams, closures, graphics, hems, footwear, and accessories, consistent with the front]."
+    },
+    {
+      "position": "right",
+      "view": "large shoulder-up portrait, visible three-quarter head turn",
+      "subject": "[Adult age range, skin tone, facial structure, eyes, brows, nose, lips, hairline, hairstyle, gaze, expression]. Head turned about 25–35 degrees from the camera, with both eyes readable and one cheek and ear more visible; not a symmetrical frontal portrait. Natural no-makeup skin with pores, slight shine, fine lines, and uneven tone; small eye catch-lights. No hands or arms.",
+      "wardrobe_visible": "[Exact same upper outfit, neckline, layering, colors, graphics, and accessories as body panels]."
+    }
+  ],
+  "identity": {
+    "source": "[Character description or supplied identity reference].",
+    "distinctive_features": "[Only requested or reference-visible marks, piercings, tattoos, or asymmetries with exact placement; otherwise none].",
+    "expression": "[Neutral closed mouth by default or the requested expression]."
+  },
+  "wardrobe": {
+    "canonical_outfit": "[Every garment in layer order; fabric and weight; fully opaque construction; fit, color, wear, footwear, and accessories].",
+    "text_and_logos": "[Exact supplied text or logos; otherwise none].",
+    "product_modeling_zones": "[For a product model, bare ears, neck, wrists, and fingers with no jewelry; otherwise limited requested accessories]."
+  },
+  "background_and_lighting": {
+    "background": "Uniform solid #504f50 studio backdrop in every panel.",
+    "light": "Broad soft neutral frontal or slight side light, approximately 5500K; balanced exposure, gentle shadows, and no backlight through garments."
+  },
+  "camera_and_style": {
+    "camera": "Eye-level, normal-lens, rectilinear studio reference photography; centered full-length bodies and a large shoulder-up portrait; deep readable focus.",
+    "detail": "Visible skin pores and tonal variation, separate hair strands, fabric weave, stitching, hardware, and natural drape; no beauty-filter smoothing or heavy color grade."
+  },
+  "consistency_locks": [
+    "Exactly one 16:9 landscape output image contains all three panels, with #d1d1d2 dividers; panel 3 is the only face source.",
+    "All panels show one person and one unchanged outfit.",
+    "Front and back construction, footwear, colors, materials, graphics, and left/right asymmetries agree through rotation.",
+    "The portrait upper outfit and accessories exactly match the body views.",
+    "All fabrics are fully opaque with no skin tone or underwear visible through them."
+  ],
+  "negative_prompt": [
+    "head, exposed neck skin, chin, or neck stump above front-panel collar", "readable face or profile on back body panel", "frontal symmetrical portrait, hands or arms in portrait panel",
+    "separate images for each view, portrait canvas, extra panels or people", "cropped outfit or footwear", "mannequin or hollow flat-lay body",
+    "sheer, mesh, translucent, or see-through clothing", "visible nipples or underwear outline",
+    "unrequested marks, jewelry, text, or logos", "wardrobe or identity drift", "airbrushed skin, heavy color grading, labels, watermarks"
+  ],
+  "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a three-panel character sheet: front body with no head or exposed neck above its collar, no-face full-body back, and large shoulder-up portrait visibly turned 25–35 degrees with one cheek and ear more visible. Keep [identity and outfit] consistent against a uniform #504f50 studio backdrop with thin #d1d1d2 panel separators and soft neutral light, natural detail, fully opaque clothing, and no scenery or labels."
+}
 ```
 
-## Reference adaptations
+## Reference and edits
 
-**Identity reference**
+When an image is supplied, add `reference_fidelity` after `objective` with exact image handles (for example `@image_1`), visible identity and wardrobe details to preserve, and an instruction to infer unseen details conservatively. Preserve face, hair, age, marks, and outfit unless changed by request. For a scoped change, add `requested_changes` and state what stays locked.
 
-```text
-Use @image_1 as the sole identity source for panel 3. Match the visible face and hair faithfully without beautifying or redesigning. Infer only non-visible details, and keep those conservative. Body panels stay headless (front) / no-face (back).
-```
-
-**Outfit reference**
-
-```text
-Use @image_2 as the wardrobe source. Preserve garments, layering, fit, colors, materials, graphics, wear, footwear, and accessory placement. Show the full outfit on the headless front body and the no-face back body; same upper outfit on the portrait.
-```
-
-**Scoped edit**
-
-```text
-Change only [requested feature]. Keep remaining identity features and every unrelated wardrobe detail unchanged in all three panels.
-```
-
-**Smile variant (second sheet when needed)**
-
-```text
-Same three-panel sheet as the locked character. Change only panel 3 expression to a natural smile for this character: [smile description]. If teeth show, lock [this character’s tooth shape, size, alignment, color] — same mouth, not a different person. Panels 1–2 and all wardrobe/identity locks unchanged.
-```
+If a smile sheet is explicitly required, output a second complete JSON object for a second single-sheet image. Copy the first object's layout, body panels, identity, wardrobe, and locks. Change only the portrait expression and corresponding `objective` and `final_generation_instruction`. If teeth show, describe this character's tooth shape, size, alignment, and color.

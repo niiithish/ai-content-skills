@@ -1,0 +1,47 @@
+{
+  "prompt_type": "photorealistic_environment_reference",
+  "objective": "Create one clear three-quarter establishing reference of an empty compact artist's studio, with an unmistakable off-center inside corner and two adjacent walls receding in opposite directions.",
+  "canvas_and_camera": {
+    "output_image_count": 1,
+    "aspect_ratio": "16:9 landscape",
+    "composition_rule": "One image on one canvas, no collage or separate angles.",
+    "camera_position": "Eye-level camera close to the front-right side of a square room, aimed diagonally at the opposite inside corner. The vertical seam where the two far walls meet must land at about 35% of the image width, distinctly left of center.",
+    "view": "Strong two-point diagonal perspective, not a view square-on to any wall: the left wall stretches from the left foreground back to the off-center corner, while the adjoining right wall runs from that corner toward the right foreground. Both wall-floor seams visibly angle toward the corner. Show a generous unobstructed floor foreground and enough ceiling to read room volume.",
+    "optics": "Rectilinear 28 mm lens, level camera, upright verticals, natural proportions, deep focus."
+  },
+  "environment": {
+    "type_and_style": "Quiet contemporary artist's studio in a renovated loft, functional and uncluttered, warm white, pale oak, and muted blue-grey palette.",
+    "scale_and_shell": "Approximately square five-meter room, warm-white plaster walls meeting at a visible 90-degree inside corner, pale oak plank floor, white ceiling with simple exposed beams.",
+    "openings": "One tall daylight window halfway along the left wall; one closed blue-grey door at the far end of the right wall near the image's right edge. The window and door are on different adjoining walls."
+  },
+  "spatial_design": {
+    "staging_anchor": "A single broad wooden workbench set against the right wall just beyond the off-center corner.",
+    "zones": "Empty pale oak floorboards occupy the front third. The corner and workbench occupy the middle ground. The left-wall window and right-wall door remain plainly visible in the background.",
+    "circulation": "A wide clear floor path crosses from the front foreground to the door at the right. No furnishing blocks the window or door.",
+    "landmark_relationships": [
+      "The workbench sits on the right wall, immediately to the right of the visible off-center inside corner.",
+      "The window is on the adjoining left wall, to the left of the corner.",
+      "The door is farther right along the workbench wall and remains visible beyond it."
+    ]
+  },
+  "set_dressing": "A single ceramic vase and a short stack of blank canvases on the workbench, one plain wooden stool in front of it; restrained objects that do not obscure the corner or paths.",
+  "materials_and_condition": "Clean warm-white plaster, lightly worn pale oak planks, natural unfinished wood workbench, matte blue-grey painted door; realistic texture and construction.",
+  "lighting_and_atmosphere": {
+    "time_of_day": "Late morning.",
+    "primary_source_and_direction": "Soft daylight enters only through the left-wall window, travelling toward the right wall.",
+    "shadow_direction": "Soft consistent shadows fall toward the right side of the room.",
+    "atmosphere": "Clear neutral daylight with no fog or heavy grade; architecture remains readable."
+  },
+  "rendering_and_consistency_locks": [
+    "Photorealistic unoccupied room, realistic scale, crisp spatial detail.",
+    "The inside corner is visibly 35% from the left edge, never centered; the two adjoining walls and their floor seams visibly recede in different directions.",
+    "Keep the left-wall window, right-wall workbench and door, broad foreground floor, and left-to-right daylight consistent."
+  ],
+  "negative_prompt": [
+    "front-on view of a single wall, one-point centered room composition, centered far wall",
+    "corner centered in the image, corner hidden by furniture, flat wallpaper appearance",
+    "fisheye, dollhouse cutaway, top-down view, warped verticals, blocked door",
+    "duplicate windows, duplicate workbenches, floating objects, people, logos, readable text"
+  ],
+  "final_generation_instruction": "Generate ONE photorealistic 16:9 landscape image of an empty artist's studio from a true diagonal three-quarter camera. Make the vertical inside corner appear at 35% of the canvas width, with one long left wall and one adjoining right wall visibly angled away from it in different directions. Show large clear oak floor foreground, left-wall window, right-wall workbench and door, natural rectilinear geometry, and soft daylight from the left. Do not make a centered frontal room view."
+}

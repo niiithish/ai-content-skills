@@ -1,0 +1,55 @@
+{
+  "prompt_type": "photorealistic_multiview_prop_reference_sheet",
+  "objective": "Generate exactly one 16:9 composite studio image with three conspicuously different views of the exact same unbranded hiking shoe: left side profile, center top view, and right rear view.",
+  "canonical_prop_design": {
+    "identity": "One adult low-top hiking shoe with a rounded toe, padded collar, dark rubber outsole, and rust-orange upper; the same left shoe in every cell.",
+    "construction": "Six pairs of black metal eyelets with black round laces, gray reinforced toe cap, stitched side overlay shaped as one long curved strip, padded heel, and thick black lug sole.",
+    "color_and_materials": "Rust-orange matte woven fabric upper; charcoal gray synthetic toe cap and heel panel; black laces, eyelets, and lug sole; clean unworn condition.",
+    "markings_and_asymmetry": "No logo, branding, words, or pattern. Each view is of the same left shoe; handedness never flips."
+  },
+  "canvas_and_layout": {
+    "output_image_count": 1,
+    "aspect_ratio": "16:9 landscape",
+    "composite_rule": "All three views appear together on one image canvas; never separate images or files.",
+    "view_count": 3,
+    "grid": "One horizontal row of three equal cells with thin solid #d1d1d2 vertical separators.",
+    "framing": "One complete uncropped shoe centered in each cell with generous margins; full-object views have comparable scale, while the top view shows the complete shoe from directly overhead.",
+    "labels": "No captions, view names, orientation labels, or overlaid text."
+  },
+  "views": [
+    {
+      "position": "left",
+      "orientation": "left lateral side profile",
+      "visible_surfaces_and_details": "Entire shoe pointing toe toward viewer-left, showing the long rust-orange side, curved charcoal overlay, black sole profile, and heel. This silhouette must be unmistakably horizontal."
+    },
+    {
+      "position": "center",
+      "orientation": "true overhead top view",
+      "visible_surfaces_and_details": "Same left shoe from directly above, toe toward bottom of frame, showing six pairs of eyelets, black laces, gray toe cap, and padded collar opening."
+    },
+    {
+      "position": "right",
+      "orientation": "straight rear view",
+      "visible_surfaces_and_details": "Same left shoe viewed from behind, showing the charcoal heel panel, padded collar, and black lug sole width; no toe visible."
+    }
+  ],
+  "background_and_lighting": {
+    "background": "Uniform solid #504f50 studio backdrop in every cell.",
+    "light": "Broad soft neutral product light with controlled highlights and subtle contact shadows."
+  },
+  "camera_and_optics": "Orthographic side profile, exact overhead top, and orthographic rear; deep sharp focus. Each panel has a clearly different camera angle.",
+  "material_detail": "Woven rust-orange fabric, stitched curved side overlay, gray synthetic cap and heel reinforcement, black laces, metal eyelets, and black tread, all consistent between cells.",
+  "consistency_locks": [
+    "Exactly one 16:9 landscape output image contains three cells in one row with thin solid #d1d1d2 separators and uniform solid #504f50 backgrounds.",
+    "All three panels show the identical left shoe, without changing sole, upper, color, laces, eyelets, overlays, or condition.",
+    "The views must be visibly distinct: horizontal left side, overhead top, straight rear; not three repeated three-quarter or side views."
+  ],
+  "negative_prompt": [
+    "alternate shoes or product variants, extra parts, logos, text",
+    "separate images, portrait canvas, cropped product, inconsistent scale, overlapping cells",
+    "hands, people, lifestyle environment, orientation labels, watermarks",
+    "dramatic shadows, shallow focus, motion blur, wide-angle distortion",
+    "three similar orientations, duplicate side views, same view repeated"
+  ],
+  "final_generation_instruction": "ONE single 16:9 landscape composite image, not three images: three side-by-side cells with thin solid #d1d1d2 vertical separators and uniform flat #504f50 background. Show the SAME rust-orange left hiking shoe from three clearly distinct angles: LEFT CELL strict horizontal side profile, CENTER CELL direct overhead top view, RIGHT CELL straight rear heel view. Entire shoe uncropped in each cell; no words or labels."
+}

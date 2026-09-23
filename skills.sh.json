@@ -9,6 +9,7 @@
         "prop-generation",
         "character-generation",
         "environment-generation",
+        "photoreal-still-prompt",
         "video-generation"
       ]
     },
@@ -37,7 +38,7 @@
       "title": "Google Flow",
       "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images and Omni Flash videos. The CLI rotates saved Google accounts on quota; agents must not switch mid-job.",
       "skills": [
-        "labflow"
+        "flow"
       ]
     }
   ]

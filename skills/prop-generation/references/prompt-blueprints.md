@@ -1,78 +1,80 @@
-# Prop prompt blueprints
+# Prop JSON prompt blueprint
 
-Use the multi-view blueprint. Replace every bracketed instruction. No placeholders in the final prompt. Cap at 3–4 views.
+Use this structure to write a valid JSON image prompt. Replace bracketed values with concrete details, omit irrelevant optional fields, and return only the completed object in a `json` code block. Two jewellery views use a 1×2 row; three views use a horizontal row; four use a 2×2 grid. Include only surfaces needed to establish the object and support the intended shots.
 
-## Multi-view sheet (3–4 views)
-
-```text
-PROP REFERENCE SHEET — [PROP NAME] ([COUNT] views)
-
-Create a production-ready [COUNT]-view studio reference sheet of one [prop]. Show the exact same physical object in every panel so downstream AI image and video models do not invent unseen surfaces.
-
-CANONICAL PROP DESIGN
-[Silhouette, proportions, construction, components, colors, materials, finish, markings, condition, exact left/right asymmetry. Define one unchanged object before rotations.]
-
-VIEWS
-[GRID POSITION] — [ORIENTATION]: [Camera orientation, visible surface, identity-critical details.]
-[Repeat once per view. 3 by default, at most 4. Only surfaces the video/ad will show.]
-
-LAYOUT
-Wide landscape canvas in a [1x3 / 2x2] arrangement. Logical inspection sequence. Same visual scale across panels, centered in clear areas, balanced margins, no overlap, no cropping. Long/tall orientations may use their cell fully without a hero panel dominating. No labels, view names, captions, or overlaid text — only text physically on the prop.
-
-BACKGROUND + LIGHT
-One continuous seamless neutral medium-to-dark grey studio background. Broad soft neutral product lighting, balanced exposure, controlled highlights, subtle contact shadow under each upright view. No environment or horizon.
-
-CAMERA + OPTICS
-Locked orthographic or near-orthographic for front, side, rear, top, bottom. Controlled normal-lens perspective only for a selected three-quarter. Straight rectilinear geometry, no tilt, no wide-angle distortion, deep sharp focus every panel.
-
-MATERIAL + DETAIL
-[How each main material responds to light. Seams, fasteners, controls, tread, texture, wear — consistent.]
-
-CONSISTENCY LOCKS
-All [COUNT] panels show the same single prop: identical dimensions, silhouette, components, colors, materials, markings, asymmetry, condition, attachments. Rotated views must agree structurally. No alternate variants, mirrored asymmetry, duplicated or missing parts, people, hands, unrelated props, exploded parts, environment, dramatic shadows, shallow focus, motion blur, cropped edges, orientation labels, or captions. [Exact text/logo locks — only text on the prop.]
+```json
+{
+  "prompt_type": "multiview_prop_reference_sheet",
+  "objective": "Generate exactly one composite studio reference image showing [three or four] views of the exact same [prop] for consistent downstream image and video shots.",
+  "canonical_prop_design": {
+    "identity": "[One object, defining silhouette, proportions, dimensions or scale cues].",
+    "construction": "[Components, joins, closures, controls, and exact placement].",
+    "color_and_materials": "[Each surface's color, material, finish, and wear].",
+    "markings_and_asymmetry": "[Exact left/right asymmetry, markings, and only supplied text or logos; otherwise none]."
+  },
+  "canvas_and_layout": {
+    "output_image_count": 1,
+    "aspect_ratio": "16:9 landscape",
+    "composite_rule": "All views occupy cells on this single image canvas; do not create separate images or files for individual views.",
+    "view_count": 3,
+    "grid": "One horizontal row of three equal cells, with thin solid #d1d1d2 separators between cells.",
+    "framing": "For full-object views, keep the same visual scale and camera height; center each view with balanced margins and no crop or overlap. A selected detail closeup may be magnified.",
+    "labels": "No orientation labels, view names, captions, or overlaid text; only text physically on the prop."
+  },
+  "views": [
+    {
+      "position": "left",
+      "orientation": "[Strict camera axis for the first view, such as true front or full lateral side].",
+      "visible_surfaces_and_details": "[Direction the object's front points; visible and hidden surfaces; identity-critical components and markings]."
+    },
+    {
+      "position": "center",
+      "orientation": "[Different camera axis, such as strict side or direct overhead].",
+      "visible_surfaces_and_details": "[Different silhouette and visible surfaces, plus how they connect to the first view]."
+    },
+    {
+      "position": "right",
+      "orientation": "[Third distinct camera axis, such as straight rear or direct top, or a justified detail closeup].",
+      "visible_surfaces_and_details": "[Previously unseen parts and surfaces; state what must not be visible from this angle]."
+    }
+  ],
+  "background_and_lighting": {
+    "background": "Uniform solid #504f50 studio background in every cell, with no environment or horizon.",
+    "light": "Broad soft neutral product lighting, balanced exposure, controlled material highlights, and subtle contact shadows under upright views."
+  },
+  "camera_and_optics": "Orthographic or near-orthographic front, side, rear, top, or bottom views; controlled normal-lens perspective only for a selected three-quarter view. Rectilinear geometry, no tilt, deep sharp focus in every panel.",
+  "material_detail": "[Weave, grain, seams, fasteners, ports, controls, tread, print, engraving, reflections, and wear, consistent between views].",
+  "consistency_locks": [
+    "Exactly one 16:9 landscape output image contains all views in cells separated by #d1d1d2 lines.",
+    "All panels show one physical object with identical proportions, components, colors, materials, markings, condition, and attachments.",
+    "Left/right asymmetries rotate correctly; no mirrored or invented surfaces.",
+    "Each view has a visibly distinct silhouette or a justified detail crop; no repeated near-identical angle.",
+    "Any on-prop text or logo appears exactly as supplied and nowhere else."
+  ],
+  "negative_prompt": [
+    "alternate product variants, duplicated or missing parts, mirrored asymmetry, repeated near-identical angles",
+    "separate images for each view, portrait canvas, cropped edges, inconsistent scale, overlapping views, exploded parts",
+    "people, hands, unrelated props, lifestyle environment",
+    "orientation labels, captions, invented text or logos, watermarks",
+    "dramatic shadows, shallow focus, motion blur, wide-angle distortion"
+  ],
+  "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a [three/four]-view studio reference sheet of the same [prop] in [ordered orientations]. Preserve [defining features] through rotation, keep the full object uncropped in each panel at consistent scale, using a uniform #504f50 background, thin #d1d1d2 cell separators, soft product light, and no labels or unrelated objects."
+}
 ```
 
-### Grids
+For four views, set `view_count` to `4`, change `grid` to `2×2 with one vertical and one horizontal thin solid #d1d1d2 separator`, and give the four `views` positions `top-left`, `top-right`, `bottom-left`, and `bottom-right`. The fourth view must resolve a surface needed on camera or a small identity feature unreadable at full scale. Choose views based on the object: a shoe may need lateral, medial, top, and three-quarter; a compact device may need front, side, and rear; a vehicle may need front, side, rear, and three-quarter. Keep handedness locked. Do not add an underside unless it matters to the shot.
 
-- 3 views → 1×3 row
-- 4 views → 2×2
+## Jewellery loop and clasp: two views
 
-### Surface coverage
+When asked for two views, or when a necklace or bracelet is defined by its complete loop and front clasp, adapt the object above to `view_count: 2`, `grid: "1×2 row with thin solid #d1d1d2 separator"`, and two `views` only:
 
-Add a view only when the shot needs that surface and it resolves a real unknown:
+- **Left:** near-orthographic top-down full closed oval loop, entire circumference visible and uncropped. Beads or pearls continue across the top or nape arc; no chain-only gap, open horseshoe, or worn-on-neck V. Put the front clasp and drop, if any, at 6 o'clock.
+- **Right:** near-orthographic magnified closeup of the *same* 6 o'clock hardware, with a few beads and spacers on each side. It is a detail of the left view, not a second piece. Show exactly how it opens and closes.
 
-- opposite side — lateral asymmetry the shot reveals
-- top — controls/openings the audience sees
-- rear — heel, ports, back construction the shot shows
-- three-quarter — connects width/depth
-- detail — small identity feature that will not read full-object
-- bottom — only if underside is the subject
+In `canonical_prop_design`, specify strand rhythm, bead or pearl shape and luster, metal, clasp ownership, and left/right attachment. For a ring-and-T-bar clasp, lock the ring wire and T-bar to the same gauge; the T-bar passes through the ring and is only slightly longer than its outer diameter. The viewer-left strand's jump ring connects through the receiver ring; the viewer-right strand owns the T-bar and does not also attach to the receiver. A drop, if present, hangs from the bottom of the receiver. Adapt these mechanics if the supplied product uses a different clasp. Lock the full loop, hardware, and handedness in `consistency_locks` and exclude hidden rear clasps, duplicate pendants, and missing nape beads. Keep the one-image 16:9 landscape canvas, #504f50 background, #d1d1d2 separator, light, label, and no-wearer rules from the main blueprint.
 
-Stop at 3 unless a 4th earns its place.
+## Reference and scoped edits
 
-## View order shortcuts
+For a supplied image, insert `reference_fidelity` after `objective` with the exact image handle, visible silhouette, proportions, palette, materials, branding, and wear to preserve; infer unseen surfaces conservatively. For a scoped remix, add `requested_changes` and lock all unrelated design features in `consistency_locks`. Quote on-prop text exactly; do not invent branding.
 
-Fill the multi-view blueprint with these panel sets when they fit:
-
-| Prop type | Suggested views |
-|---|---|
-| Compact product (remote, tool, boxed item) | front · strict side · back (1×3) |
-| Shoe | lateral · medial · top/laces · front ¾ (2×2); outsole only if it is the subject |
-| Appliance / blender | front · side · front ¾; top only if controls matter — never underside |
-| Vehicle | front · full side · rear · front ¾ (2×2) |
-| Chair / furniture | front · side · rear; ¾ as 4th only if needed |
-| Robot / gadget with top controls | front · side · back · top when top appears on camera |
-
-Handedness (left/right shoe, etc.) stays locked across every panel.
-
-## Reference adaptations
-
-```text
-Use [@image_1 / the supplied reference image] as the identity source. Preserve silhouette, proportions, components, palette, materials, markings, and wear in every view. Infer unseen surfaces conservatively. Do not redesign, beautify, or add features unless requested.
-```
-
-Scoped edit:
-
-```text
-Change only [requested feature]. Keep silhouette, proportions, remaining components, colors, materials, markings, and condition unchanged across every view.
-```
+Before returning the JSON, compare every view's camera axis and silhouette, then read the full object once for stray object names or components copied from another example (for example, a shoe prompt mentioning a mug). Keep `objective`, `canonical_prop_design`, `canvas_and_layout`, `views`, `negative_prompt`, and `final_generation_instruction` about the same prop.

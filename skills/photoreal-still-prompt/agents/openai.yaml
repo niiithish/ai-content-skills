@@ -1,0 +1,4 @@
+interface:
+  display_name: "Photoreal Still Prompt"
+  short_description: "Write JSON prompts for believable real-world photos"
+  default_prompt: "Use $photoreal-still-prompt to write a JSON prompt for one realistic image from my scene brief."
