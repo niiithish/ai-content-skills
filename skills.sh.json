@@ -11,6 +11,7 @@
         "environment-generation",
         "photoreal-still-prompt",
         "animated-video-production",
+        "animated-scene-still",
         "video-generation"
       ]
     },

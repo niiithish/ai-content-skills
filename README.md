@@ -19,6 +19,7 @@ npx skills add niiithish/ai-content-skills --skill character-generation
 npx skills add niiithish/ai-content-skills --skill environment-generation
 npx skills add niiithish/ai-content-skills --skill photoreal-still-prompt
 npx skills add niiithish/ai-content-skills --skill animated-video-production
+npx skills add niiithish/ai-content-skills --skill animated-scene-still
 npx skills add niiithish/ai-content-skills --skill video-generation
 npx skills add niiithish/ai-content-skills --skill clay-animation-video-prompt
 npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
@@ -43,6 +44,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`environment-generation`](./skills/environment-generation) | JSON wide 3/4-view location references for image and video. |
 | [`photoreal-still-prompt`](./skills/photoreal-still-prompt) | JSON prompts for one believable real-world image or video start frame, defaulting to 9:16 portrait, with grounded product packaging, camera, and light. |
 | [`animated-video-production`](./skills/animated-video-production) | DreamWorks-inspired CG animation workflow: reference assets, composed stills, fixed-frame clips, scene-native sound, and exact visible text without music or captions. |
+| [`animated-scene-still`](./skills/animated-scene-still) | JSON prompt for one composed CG animation frame using approved character, environment, and prop references. |
 | [`video-generation`](./skills/video-generation) | Block-structured AI video prompts (Seedance, Veo, Kling, etc.). |
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
@@ -69,6 +71,7 @@ video-generation       →  one prompt per generation, chained by last frame
 | **environment-generation** | Spatially clear 3/4 location sheet. |
 | **photoreal-still-prompt** | One photoreal lifestyle, product-in-context, or scene image prompt. |
 | **animated-video-production** | Consistent 3D animation assets, scene stills, and clip prompts with ambient sound and controlled on-screen text. |
+| **animated-scene-still** | One composed 3D animation frame ready to use as a video clip's opening image. |
 | **video-generation** | One model-ready prompt per generation from the cut list. |
 | **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
 | **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
