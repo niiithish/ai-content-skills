@@ -10,6 +10,7 @@
         "character-generation",
         "environment-generation",
         "photoreal-still-prompt",
+        "animated-video-production",
         "video-generation"
       ]
     },
