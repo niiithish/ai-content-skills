@@ -1,6 +1,6 @@
 ---
 name: animated-video-production
-description: Run a stylized 3D animated short-form video project end to end with Google Flow. Covers client brief intake, a shot list timed to the voiceover, character, environment and prop sheets, composed scene stills, 360p draft clips, 1080p finals and the hand-off to the editor, using batch scripts the user runs. Use when a client brief or message asks for a DreamWorks-style, Pixar-style or feature-animation AI video; when starting a new animated video project in an empty folder; when continuing a project whose AGENTS.md names this skill; or for a single animated scene still or clip prompt. Not for claymation (clay-animation-video-prompt), photoreal ads or UGC talking heads.
+description: Run a stylized 3D animated short-form video project end to end with Google Flow. Starts from an approved video-plan PLAN.md and covers character, environment and prop sheets, composed scene stills, 360p draft clips, 1080p finals and the hand-off to the editor, using batch scripts the user runs (or the agent, when the user asks for an unattended run). Use when a video plan's style is 3D feature animation (DreamWorks-style, Pixar-style); when continuing a project whose AGENTS.md names this skill; or for a single animated scene still or clip prompt. Not for claymation (clay-animation-video-prompt), photoreal ads or UGC talking heads.
 ---
 
 # Animated Video Production
@@ -14,67 +14,70 @@ Files, loaded only when a phase needs them:
 | [references/scene-still.md](references/scene-still.md) | Writing any still prompt (phase 3) |
 | [references/clip-prompt.md](references/clip-prompt.md) | Writing any clip prompt (phase 4) |
 | [references/failure-locks.md](references/failure-locks.md) | Before writing prompts, and whenever a result is rejected |
-| `scripts/init-project.sh` | Phase 0: creates the project folders |
+| `scripts/init-project.sh` | Phase 2: adds the production folders to a planned video |
 | `scripts/make.py` | Copied into each video by init; every batch, review and hand-off command |
-| `templates/` | Used by init: the `AGENTS.md` and `SHOT-LIST.md` skeletons |
+| `templates/AGENTS.md` | Used by init: the client file skeleton |
 
-Generation runs through the `flow` skill's CLI. Reference sheets follow `character-generation`, `environment-generation` and `prop-generation` in their animated mode.
+Generation runs through the `flow` skill's CLI. Flow chooses the account for every job: free accounts first for stills and 360p drafts (they cost nothing there), and only paid accounts for finals, since the 1080p upscale needs one. Don't pin or switch accounts. Before a batch, if `flow accounts` shows the free accounts expired, run `flow account refresh` first; otherwise flow falls back to the paid account for stills and drafts. Reference sheets follow `character-generation`, `environment-generation` and `prop-generation` in their animated mode.
 
 ## Working with the user
 
-- **The user runs batches.** For anything with more than one shot, write the prompts and manifest jobs, then give the one `make.py` command to run, in its own code block. Don't run long generations yourself or sit waiting on them. A single test still is fine to run inline when it settles a question.
+- **The user runs batches.** For anything with more than one shot, write the prompts and manifest jobs, then give the one `make.py` command to run, in its own code block. Don't run long generations yourself or sit waiting on them. A single test still is fine to run inline when it settles a question. Everything else in `make.py` (`status`, `review`, `pick`, `animatic`, `handoff`, `sync`, and `--dry-run`) is quick: run it yourself, never hand it to the user.
 - **Stop at every gate** and wait for approval. Show results as review sheets, never as a list of file paths to open one by one.
 - **Nothing is overwritten.** A new attempt is the next version (`v2`, `v3`) with its own prompt file and a manifest job that replaces the old one. An approved still or clip is listed in `APPROVED.md` in `scenes/all/` or `clips/all/`, and from then on it's locked unless the user asks to redo it.
 - **Check your own work before the user sees it.** After every batch, build the review sheet, read it yourself against the checklist in `failure-locks.md`, and report per shot: which variant you'd pick, and what's wrong with any you wouldn't. Write the fix for any shot you'd reject before the user asks.
+- **Standing defaults, in every project, overridden only when the user says so:**
+  - Generated stills and clips never contain captions, subtitles, text overlays or music. This holds even when the brief asks for captions or music: the user adds those in the edit.
+  - Clip audio is what you would hear if you were standing in that scene: ambience, footsteps, objects, animals, and wordless character sounds (gasps, grunts, laughs, sighs), each tied to a visible action.
+  - No music, narration or spoken words.
+
+  The clip template in `clip-prompt.md` writes all of this into every prompt. Keep it.
 - **Record decisions.** When the user or the client decides something that changes a default, add it with the date to the Decisions list in the project `AGENTS.md`, and to `failure-locks.md` if it's a prompt lesson that would apply to other projects too.
 
-## Phase 0: intake
+## Unattended runs
 
-This phase runs in a new or empty client folder, or when the user pastes a brief or message.
+Only when the user says to run the whole video without them (they are away and won't review). Then everything above changes like this:
 
-1. Run `bash <skill-dir>/scripts/init-project.sh <client-folder> video-1`, where `<skill-dir>` is the folder holding this file. It never overwrites existing files. For another video in the same client folder, run it with `video-2` and so on.
-2. If the brief is a chat message, save it verbatim to `brief/message-YYYY-MM-DD.md`. Read every file in `brief/` in full, including the editing and caption sections.
-3. Fill in the **Brief digest** in `AGENTS.md`, quoting the brief section for every answer. Take particular care with voiceover, music, captions, deliverables and clip rules: these are what get delivered wrong. Mark anything the brief doesn't settle as **ASK**, and write the questions for the client. Keep them short and ready to paste into a message.
-4. **Gate:** the user confirms the digest and answers or forwards the questions.
+- **You run every batch yourself** and wait for it to finish, including sheets, `stills`, `clips` and `finals`.
+- **You are the reviewer at every gate.** Approve the plan and sheets yourself, read every review sheet against `failure-locks.md`, pick variants with `make.py pick`, and add each approval to `APPROVED.md` marked `(agent)`.
+- **Retry limits.** A still gets at most 2 new versions and a clip at most 1; after that, keep the best one and flag it. The video-credit budget is 200 unless the user gives one: check `flow accounts` before each clip batch, and don't start one that would go over.
+- **Stop only for** `LOGIN_REQUIRED`, a spent budget, or a CLI error whose hint doesn't resolve it.
+- **Log everything in `video-N/RUN-LOG.md`** as you go: each gate you passed, what you picked or rejected and why, credits spent, and a final "Check these" list of anything the user should look at.
+- **Finish with** `make.py handoff` and `make.py status`, and end your reply with the summary from `RUN-LOG.md`.
 
-## Phase 1: story lock
+## Phases 0–1: plan
 
-1. Write `video-N/SHOT-LIST.md` from the voiceover script, in story order.
-   - Every voiceover line has a shot under it.
-   - Each shot is one visible beat, 4, 6 or 8 s long (Flow lengths; trim in the edit).
-   - Picture total is at least the voiceover length. Estimate about 2.6 spoken words per second. When `edit/voiceover.*` exists, measure it instead with a speech-to-text tool that gives word timestamps (for example faster-whisper).
-2. Plan each shot so it can start from a still:
-   - Characters are already where the action needs them in the first frame.
-   - Nothing grows on screen.
-   - Nobody walks in through a wall.
-   - The action fits the clip length.
-   - A beat that needs a new camera side gets its own shot.
-3. Run the coverage check at the bottom of the shot list.
-4. **Gate: story lock.** The user approves the shot list. After that, add or cut shots only when the user asks. When they do, insert the new job in `scenes/stills-batch.json` at its place in story order (the manifest order is the edit order) and update the shot list.
+Every video starts with the `video-plan` skill. It writes `video-N/PLAN.md` (brief table, voiceover timing, sheets to make, and a shot table with clip lengths) and prints `PLAN.pdf`. Don't start phase 2 until the user has approved the plan.
+
+- The plan's shot table is the story lock. After approval, add or cut shots only when the user asks. When they do, update `PLAN.md` and reprint the PDF, and insert the new job in `scenes/stills-batch.json` at its place in story order (the manifest order is the edit order).
+- A shot's clip length comes from the plan and is never shortened.
+- When the client's real voiceover arrives, retime it with `video-plan` before the clips are made.
 
 ## Phase 2: reference sheets
 
-1. List every recurring character, location and prop. Write each sheet prompt with the matching sheet skill in its animated mode: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes. Save it to `characters/<name>/prompts/`, `environments/<name>/prompts/` or `props/<name>/prompts/`.
-2. Generate them one or two at a time: sheets need individual attention.
-3. **Hero still per environment:** the first approved still in each location becomes its look reference, fixing brightness, light direction, colour and render style. Record it in the Environments table in `AGENTS.md`. Every later still in that location passes it as an ingredient. Video 1 of the Milo project lost most of its rejected versions to shots in a location that had no hero still.
-4. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
+1. Run `bash <skill-dir>/scripts/init-project.sh <client-folder> video-N`, where `<skill-dir>` is the folder holding this file. It adds `AGENTS.md`, the sheet folders, `project.conf`, the manifests and `scripts/make.py`, and never overwrites existing files. After the skill is updated, refresh a video's copy of `make.py` with `--update-scripts`.
+2. Take every recurring character, location and prop from the plan's "Sheets to make". Write each sheet prompt with the matching sheet skill in its animated mode: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes. Save it to `characters/<name>/prompts/`, `environments/<name>/prompts/` or `props/<name>/prompts/`.
+3. Generate them one or two at a time: sheets need individual attention.
+4. **Hero still per environment:** one still in each location, usually its first shot, becomes its look reference, fixing brightness, light direction, colour and render style. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient. Video 1 of the Milo project lost most of its rejected versions to shots in a location that had no hero still.
+5. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
 
 ## Phase 3: stills
 
 1. Load `scene-still.md` and `failure-locks.md`. Write one prompt per shot to `scenes/scene-N/scene-Nx/prompts/scene-Nx-v1.md`.
-2. Add one job per shot to `scenes/stills-batch.json` with `"variants": 2`. Stills cost no credits, so a second seed is cheaper than another round of review.
-3. The user runs `video-N/scripts/make.py stills`.
-4. Run `make.py review stills` and read every sheet. Report a pick or a fix for each shot.
-5. The user decides. For each pick, run `make.py pick 1a b` and list it in `scenes/all/APPROVED.md`. Rejected shots get a `v2` job with only that shot's prompt changed, and the user reruns `make.py stills 3b 7a`.
-6. Once most stills are approved, run `make.py animatic` and send the user `edit/animatic.mp4`, laid over the voiceover if there is one. The user watches the timing before any clip credits are spent.
-7. **Gate:** every still is approved.
+2. Add one job per shot to `scenes/stills-batch.json` with `"variants": 2`. Stills cost no credits, so a second seed is cheaper than another round of review. A hero still's ingredients are the environment sheet and character sheets; every other still in that location lists the hero's output path (`scene-1a-v1.jpg`) first.
+3. **Heroes first.** The user runs `video-N/scripts/make.py stills 1a 3a` with just the hero shots. Review, pick and approve them (steps 5–6), and record them in `AGENTS.md`.
+4. The user runs `make.py stills` for the rest. A job whose ingredient is a still that isn't made or picked yet is held back and named in the output; finished outputs are skipped.
+5. Run `make.py review stills` and read every sheet. Report a pick or a fix for each shot.
+6. The user decides. For each pick, run `make.py pick 1a b` and add a line to `scenes/all/APPROVED.md` (file name and date). Rejected shots get a `v2` job, replacing the `v1` job in place, with only that shot's prompt changed, and the user reruns `make.py stills 3b 7a`.
+7. Once most stills are approved, run `make.py animatic` and send the user `edit/animatic.mp4`, laid over the voiceover if there is one. The user watches the timing before any clip credits are spent. Stills are held for their `Clip` length from `PLAN.md`.
+8. **Gate:** every still is approved.
 
 ## Phase 4: 360p draft clips
 
-1. Load `clip-prompt.md`. Write one prompt per shot to `clips/clip-N/clip-Nx/prompts/clip-Nx-v1.md`.
+1. Load `clip-prompt.md`. Open each approved still first, then write its clip prompt from what is actually in it (who stands where, facing which way), not from the still's prompt. One prompt per shot, in `clips/clip-N/clip-Nx/prompts/clip-Nx-v1.md`.
 2. Add jobs to `clips/clips-batch.json`:
    - `"resolution": "360p"` and `"timeout": 900`.
-   - Duration from the shot list.
+   - Duration from the plan's Clip column.
    - Ingredients: the approved still first, then the sheet of every character in the shot.
    - One variant by default, because clips cost credits. Use `"variants": 2` only for a shot that has already failed twice.
 3. The user runs `make.py clips`.
@@ -84,13 +87,13 @@ This phase runs in a new or empty client folder, or when the user pastes a brief
 
 ## Phase 5: 1080p finals
 
-1. The user runs `make.py finals`. Set `PRO_ACCOUNT` in `project.conf` to the paid Flow account first.
+1. The user runs `make.py finals`. Every clip job needs an approved draft; name shots to make finals for only some of them.
    - Each final reruns the approved prompt and ingredients as a native 720p generation, then upsamples it to 1080p.
    - The output goes to `clip-Nx/final/` and replaces the draft in `clips/all/`.
    - For finals of new or redone shots only: `make.py finals --into new-1080p 7c 10b`.
 2. A final is a new generation and can differ from its draft (the Milo project's 7C final had four kittens instead of three). Run `make.py review finals`, which shows each draft beside its final, and check every one.
 3. To redo a bad final:
-   - Rename the file to `rejected-<reason>-<name>`.
+   - In `clip-Nx/final/`, rename both the 720p file and its `-1080p` file to `rejected-<reason>-<name>`.
    - Put a new `"seed"` on that clip's job, because the same seed resumes the same result.
    - The user reruns `make.py finals <shot>`.
 
@@ -99,7 +102,7 @@ This phase runs in a new or empty client folder, or when the user pastes a brief
 1. Run `make.py handoff`. `edit/clips/` gets the final clips numbered in story order, plus `ORDER.txt`.
 2. The user edits. So far that has been in CapCut, with music, voiceover and captions added there.
 3. Before any edit-stage deliverable (captions, a cut list, music notes, a stitched preview), reread that exact section of the brief and quote it to the user first. Give the user what the brief describes:
-   - Captions are the client's own wording, at the few moments the brief names, with in/out times taken from the voiceover.
+   - Captions are the client's own wording from Edit notes in `PLAN.md`, at the few moments the brief names, with in/out times from `voiceover/timing.md` (retime the real voiceover with `video-plan` first).
    - Never full subtitles or new caption copy unless asked.
    - Don't build an editing tool or render the edit yourself unless the user asks for it.
 4. Update the Videos table in `AGENTS.md`.
@@ -110,17 +113,17 @@ Run it from anywhere as `video-N/scripts/make.py <command>`:
 
 | Command | Does |
 |---|---|
-| `status` | Every shot in story order: newest still, clip, whether a 1080p exists, variants waiting for a pick |
-| `stills [shots] [--dry-run]` | Stills batch (all shots, or only those named); skips outputs that exist; syncs `scenes/all` |
+| `status` | Warns when `PLAN.pdf` is older than `PLAN.md`; every shot in story order: newest still, clip, whether a 1080p exists, variants waiting for a pick |
+| `stills [shots] [--dry-run]` | Stills batch (all shots, or only those named); skips outputs that exist, holds back jobs waiting on an unmade still; syncs `scenes/all` |
 | `clips [shots] [--dry-run]` | 360p clip batch; syncs `clips/all` |
-| `finals [shots] [--into DIR] [--no-draft]` | 720p + 1080p upsample on `PRO_ACCOUNT`, then restores the previously active account |
-| `pick SHOT LETTER [--clip]` | Copies variant `-b` to the shot's version file |
+| `finals [shots] [--into DIR] [--no-draft] [--dry-run]` | 720p + 1080p upsample; flow sends these only to paid accounts; skips finals that exist. `--into` also copies the named shots' 1080p files to `clips/DIR/` |
+| `pick SHOT LETTER [--clip]` | Copies a variant (`scene-1a-v1-b.jpg`) to the shot's version file (`scene-1a-v1.jpg`) |
 | `review stills\|clips\|finals [shots]` | Contact sheets in `review/`, 10 stills or 4 clips per image |
-| `animatic` | `edit/animatic.mp4`: clips where they exist, stills elsewhere, labelled, over `edit/voiceover.*` |
+| `animatic` | `edit/animatic.mp4`: clips where they exist, stills elsewhere, labelled, over `voiceover/recording.*` or the scratch read |
 | `handoff` | Numbered final clips in `edit/clips/` |
 | `sync` | Refreshes `scenes/all/` and `clips/all/` to the newest version of each shot (1080p once it exists) |
 
-Manifest job shapes (all paths absolute or relative to the manifest):
+Manifest job shapes. Paths are absolute or relative to the manifest (from `scenes/`, a sheet is `../../characters/milo/milo-v1.png`). The id is the output's file name without the extension:
 
 ```json
 {"id": "scene-1a-v1", "kind": "image", "prompt_file": "/ABS/scenes/scene-1/scene-1a/prompts/scene-1a-v1.md",
@@ -138,20 +141,23 @@ Optional: `"seed"` to force a fresh job, since Flow resumes a job whose prompt, 
 
 ```
 <client>/
-  AGENTS.md                 client rules, brief digest, sheets, decisions
+  AGENTS.md                 client rules, look, sheets, decisions
   brief/                    the client's files, untouched
   characters/<name>/<name>-v1.jpg + prompts/     shared by every video
   environments/<name>/...   props/<name>/...
   video-1/
-    SHOT-LIST.md  project.conf  scripts/make.py
-    scenes/stills-batch.json  scenes/scene-1/scene-1a/{scene-1a-v1.jpg, prompts/scene-1a-v1.md}
+    PLAN.md  PLAN.pdf  project.conf  scripts/make.py
+    voiceover/                script.md, timing.md, scratch.wav, recording.* (the real read)
+    scenes/stills-batch.json  scenes/scene-1/scene-1a/{scene-1a-v1.jpg, prompts/scene-1a-v1.md}   scene with several shots
+                              scenes/scene-3/{scene-3-v1.jpg, prompts/scene-3-v1.md}             scene with one shot
     scenes/all/               newest (or picked) still per shot + APPROVED.md
     clips/clips-batch.json    clips/clip-1/clip-1a/{clip-1a-v1.mp4, prompts/, final/}
+                              clips/clip-3/{clip-3-v1.mp4, prompts/, final/}
     clips/all/                newest clip per shot, 1080p once it exists + APPROVED.md
     review/  edit/
 ```
 
-Shot ids are a scene number plus a letter (`1a`, `10b`), and file stems are `scene-1a-v1` and `clip-1a-v1`. An inserted shot gets the next free letter in its scene (`2c`), and its place in the manifest sets its position in the edit.
+Shot ids are a scene number with no leading zero. A scene with one shot has no letter (`3`: `scenes/scene-3/scene-3-v1.jpg`); a scene with several gets one letter per shot and a folder each (`1a`, `1b`: `scenes/scene-1/scene-1a/scene-1a-v1.jpg`). Clips mirror scenes. An inserted shot gets the next free letter in its scene (`2c`), and its place in the manifest sets its position in the edit. If a one-shot scene gains a second shot, first move its files to `scene-3/scene-3a/` (and `clip-3/clip-3a/`), renaming `scene-3-` to `scene-3a-` in the files, prompts and manifests; `make.py` refuses a scene with both.
 
 ## Visual direction
 
@@ -167,8 +173,7 @@ Shot ids are a scene number plus a letter (`1a`, `10b`), and file stems are `sce
 
 ## Final check before each gate
 
-- **Intake:** the digest quotes the brief on voiceover, music, captions and deliverables, and the questions for the client are written.
-- **Story lock:** every voiceover line is covered, picture ≥ voiceover, one beat per shot, and each shot can start from a still.
+- **Plan:** `video-plan`'s own checks passed, and the user approved `PLAN.pdf`.
 - **Stills:** you read the review sheets yourself, and each shot has a pick or a fix.
 - **Clips:** the frame stays locked, everyone keeps moving, and the audio is scene-only.
 - **Finals:** each one was compared with its draft.

@@ -10,7 +10,7 @@ Use this structure to write a valid JSON image prompt. Replace bracketed values 
     "identity": "[One object, defining silhouette, proportions, dimensions or scale cues].",
     "construction": "[Components, joins, closures, controls, and exact placement].",
     "color_and_materials": "[Each surface's color, material, finish, and wear].",
-    "markings_and_asymmetry": "[Exact left/right asymmetry, markings, and only supplied text or logos; otherwise none]."
+    "markings_and_asymmetry": "[Exact left/right asymmetry, markings, and supplied text or logos, or the fictional brand text, quoted exactly]."
   },
   "canvas_and_layout": {
     "output_image_count": 1,
@@ -55,7 +55,7 @@ Use this structure to write a valid JSON image prompt. Replace bracketed values 
     "alternate product variants, duplicated or missing parts, mirrored asymmetry, repeated near-identical angles",
     "separate images for each view, portrait canvas, cropped edges, inconsistent scale, overlapping views, exploded parts",
     "people, hands, unrelated props, lifestyle environment",
-    "orientation labels, captions, invented text or logos, watermarks",
+    "orientation labels, captions, garbled or misspelled text, logos not in the design, watermarks",
     "dramatic shadows, shallow focus, motion blur, wide-angle distortion"
   ],
   "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a [three/four]-view studio reference sheet of the same [prop] in [ordered orientations]. Preserve [defining features] through rotation, keep the full object uncropped in each panel at consistent scale, using a uniform #504f50 background, thin #d1d1d2 cell separators, soft product light, and no labels or unrelated objects."

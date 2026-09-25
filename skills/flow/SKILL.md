@@ -21,7 +21,7 @@ Run the requested generation command directly. Labflow owns:
 
 What not to do:
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits` or `flow doctor` unless the user explicitly asks for account diagnostics.
-- Do not run `flow account use`, `flow rotate`, `flow sync` or `flow account refresh` during ordinary generation. The one exception is a project script that pins the paid account for 1080p finals.
+- Let flow pick the account: it sends stills and 360p drafts to free accounts first and upsample jobs only to paid ones. Do not run `flow account use`, `flow rotate` or `flow sync`. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
 - Do not pass `--no-rotate` unless the user explicitly asks to lock one account. Normal generation leaves rotation on so depleted or unhealthy accounts are replaced automatically.
 - Never expose or request session tokens, cookies, passwords, recovery data or vault credentials.
 
@@ -51,7 +51,7 @@ Seeds:
    "duration": 4, "resolution": "360p", "timeout": 900,
    "ingredient": ["/ABS/scene-1a-v1.jpg", "/ABS/sheet.png"], "output": "/ABS/clip-1a-v1.mp4"},
   {"id": "clip-1a-v1-final", "kind": "video", "prompt_file": "/ABS/clip-1a-v1.md", "aspect": "9:16",
-   "duration": 4, "resolution": "720p", "upsample": "1080p", "no_rotate": true, "timeout": 1500,
+   "duration": 4, "resolution": "720p", "upsample": "1080p", "timeout": 1500,
    "ingredient": ["/ABS/scene-1a-v1.jpg", "/ABS/sheet.png"], "output": "/ABS/final/clip-1a-v1.mp4"}
 ]}
 ```

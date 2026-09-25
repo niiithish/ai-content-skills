@@ -5,7 +5,7 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 ## Before writing
 
 - Look at every reference you'll pass: sheets, the location's hero still, and any approved still whose composition you're reusing.
-- Read the shot's row in `SHOT-LIST.md` and the lessons in `failure-locks.md`.
+- Read the shot's row in `PLAN.md` and the lessons in `failure-locks.md`.
 - The still shows the **first frame** of the clip: the starting pose and prop state before the main action. Put characters where the clip needs them to start.
 
 ## Ingredients, in this order
@@ -38,13 +38,13 @@ Keep it to concrete failure modes for this shot:
 - the 2D or photoreal drift
 - the sheet layout, a headless body, a grey studio backdrop
 - golden light
-- readable text, logos, UI, captions, watermarks
+- captions, watermarks, app UI, garbled or misspelled lettering
 
 Don't list an object the positive text never mentions and that the frame has no reason to contain. In clip prompts and in positive text, naming an absent thing tends to summon it.
 
 ## Text in the frame
 
-No captions or overlays. Signs, papers and labels are blank or out of focus, unless the user supplies the exact wording. In that case quote it, say where it goes, and check the render before approving.
+In-world text is welcome; overlays are not. Anything that carries print in real life (a newspaper, a sign, a book cover, packaging, a label, a shop front) gets short, readable, plausible text written into the prompt in quotes: a headline, a brand name, a product line. Invent fictional brands; use a real one only when the user supplies it. Keep each surface to a few words and leave fine print soft. Never captions, subtitles, watermarks, app UI or on-screen graphics. Say which surface each text is on, and check the spelling in the render before approving.
 
 ## Blueprint
 
@@ -63,7 +63,7 @@ No captions or overlays. Signs, papers and labels are blank or out of focus, unl
   "camera": "[height in cm or m, distance, angle, normal lens, what's sharp]",
   "lighting": "[source, direction, brightness, shadow softness]; not golden.",
   "rendering": "Fully 3D rendered DreamWorks-inspired feature-animation CG exactly like the look still: [visible qualities]. Not 2D, no outlines, not photographic.",
-  "negative_prompt": ["[concrete failure modes for this shot]", "three-panel sheet layout", "headless body", "grey studio background", "golden light", "readable text, letters, numbers or logos anywhere", "phone interface, app buttons or on-screen UI", "captions or watermark"],
+  "negative_prompt": ["[concrete failure modes for this shot]", "three-panel sheet layout", "headless body", "grey studio background", "golden light", "garbled or misspelled lettering", "phone interface, app buttons or on-screen UI", "captions or watermark"],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame, [one-sentence restatement of viewpoint, subjects, counts, prop state and light]."
 }
 ```

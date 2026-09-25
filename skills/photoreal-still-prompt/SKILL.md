@@ -21,7 +21,7 @@ Use [references/json-blueprint.md](references/json-blueprint.md) for the JSON st
 - Give each supplied reference one explicit job: person identity, product/packaging identity, location, pose/crop, or lighting/camera. State what to preserve and what **not** to copy from it. Keep requested changes scoped.
 - If exact product branding matters, use the supplied product image or exact text as authority. Preserve package silhouette, cap, palette, wordmark, label hierarchy, and readable supplied copy. Do not replace it with a blank package, a category-only label such as `Hair Serum`, invented claims, or random lettering.
 - If no brand or package reference is supplied and a product must be prominent, design a plausible **fictional** retail identity: an intentional container, material, cap, proper-name wordmark, product-line name, short category descriptor, size, and restrained label hierarchy. Specify the short text exactly; leave fine print indistinct rather than requesting gibberish. If the user needs an exact existing brand and has not provided it, ask for the product reference or exact label copy.
-- Background products should read as ordinary retail objects, not a row of identical blank white bottles. Describe only the few whose design matters; keep incidental print soft or unreadable.
+- Background products should read as ordinary retail objects, not a row of identical blank white bottles. They carry plausible fictional brands too. Describe only the few whose design matters; their short text is readable where in focus, soft where not.
 
 ## Real-world look
 

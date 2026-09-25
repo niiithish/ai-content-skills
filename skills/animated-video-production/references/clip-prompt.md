@@ -2,12 +2,12 @@
 
 One clip is one continuous shot, 4, 6 or 8 s, from one approved still. Save the prompt to `clips/clip-N/clip-Nx/prompts/clip-Nx-vK.md`: a one-line `#` heading naming the source still, then the prompt in a `text` code block. Flow reads only the code block.
 
-## Defaults (the brief or the user can override them)
+## Defaults (only the user overrides them; a client brief asking for music or captions means they are added in the edit, not generated)
 
 - **Locked frame.** The view never moves: no zoom, push, pan or tracking, even if the shot list names a camera move. Describe the fixed framing in positive terms.
 - **Nobody is ever still.** Every visible character has timed action across the whole clip, plus secondary motion: blinking, breathing, ears, tails, fabric.
 - **Scene audio only.** Room tone, weather, footsteps, objects, animals. No music, narration or dialogue. Characters who mustn't speak make only wordless sounds (gasps, grunts, laughs, sighs, hums). Music, voiceover and captions are added in the edit.
-- **No text on screen.**
+- **No overlays.** No captions, subtitles or on-screen graphics. Printed text that belongs to the scene (a newspaper, a label) stays exactly as it is in @image1.
 
 ## Ingredients
 
@@ -30,7 +30,7 @@ Style: DreamWorks-inspired feature-animation CG exactly as in @image1: sculpted,
 
 Sound: only what you would hear standing in this place. [Ambience.] [Each sound tied to a visible action, in order.] [Name] never says any words; his voice is only wordless human sounds such as grunts, huffs, gasps, laughs, sighs and hums.
 
-No music, no score, no soundtrack, no narration, no spoken words or dialogue. No captions, subtitles, text or on-screen graphics.
+No music, no score, no soundtrack, no narration, no spoken words or dialogue. No captions, subtitles or on-screen graphics; any printed text in the scene stays exactly as it is in @image1.
 ```
 
 ## Writing the action

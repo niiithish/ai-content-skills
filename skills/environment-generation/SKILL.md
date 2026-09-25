@@ -13,7 +13,7 @@ Use the structured JSON style in [references/prompt-blueprints.md](references/pr
 
 ## Animated mode
 
-Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels and separators. What changes:
+Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The defaults below still apply: one 16:9 landscape establishing plate. What changes:
 
 - **Render** the place as feature-animation CG: sculpted, slightly stylized architecture and props, rich but controlled colour, layered set dressing, soft 3D shading. Replace the photoreal and `photograph` wording with this.
 - **Light** with the location's real source at the time of day the story needs, and state its brightness. No golden hour unless the brief asks for it. This light becomes the reference for every still shot there.
@@ -68,7 +68,7 @@ A frontal head-on plate looks like a nice photo but fails as a video location: i
 3. `set_dressing`, `materials_and_condition`, `lighting_and_atmosphere`
 4. `rendering_and_consistency_locks`, `negative_prompt`, `final_generation_instruction`
 
-Visible text/logos only when supplied or essential; otherwise exclude invented branding and writing.
+In-world text is welcome; overlays are not. Anything that carries print in real life (a newspaper, a sign, a book cover, packaging, a label, a shop front) gets short, readable, plausible text written into the prompt in quotes: a headline, a brand name, a product line. Invent fictional brands; use a real one only when the user supplies it. Keep each surface to a few words and leave fine print soft. Never captions, subtitles, watermarks, app UI or on-screen graphics.
 
 ## Final check
 

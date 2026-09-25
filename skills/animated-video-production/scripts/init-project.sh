@@ -5,11 +5,10 @@
 #   init-project.sh /abs/client-folder video-2 --update-scripts
 #
 # Creates, without overwriting anything that exists:
-#   AGENTS.md                     client rules + brief digest (from the template)
+#   AGENTS.md                     client rules, look, sheets, decisions (from the template)
 #   brief/                        the client's brief files go here
 #   characters/ environments/ props/   reference sheets, shared by every video
-#   video-N/SHOT-LIST.md          story lock, timed to the voiceover
-#   video-N/project.conf          PRO_ACCOUNT for 1080p finals, batch pacing
+#   video-N/project.conf          batch pacing
 #   video-N/scenes/stills-batch.json   video-N/clips/clips-batch.json
 #   video-N/edit/ video-N/review/
 #   video-N/scripts/make.py       copied from the skill (--update-scripts refreshes it)
@@ -35,7 +34,7 @@ mkdir -p "$ROOT"/{brief,characters,environments,props} \
          "$VIDEO"/{scenes,clips,edit,review,scripts}
 
 put "$SKILL/templates/AGENTS.md" "$ROOT/AGENTS.md"
-put "$SKILL/templates/SHOT-LIST.md" "$VIDEO/SHOT-LIST.md"
+[[ -e "$VIDEO/PLAN.md" ]] || echo "note: no $VIDEO_NAME/PLAN.md yet: plan the video with the video-plan skill first"
 
 for m in scenes/stills-batch.json clips/clips-batch.json; do
   [[ -e "$VIDEO/$m" ]] || { printf '{\n  "jobs": []\n}\n' > "$VIDEO/$m"; made "$VIDEO_NAME/$m"; }
@@ -43,9 +42,7 @@ done
 
 if [[ ! -e "$VIDEO/project.conf" ]]; then
   cat > "$VIDEO/project.conf" <<EOF
-# Paid Flow account used for 1080p finals (the upsample is free only on a paid plan).
-PRO_ACCOUNT=${FLOW_PRO_ACCOUNT:-}
-# flow batch pacing
+# flow batch pacing (flow itself picks free accounts for stills and drafts, paid ones for finals)
 CONCURRENCY=3
 RPM=6
 EOF

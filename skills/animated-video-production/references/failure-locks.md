@@ -12,7 +12,7 @@ For every tile, check:
 4. **Light:** matches the location's hero still. No golden or sunset drift, and not too dark.
 5. **Render:** 3D CG like the sheets, not 2D or outlined, not photoreal.
 6. **Layout:** no sheet panels, headless bodies or grey backdrop.
-7. **Text:** none unless supplied: no UI, captions or watermarks.
+7. **Text:** in-world text (papers, signs, labels, packaging) is readable and spelled as the prompt quotes it; no captions, UI or watermarks.
 8. **Geometry:** nobody inside a wall, bench or prop, and doors and props look real and sit in the known layout.
 9. **Start state:** the still works as the first frame of the clip's action.
 10. **Clips:** the frame stays put from start to end, everyone moves, and props don't multiply or vanish.
@@ -24,6 +24,7 @@ For every tile, check:
 |---|---|---|
 | The app's buttons or captions drawn into the frame | A social app or phone named in the prompt | Never name the app. Say "vertical short film", with action in the central 70% of the frame. |
 | 2D, outlined or flat cartoon look | Only a style word, no visual anchor | Pass an approved 3D still as the look still, and write "fully 3D rendered… not 2D, no outlines". |
+| Blank labels and papers, or garbled lettering | No text quoted, or too much of it | Quote a short exact text for each surface (a headline, a brand name, 2–4 words); invent fictional brands; leave fine print soft. |
 | Golden-hour or sunset light | The model's default for "warm" or "afternoon" | Name the real source and brightness; add "not golden, not sunset" to the lighting line and the negatives. |
 | Each shot in the same room lit differently (7B took eight tries) | No locked look for the location | A hero still per environment, passed first in every still there. |
 | Too dark, or a heavy blue tint | "Abandoned" or "moody" read as night | State the brightness ("fairly bright daylight, walls clearly visible"); negatives "dark scene, night, deep blue tint". |
@@ -60,7 +61,7 @@ For every tile, check:
 |---|---|
 | `NOT_FOUND`, or a lost job that resumes to nothing | Put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
 | A 1080p final differs from the approved draft | Finals are new generations. Review finals against drafts; rename the bad one `rejected-…`, change the seed, rerun that shot. |
-| The 1080p upsample fails or costs credits | It is free only on a paid account; `make.py finals` switches to `PRO_ACCOUNT`. A 360p draft cannot be upscaled. |
+| The 1080p upsample fails or costs credits | It is free only on a paid account; flow sends upsample jobs only to paid accounts; if none has credits, finals fail with a hint. A 360p draft cannot be upscaled. |
 | A batch interrupted | Rerun the same command; outputs that exist are skipped and accepted jobs resume. |
 
 ## Edit and delivery
@@ -69,4 +70,5 @@ For every tile, check:
 |---|---|
 | Full subtitles delivered when the client wanted a few captions | Reread the brief's caption section before any edit deliverable; use the client's exact wording at the moments they name; quote the brief back to the user. |
 | Time spent building an edit tool the user didn't need | The user edits (CapCut). Deliver ordered clips, timings and placements unless asked for more. |
-| Shots added after the finals (a third of Milo video 1) | Story lock at phase 1; check voiceover coverage with the animatic before any clips. |
+| Clips shorter than their voiceover line, regenerated longer | Time the voiceover with `video-plan` before the shot list; each line's clips cover its slot plus 1 s. Longer is only trimmed. |
+| Shots added after the finals (a third of Milo video 1) | Story lock with the approved `PLAN.md`; check voiceover coverage with the animatic before any clips. |

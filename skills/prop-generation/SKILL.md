@@ -74,7 +74,7 @@ Skip surfaces the audience never sees (blender underside, plain appliance base).
 - Exact left/right for asymmetries; preserve through rotation.
 - Consistent scale and camera height; each panel centered, no overlap or crop.
 - Reference image: preserve silhouette, palette, materials, branding, wear unless asked to change. Scoped remix: name the change, lock everything else.
-- Quote on-prop text/logos exactly; do not invent branding.
+- Quote on-prop text/logos exactly. With no supplied branding, a product gets a plausible fictional brand (wordmark, product name, short descriptor) written out in the prompt, never a blank or unbranded package.
 - For ad work: this sheet is the product identity source. A worn/in-use still and a **visually distinct** alternative (different form, not just worse condition) are separate assets when the script needs them.
 
 ## JSON fields (order)

@@ -23,6 +23,8 @@ The clay style is the visual language, not the story. Characters should act, rea
 
 ## Workflow
 
+If the video has an approved `PLAN.md` from the `video-plan` skill, start from it: its brief table, sheets list, shots and clip lengths replace steps 1–2, and its clip lengths are never shortened.
+
 ### 1. Parse the request
 
 Extract or sensibly default:

@@ -1,26 +1,10 @@
 # CLIENT NAME: animated videos
 
-**Load the `animated-video-production` skill before any work in this folder.** The skill holds the pipeline, the prompt rules and the `make.py` commands. This file holds only what is specific to this client. The client's files in `brief/` are the source of truth for story, characters and editing. Where this file and the skill disagree, this file wins.
+**Load the `animated-video-production` skill before any work in this folder, and `video-plan` to plan a new video.** The skill holds the pipeline, the prompt rules and the `make.py` commands. This file holds only what is specific to this client. The client's files in `brief/` are the source of truth for story, characters and editing. Where this file and the skill disagree, this file wins.
 
-## Brief digest
+## Plans
 
-Filled in at intake from `brief/`. Quote the brief section next to every answer. Mark anything the brief doesn't settle as **ASK**.
-
-| Item | What the client wants | Brief |
-|---|---|---|
-| Format | 9:16 vertical, 1080p | |
-| Length | | |
-| Look | | |
-| Voiceover | who records it, and whether the script is final | |
-| Music | | |
-| Captions | who adds them, where and how many, the exact wording | |
-| Scene audio / dialogue | | |
-| Deliverables | separate clips or a finished edit, file format | |
-| Clip rules | length, camera, anything the client banned | |
-| Deadline / revisions | | |
-
-**Open questions for the client:**
-- 
+Each video's brief, voiceover timing, sheets list and shots are in `video-N/PLAN.md` (made with the `video-plan` skill; `PLAN.pdf` is printed from it). Client-wide rules that hold for every video go in Decisions below.
 
 ## Look
 
@@ -51,4 +35,4 @@ Choices the user or client made that override the skill's defaults. Date each on
 
 | Video | Folder | Status |
 |---|---|---|
-| 1 | `video-1/` | intake |
+| 1 | `video-1/` | planning |

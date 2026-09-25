@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Plan"
+  short_description: "Turn a client brief into PLAN.md and PLAN.pdf: sheets to make and a shot table timed to the voiceover"
+  default_prompt: "Use $video-plan to plan this video from the client's brief: time the voiceover, fill in what we show, list the sheets, and print PLAN.pdf."

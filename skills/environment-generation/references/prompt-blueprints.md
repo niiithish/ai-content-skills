@@ -42,7 +42,7 @@ Use the interior or exterior structure to write a valid JSON image prompt. Repla
   "negative_prompt": [
     "flat frontal or centered one-point view, corner centered or hidden, broad far wall square to camera", "dollhouse cutaway, top-down view, fisheye, extreme wide-angle stretch",
     "blocked doors or paths, floating objects, impossible reflections", "duplicated furniture, invented rooms or windows, warped walls, bent verticals",
-    "contradictory light or shadows, extra people, invented branding or readable text"
+    "contradictory light or shadows, extra people, garbled or misspelled lettering"
   ],
   "final_generation_instruction": "Generate exactly one 16:9 landscape photograph of a three-quarter interior reference of [place]. Place the visible inside corner off-center and show two adjoining walls with floor seams angling toward it from different directions. Show [anchor], [openings], and [furnishings] with clear circulation, one light direction, level rectilinear geometry, and deep focus."
 }
@@ -89,7 +89,7 @@ Use the interior or exterior structure to write a valid JSON image prompt. Repla
   "negative_prompt": [
     "flat frontal facade, centered one-point view, aerial top-down, fisheye, extreme panorama",
     "blocked entrances, impossible roads or stairs, floating structures", "duplicated landmarks, accidental extra buildings, warped architecture",
-    "two suns, contradictory shadows, invented branding or readable text"
+    "two suns, contradictory shadows, garbled or misspelled lettering"
   ],
   "final_generation_instruction": "Generate exactly one 16:9 landscape photograph of a three-quarter establishing reference of [site]. Show [anchor], [boundaries], and [entrances/routes] in clear relation, with readable foreground and far depth, one light direction, and level rectilinear geometry."
 }

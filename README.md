@@ -41,7 +41,8 @@ npx skills add niiithish/ai-content-skills --list
 | [`character-generation`](./skills/character-generation) | One 16:9 JSON three-panel sheet: headless front + back bodies, large 3/4 portrait; #504f50 background and #d1d1d2 dividers. |
 | [`environment-generation`](./skills/environment-generation) | JSON wide 3/4-view location references for image and video. |
 | [`photoreal-still-prompt`](./skills/photoreal-still-prompt) | JSON prompts for one believable real-world image or video start frame, defaulting to 9:16 portrait, with grounded product packaging, camera, and light. |
-| [`animated-video-production`](./skills/animated-video-production) | Client brief to 1080p clips for DreamWorks-style 3D animation on Google Flow: intake, story lock, sheets, still and clip prompts, a `make.py` batch/review/hand-off tool, and a failure-locks checklist. |
+| [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or faster-whisper), with suggested visuals marked. |
+| [`animated-video-production`](./skills/animated-video-production) | Approved plan to 1080p clips for DreamWorks-style 3D animation on Google Flow: sheets, still and clip prompts, a `make.py` batch/review/hand-off tool, and a failure-locks checklist. |
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |

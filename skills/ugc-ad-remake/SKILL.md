@@ -22,6 +22,8 @@ This skill overrides **script-generation** for talking-head remakes: on-camera s
 
 ## Session start
 
+If the video has an approved `PLAN.md` from the `video-plan` skill, start from its brief table, shots and clip lengths instead of re-reading the brief.
+
 If they only name the goal, note it and wait.
 
 When work starts, use or create a project folder:

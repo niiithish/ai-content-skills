@@ -4,7 +4,8 @@
 Run from anywhere; it works on the video folder that contains this scripts/ folder.
 
   make.py status                       every shot: newest still, clip, final
-  make.py stills [shots] [--dry-run]   generate stills in scenes/stills-batch.json
+  make.py stills [shots] [--dry-run]   generate stills in scenes/stills-batch.json (jobs whose
+                                       ingredient is an unmade still wait for it)
   make.py clips  [shots] [--dry-run]   generate 360p drafts in clips/clips-batch.json
   make.py finals [shots] [--into DIR] [--no-draft] [--dry-run]
                                        native 720p + 1080p upsample of each clip
@@ -12,18 +13,18 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
   make.py review stills|clips|finals [shots]
                                        contact sheets in review/ (one image per page)
   make.py animatic                     edit/animatic.mp4: clips where they exist,
-                                       stills elsewhere, over edit/voiceover.* if present
+                                       stills elsewhere, over voiceover/recording.* if present
   make.py handoff                      edit/clips/01-....mp4 in story order for the editor
   make.py sync                         refresh scenes/all and clips/all
 
-Shots are ids like 1a or 10b. Story order is the job order in scenes/stills-batch.json.
+Shots are ids like 3 (a scene with one shot), 1a or 10b. Story order is the job order in scenes/stills-batch.json.
 
 A manifest job may carry "variants": 2-4. Each variant is its own job with its own seed,
 saved as scene-1a-v1-a.jpg, -b, ... until `pick` copies one to scene-1a-v1.jpg. Jobs whose
 output already exists are skipped, so any command can be rerun after an interruption.
 
-Settings come from ../project.conf (PRO_ACCOUNT, CONCURRENCY, RPM); PRO_ACCOUNT falls back
-to $FLOW_PRO_ACCOUNT. Finals need it: Flow's 1080p upsample is free only on a paid account.
+Settings come from ../project.conf (CONCURRENCY, RPM). Accounts are flow's job: it sends stills and
+360p drafts to free accounts first, and finals (720p + 1080p upsample) only to paid ones.
 """
 import argparse
 import json
@@ -43,7 +44,7 @@ KINDS = {
 }
 LETTERS = "abcd"
 BASE_SEED = 12345
-JOB_ID = re.compile(r"^(scene|clip)-(\d+[a-z]+)-v(\d+)$")
+JOB_ID = re.compile(r"^(scene|clip)-((0|[1-9]\d*)([a-z]?))-v([1-9]\d*)$")  # scene-3-v1 (one-shot scene) or scene-3a-v1
 FONTS = [
     "/usr/share/fonts/noto/NotoSans-Bold.ttf",
     "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
@@ -59,7 +60,7 @@ def die(msg):
 
 
 def conf():
-    c = {"PRO_ACCOUNT": "", "CONCURRENCY": "3", "RPM": "6"}
+    c = {"CONCURRENCY": "3", "RPM": "6"}
     p = VIDEO / "project.conf"
     if p.is_file():
         for line in p.read_text().splitlines():
@@ -67,7 +68,6 @@ def conf():
             if "=" in line:
                 k, v = line.split("=", 1)
                 c[k.strip()] = v.strip().strip("\"'")
-    c["PRO_ACCOUNT"] = c["PRO_ACCOUNT"] or os.environ.get("FLOW_PRO_ACCOUNT", "")
     return c
 
 
@@ -83,21 +83,36 @@ def load_jobs(kind):
         return []
     data = json.loads(path.read_text())
     jobs = data["jobs"] if isinstance(data, dict) else data
+    stem = KINDS[kind]["stem"]
     for j in jobs:
-        if not JOB_ID.match(j.get("id", "")):
-            die(f"{path.name}: job id {j.get('id')!r} must look like scene-1a-v1 or clip-1a-v1")
+        m = JOB_ID.match(j.get("id", ""))
+        if not m or m[1] != stem:
+            die(f"{path.name}: job id {j.get('id')!r} must look like {stem}-3-v1 (a one-shot scene) or {stem}-1a-v1 (scene number, shot letter, version)")
         for key in ("prompt_file", "output"):
             j[key] = str((path.parent / j[key]).resolve())
+        if Path(j["output"]).name != j["id"] + KINDS[kind]["ext"]:
+            die(f"{path.name}: job {j['id']} must write {j['id']}{KINDS[kind]['ext']}, not {Path(j['output']).name}")
         j["ingredient"] = [str((path.parent / p).resolve()) for p in j.get("ingredient", [])]
+        folder = VIDEO / KINDS[kind]["folder"] / f"{stem}-{m[3]}" / (f"{stem}-{m[2]}" if m[4] else "")
+        if Path(j["output"]).parent != folder:
+            die(f"{path.name}: job {j['id']} must write into {folder.relative_to(VIDEO)}/")
+    scenes = {}
+    for j in jobs:
+        m = JOB_ID.match(j["id"])
+        scenes.setdefault(m[3], set()).add(m[4])
+    mixed = sorted((n for n, letters in scenes.items() if "" in letters and len(letters) > 1), key=int)
+    if mixed:
+        die(f"{path.name}: scene {', '.join(mixed)} has both a one-shot id ({stem}-N-v1) and lettered shots: "
+            f"once a scene has two shots, rename its first shot to {stem}-Na (folder {stem}-N/{stem}-Na/)")
     return jobs
 
 
 def shot(job):
-    return JOB_ID.match(job["id"])[2]
+    return JOB_ID.match(re.sub(r"-[a-d]$", "", job["id"]))[2]  # variant jobs end in -a, -b, ...
 
 
 def version(job):
-    return int(JOB_ID.match(job["id"])[3])
+    return int(JOB_ID.match(job["id"])[5])
 
 
 def select(jobs, shots):
@@ -146,6 +161,21 @@ def check_inputs(jobs):
         die("missing files:\n  " + "\n  ".join(missing))
 
 
+def split_ready(run):
+    """Drop jobs whose output exists (flow rejects a batch that feeds one job's output into another,
+    even a finished one) and hold back jobs whose ingredient is a still or clip not made yet."""
+    made_by = {j["output"]: j["id"] for kind in KINDS for j in load_jobs(kind)}
+    todo = [j for j in run if not Path(j["output"]).is_file()]
+    ready, waiting = [], {}
+    for j in todo:
+        deps = sorted({made_by[p] for p in j["ingredient"] if p in made_by and not Path(p).is_file()})
+        if deps:
+            waiting[shot(j)] = deps
+        else:
+            ready.append(j)
+    return ready, waiting
+
+
 def run_batch(jobs, name, dry):
     c = conf()
     folder = VIDEO / ("scenes" if name == "stills" else "clips")
@@ -181,12 +211,13 @@ def sync(quiet=False):
         root = VIDEO / k["folder"]
         if not manifest_path(kind).is_file():
             continue
-        name = re.compile(rf"^{k['stem']}-(\d+[a-z]+)-v(\d+)(-1080p)?\{k['ext']}$")
+        name = re.compile(rf"^{k['stem']}-(\d+[a-z]?)-v(\d+)(-1080p)?\{k['ext']}$")
         wanted = {shot(j) for j in load_jobs(kind)}
         all_dir = root / "all"
         all_dir.mkdir(exist_ok=True)
         latest = {}
-        paths = list(root.glob(f"{k['stem']}-*/{k['stem']}-*/*")) + list(root.glob(f"{k['stem']}-*/{k['stem']}-*/final/*-1080p.mp4"))
+        paths = [p for pattern in ("*/", "*/*/") for p in root.glob(f"{k['stem']}-{pattern}*")]  # scene-3/ and scene-1/scene-1a/
+        paths += [p for pattern in ("*/", "*/*/") for p in root.glob(f"{k['stem']}-{pattern}final/*-1080p.mp4")]
         for p in paths:
             m = name.match(p.name)
             if not m or m[1] not in wanted:
@@ -214,8 +245,9 @@ def sync(quiet=False):
 
 def newest_in_all(kind, s):
     k = KINDS[kind]
-    files = sorted((VIDEO / k["folder"] / "all").glob(f"{k['stem']}-{s}-v*{k['ext']}"))
-    files = [f for f in files if re.match(rf"^{k['stem']}-{s}-v\d+(-1080p)?\{k['ext']}$", f.name)]
+    pat = re.compile(rf"^{k['stem']}-{s}-v(\d+)(-1080p)?\{k['ext']}$")
+    files = sorted((f for f in (VIDEO / k["folder"] / "all").glob(f"{k['stem']}-{s}-v*") if pat.match(f.name)),
+                   key=lambda f: int(pat.match(f.name)[1]))
     finals = [f for f in files if f.name.endswith("-1080p.mp4")]
     return (finals or files or [None])[-1]
 
@@ -226,10 +258,16 @@ def cmd_generate(kind, args):
     jobs = select(load_jobs(kind), args.shots)
     if not jobs:
         die(f"{manifest_path(kind).relative_to(VIDEO)} has no jobs")
-    check_inputs(jobs)
     run = expand(jobs)
-    run_batch(run, kind, args.dry_run)
-    report([j["output"] for j in run])
+    ready, waiting = split_ready(run)
+    check_inputs(ready)
+    if ready:
+        run_batch(ready, kind, args.dry_run)
+        args.dry_run or report([j["output"] for j in ready])
+    else:
+        print("nothing to generate: every output exists or waits on another shot")
+    for s, deps in waiting.items():
+        print(f"{s} waits for {', '.join(deps)}: make (and pick) that first, then rerun")
     pending = [shot(j) for j in jobs if not Path(j["output"]).is_file() and any(p.is_file() for p in variant_paths(Path(j["output"])))]
     if pending:
         print(f"\nVariants waiting for a pick: {', '.join(pending)}  (make.py review {kind}, then make.py pick SHOT LETTER)")
@@ -237,42 +275,31 @@ def cmd_generate(kind, args):
 
 
 def cmd_finals(args):
-    c = conf()
     finals = []
-    for j in select(load_jobs("clips"), args.shots):
+    jobs = select(load_jobs("clips"), args.shots)
+    if not jobs:
+        die("clips/clips-batch.json has no jobs")
+    no_draft = [j["id"] for j in jobs if not Path(j["output"]).is_file()]
+    if no_draft and not args.no_draft:
+        die(f"no approved draft for {', '.join(no_draft)}: make or pick it, name only the shots that have one, or pass --no-draft")
+    for j in jobs:
         draft = Path(j["output"])
-        if not draft.is_file() and not args.no_draft:
-            die(f"no draft for {j['id']}: {draft.relative_to(VIDEO)} (pick a variant, or pass --no-draft)")
         finals.append({
             "id": j["id"] + "-final", "kind": "video", "prompt_file": j["prompt_file"],
             "aspect": j.get("aspect", "9:16"), "duration": j.get("duration", 4),
             "resolution": "720p", "upsample": "1080p", "ingredient": j["ingredient"],
-            "timeout": 1500, "no_rotate": True,
+            "timeout": 1500,  # upsample jobs only go to paid accounts; flow picks one
             "output": str(draft.parent / "final" / draft.name),
             **({"seed": j["seed"]} if "seed" in j else {}),
         })
-    check_inputs(finals)
-    print(f"{len(finals)} finals")
-    previous = None
-    if not args.dry_run:
-        if not c["PRO_ACCOUNT"]:
-            die("set PRO_ACCOUNT in project.conf (the paid Flow account that upsamples to 1080p for free)")
-        try:
-            previous = json.loads(subprocess.run(["flow", "accounts"], capture_output=True, text=True).stdout).get("active")
-        except (ValueError, AttributeError):
-            previous = None
-        subprocess.run(["flow", "account", "use", c["PRO_ACCOUNT"]], check=True, stdout=subprocess.DEVNULL)
-        print(f"Using {c['PRO_ACCOUNT']} for the 1080p upsample")
-    try:
-        run_batch(finals, "finals", args.dry_run)
-    finally:
-        if previous and previous != c["PRO_ACCOUNT"]:
-            subprocess.run(["flow", "account", "use", previous], stdout=subprocess.DEVNULL)
-            print(f"Active account restored to {previous}")
     hd = [Path(f["output"]).with_name(Path(f["output"]).stem + "-1080p.mp4") for f in finals]
-    report(hd)
+    finals = [f for f, h in zip(finals, hd) if not (Path(f["output"]).is_file() and h.is_file())]
+    check_inputs(finals)
+    print(f"{len(finals)} finals to make, {len(hd) - len(finals)} already there")
+    finals and run_batch(finals, "finals", args.dry_run)
+    args.dry_run or report(hd)
     sync()
-    if args.into:
+    if args.into and not args.dry_run:
         dest = VIDEO / "clips" / args.into
         dest.mkdir(parents=True, exist_ok=True)
         for p in hd:
@@ -332,6 +359,17 @@ def cmd_review(args):
     out_dir = VIDEO / "review"
     out_dir.mkdir(exist_ok=True)
     tmp = Path(tempfile.mkdtemp(prefix=".frames-", dir=out_dir))
+    try:
+        sheets, missing = review_sheets(kind, jobs, out_dir, tmp)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    for p in sheets:
+        print(p)
+    if missing:
+        print("not generated yet: " + ", ".join(missing))
+
+
+def review_sheets(kind, jobs, out_dir, tmp):
     stamp = f"{datetime.now():%Y%m%d-%H%M%S}"
     rows, missing = [], []  # each row: list of (label, path)
     for j in jobs:
@@ -379,11 +417,12 @@ def cmd_review(args):
                     row = [("no draft", blank)] + row
                 tiles += row
             sheets.append(montage(tiles, cols, "240x427", out_dir / f"{kind}-{stamp}-{i // 4 + 1}.jpg"))
-    shutil.rmtree(tmp, ignore_errors=True)
-    for p in sheets:
-        print(p)
-    if missing:
-        print("not generated yet: " + ", ".join(missing))
+    return sheets, missing
+
+
+def real_voiceover():
+    vo = VIDEO / "voiceover"
+    return next((p for ext in ("wav", "mp3", "m4a", "aac") for p in [vo / f"recording.{ext}"] if p.is_file()), None)
 
 
 def encode_segment(src, seconds, label, dest, still):
@@ -395,11 +434,26 @@ def encode_segment(src, seconds, label, dest, still):
                    check=True)
 
 
+def shot_list_lengths():
+    """{shot: seconds} from the Clip column of PLAN.md rows like | 1a | ... | 6 s | (SHOT-LIST.md in older videos)."""
+    p = next((f for f in (VIDEO / "PLAN.md", VIDEO / "SHOT-LIST.md") if f.is_file()), VIDEO / "PLAN.md")
+    rows = [l.strip().strip("|").split("|") for l in p.read_text().splitlines() if l.lstrip().startswith("|")] if p.is_file() else []
+    return {r[0].strip().lower(): float(m[1]) for r in rows
+            if len(r) > 1 and (m := re.match(r"^\s*(\d+(?:\.\d+)?)\s*s", r[-1]))}
+
+
 def cmd_animatic(args):
-    clip_len = {shot(j): j.get("duration", 4) for j in load_jobs("clips")}
+    clip_len = {**shot_list_lengths(), **{shot(j): j["duration"] for j in load_jobs("clips") if "duration" in j}}
     edit = VIDEO / "edit"
     edit.mkdir(exist_ok=True)
     tmp = Path(tempfile.mkdtemp(prefix=".animatic-", dir=edit))
+    try:
+        animatic(clip_len, edit, tmp)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def animatic(clip_len, edit, tmp):
     segs, total, lines = [], 0.0, []
     for s in story_order():
         clip, still = newest_in_all("clips", s), newest_in_all("stills", s)
@@ -420,14 +474,13 @@ def cmd_animatic(args):
     if not segs:
         die("no stills or clips yet")
     (tmp / "list.txt").write_text("".join(f"file '{p}'\n" for p in segs))
-    vo = next((p for ext in ("wav", "mp3", "m4a", "aac") for p in [edit / f"voiceover.{ext}"] if p.is_file()), None)
+    vo = real_voiceover() or next((p for p in [VIDEO / "voiceover" / "scratch.wav"] if p.is_file()), None)
     dest = edit / "animatic.mp4"
     cmd = ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(tmp / "list.txt")]
     cmd += ["-i", str(vo), "-map", "0:v", "-map", "1:a", "-c:a", "aac"] if vo else []
     subprocess.run(cmd + ["-c:v", "copy", str(dest)], check=True)
-    shutil.rmtree(tmp, ignore_errors=True)
     print("\n".join(lines))
-    print(f"\n{dest}\npicture {total:.1f}s" + (f" · voiceover {ffprobe_duration(vo):.1f}s ({vo.name})" if vo else " · no edit/voiceover.* yet"))
+    print(f"\n{dest}\npicture {total:.1f}s" + (f" · voiceover {ffprobe_duration(vo):.1f}s ({vo.name})" if vo else " · no voiceover/recording.* yet"))
 
 
 def cmd_handoff(args):
@@ -445,6 +498,8 @@ def cmd_handoff(args):
         name = f"{n:02d}-{clip.name}"
         shutil.copy2(clip, dest / name)
         lines.append(f"{name}  {ffprobe_duration(clip):.1f}s" + ("" if clip.name.endswith("-1080p.mp4") else "  (draft, no 1080p yet)"))
+    if not any(dest.glob("[0-9][0-9]-*.mp4")):
+        die("no clips yet")
     (dest / "ORDER.txt").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
     print(f"\n{dest}")
@@ -454,6 +509,11 @@ def cmd_status(args):
     sync(quiet=True)
     stills = {shot(j): j for j in load_jobs("stills")}
     clips = {shot(j): j for j in load_jobs("clips")}
+    plan, pdf = VIDEO / "PLAN.md", VIDEO / "PLAN.pdf"
+    if plan.is_file() and (not pdf.is_file() or pdf.stat().st_mtime < plan.stat().st_mtime):
+        print("PLAN.pdf is older than PLAN.md: reprint it with the video-plan skill's plan.py pdf\n")
+    if not story_order():
+        die("no jobs yet: add them to scenes/stills-batch.json")
     print(f"{'shot':>5}  {'still':<22}{'clip':<22}final")
     for s in story_order():
         cells = []
@@ -489,7 +549,7 @@ def main():
     p.add_argument("--dry-run", action="store_true")
     p = sub.add_parser("pick")
     p.add_argument("shot")
-    p.add_argument("letter", choices=list(LETTERS))
+    p.add_argument("letter", type=str.lower, choices=list(LETTERS))
     p.add_argument("--clip", action="store_true")
     p = sub.add_parser("review")
     p.add_argument("kind", choices=["stills", "clips", "finals"])
