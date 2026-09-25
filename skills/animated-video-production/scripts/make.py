@@ -9,7 +9,7 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
   make.py clips  [shots] [--dry-run]   generate 360p drafts in clips/clips-batch.json
   make.py finals [shots] [--into DIR] [--no-draft] [--dry-run]
                                        native 720p + 1080p upsample of each clip
-  make.py pick 1a b [--clip]           keep variant b as the shot's version
+  make.py pick 1a 2 [--clip]           keep take 2 as the shot's version
   make.py review stills|clips|finals [shots]
                                        contact sheets in review/ (one image per page)
   make.py animatic                     edit/animatic.mp4: clips where they exist,
@@ -19,8 +19,9 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
 
 Shots are ids like 3 (a scene with one shot), 1a or 10b. Story order is the job order in scenes/stills-batch.json.
 
-A manifest job may carry "variants": 2-4. Each variant is its own job with its own seed,
-saved as scene-1a-v1-a.jpg, -b, ... until `pick` copies one to scene-1a-v1.jpg. Jobs whose
+A manifest job may carry "variants": 2-4. Each variant is a take with its own seed, saved in the
+shot's takes/ folder (scene-4/takes/scene-4-v1-take1.jpg, -take2, ...) until `pick` copies one
+up to scene-4-v1.jpg. Letters in a name only ever mean a shot (4a, 4b), never a take. Jobs whose
 output already exists are skipped, so any command can be rerun after an interruption.
 
 Settings come from ../project.conf (CONCURRENCY, RPM). Accounts are flow's job: it sends stills and
@@ -42,7 +43,7 @@ KINDS = {
     "stills": {"folder": "scenes", "stem": "scene", "manifest": "stills-batch.json", "ext": ".jpg"},
     "clips": {"folder": "clips", "stem": "clip", "manifest": "clips-batch.json", "ext": ".mp4"},
 }
-LETTERS = "abcd"
+MAX_TAKES = 4
 BASE_SEED = 12345
 JOB_ID = re.compile(r"^(scene|clip)-((0|[1-9]\d*)([a-z]?))-v([1-9]\d*)$")  # scene-3-v1 (one-shot scene) or scene-3a-v1
 FONTS = [
@@ -108,7 +109,7 @@ def load_jobs(kind):
 
 
 def shot(job):
-    return JOB_ID.match(re.sub(r"-[a-d]$", "", job["id"]))[2]  # variant jobs end in -a, -b, ...
+    return JOB_ID.match(re.sub(r"-take\d$", "", job["id"]))[2]  # take jobs end in -take1, -take2, ...
 
 
 def version(job):
@@ -136,7 +137,11 @@ def story_order():
 
 
 def variant_paths(out):
-    return [out.with_name(f"{out.stem}-{x}{out.suffix}") for x in LETTERS]
+    return [out.parent / "takes" / f"{out.stem}-take{i}{out.suffix}" for i in range(1, MAX_TAKES + 1)]
+
+
+def take_no(path):
+    return path.stem.rsplit("-take", 1)[1]
 
 
 def expand(jobs):
@@ -151,7 +156,8 @@ def expand(jobs):
             continue
         base = int(j.get("seed", BASE_SEED))
         for i, path in enumerate(variant_paths(out)[:n]):
-            run.append({**j, "id": f"{j['id']}-{LETTERS[i]}", "output": str(path), "seed": base + 1000 * i})
+            path.parent.mkdir(exist_ok=True)
+            run.append({**j, "id": f"{j['id']}-take{i + 1}", "output": str(path), "seed": base + 1000 * i})
     return run
 
 
@@ -270,7 +276,7 @@ def cmd_generate(kind, args):
         print(f"{s} waits for {', '.join(deps)}: make (and pick) that first, then rerun")
     pending = [shot(j) for j in jobs if not Path(j["output"]).is_file() and any(p.is_file() for p in variant_paths(Path(j["output"])))]
     if pending:
-        print(f"\nVariants waiting for a pick: {', '.join(pending)}  (make.py review {kind}, then make.py pick SHOT LETTER)")
+        print(f"\nVariants waiting for a pick: {', '.join(pending)}  (make.py review {kind}, then make.py pick SHOT TAKE)")
     sync()
 
 
@@ -315,9 +321,9 @@ def cmd_pick(args):
     if not jobs:
         die(f"no {kind} job for {args.shot}")
     out = Path(jobs[-1]["output"])
-    src = out.with_name(f"{out.stem}-{args.letter.lower()}{out.suffix}")
+    src = variant_paths(out)[args.take - 1]
     if not src.is_file():
-        die(f"no variant {src.relative_to(VIDEO)}")
+        die(f"no take {src.relative_to(VIDEO)}")
     shutil.copy2(src, out)
     print(f"{src.name} -> {out.name}")
     sync()
@@ -389,7 +395,7 @@ def review_sheets(kind, jobs, out_dir, tmp):
             rows.append(row)
             continue
         candidates = [(f"{s} v{v}", out)] if out.is_file() else [
-            (f"{s} v{v} {p.stem[-1]}", p) for p in variant_paths(out) if p.is_file()]
+            (f"{s} v{v} take {take_no(p)}", p) for p in variant_paths(out) if p.is_file()]
         if not candidates:
             missing.append(f"{s} v{v}")
         for label, path in candidates:
@@ -526,7 +532,7 @@ def cmd_status(args):
             if out.is_file():
                 cells.append(f"v{version(j)}")
             elif any(p.is_file() for p in variant_paths(out)):
-                cells.append(f"v{version(j)} pick {''.join(p.stem[-1] for p in variant_paths(out) if p.is_file())}")
+                cells.append(f"v{version(j)} pick take {','.join(take_no(p) for p in variant_paths(out) if p.is_file())}")
             else:
                 cells.append(f"v{version(j)} to make")
         j = clips.get(s)
@@ -549,7 +555,7 @@ def main():
     p.add_argument("--dry-run", action="store_true")
     p = sub.add_parser("pick")
     p.add_argument("shot")
-    p.add_argument("letter", type=str.lower, choices=list(LETTERS))
+    p.add_argument("take", type=int, choices=range(1, MAX_TAKES + 1))
     p.add_argument("--clip", action="store_true")
     p = sub.add_parser("review")
     p.add_argument("kind", choices=["stills", "clips", "finals"])

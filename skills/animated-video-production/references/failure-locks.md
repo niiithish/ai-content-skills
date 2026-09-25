@@ -15,8 +15,10 @@ For every tile, check:
 7. **Text:** in-world text (papers, signs, labels, packaging) is readable and spelled as the prompt quotes it; no captions, UI or watermarks.
 8. **Geometry:** nobody inside a wall, bench or prop, and doors and props look real and sit in the known layout.
 9. **Start state:** the still works as the first frame of the clip's action.
-10. **Clips:** the frame stays put from start to end, everyone moves, and props don't multiply or vanish.
-11. **Finals:** the same content as the draft.
+10. **Eyelines:** everyone faces and looks where the plan says: at the pie, at each other, at the dog. Nobody poses for the camera unless the plan asks for it.
+11. **New picture:** the camera differs from the shot before and from the look still. A still that is the look still again with small changes is a reject.
+12. **Clips:** the frame stays put from start to end, everyone moves, and props don't multiply or vanish.
+13. **Finals:** the same content as the draft.
 
 ## Stills
 
@@ -27,6 +29,8 @@ For every tile, check:
 | Blank labels and papers, or garbled lettering | No text quoted, or too much of it | Quote a short exact text for each surface (a headline, a brand name, 2–4 words); invent fictional brands; leave fine print soft. |
 | Golden-hour or sunset light | The model's default for "warm" or "afternoon" | Name the real source and brightness; add "not golden, not sunset" to the lighting line and the negatives. |
 | Each shot in the same room lit differently (7B took eight tries) | No locked look for the location | A hero still per environment, passed first in every still there. |
+| The look still comes back with small changes (pie heist 2b, 3a: the same garden view and poses as scene 1) | The look still passed with "match this" and the same characters in the same spot | Its `use_for` says light, colour and render only, and describes the new camera. If it still copies, pass the environment sheet instead of the look still for that shot and describe the light in words. |
+| Characters face the camera while the thing they want is behind them (pie heist 1: raccoons "planning" with their backs to the pie) | Facing never stated; the sheets show them facing camera | State each character's facing in the frame and what they look at. When the target is deeper in the picture, shoot over their shoulders: backs or three-quarter backs to camera. Negatives: "looking at the camera, posing for the camera". |
 | Too dark, or a heavy blue tint | "Abandoned" or "moody" read as night | State the brightness ("fairly bright daylight, walls clearly visible"); negatives "dark scene, night, deep blue tint". |
 | Two or four kittens instead of three | Count stated once | "EXACTLY THREE… all three clearly visible side by side", identity line per group, wrong counts in the negatives. Re-check finals too. |
 | The subject too small to read | No frame share given | "Large in the frame, fills the lower-left third"; viewpoint close and low. |

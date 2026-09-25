@@ -64,7 +64,7 @@ Music:
 
 - [ ] Every voiceover line has shots under it, and they add up to at least its clip length in `voiceover/timing.md`.
 - [ ] Each shot is one visible beat that can start from a still: characters already in place, nothing growing on screen, nobody walking in through a wall.
-- [ ] No two shots in a row share the same camera, and something happens in every shot.
+- [ ] No two shots in a row share the same camera, and something happens in every shot. Every character's facing and eyeline is stated, and no POV shot shows the character whose eyes it is.
 - [ ] Every character, location and prop in the shots is in "Sheets to make".
 - [ ] Captions are only in Edit notes, at the moments the brief names, in the client's exact wording; the Shots table has none.
 - [ ] Every suggested visual is marked in *italic*.
