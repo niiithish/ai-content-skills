@@ -9,6 +9,9 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
   make.py clips  [shots] [--dry-run]   generate 360p drafts in clips/clips-batch.json
   make.py finals [shots] [--into DIR] [--no-draft] [--dry-run]
                                        native 720p + 1080p upsample of each clip
+  make.py sheet PROMPT [--ref IMG ...] [--seed N] [--dry-run]
+                                       one reference sheet from characters/, environments/ or
+                                       props/<name>/prompts/<name>-vK.md, saved as <name>/<name>-vK.jpg
   make.py pick 1a 2 [--clip]           keep take 2 as the shot's version
   make.py review stills|clips|finals [shots]
                                        contact sheets in review/ (one image per page)
@@ -194,14 +197,21 @@ def run_batch(jobs, name, dry):
     cmd = ["flow", "batch", str(run_file), "--concurrency", c["CONCURRENCY"], "--rpm", c["RPM"], "--continue-on-error"]
     if dry:
         cmd.append("--dry-run")
+    failed = {}
     with open(log, "w") as fh:
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
-        for line in proc.stdout:
-            line = f"[{datetime.now():%H:%M:%S}] {line.rstrip()}"
+        for raw in proc.stdout:
+            line = f"[{datetime.now():%H:%M:%S}] {raw.rstrip()}"
             print(line, flush=True)
             fh.write(line + "\n")
-        proc.wait()
-    return proc.returncode
+            if '"failedJobs"' in raw:
+                try:
+                    for f in json.loads(raw)["failedJobs"]:
+                        failed[f["id"]] = f"{f.get('code', 'FAILED')}: {f.get('error', '')} {f.get('hint', '')}".strip()
+                except (ValueError, KeyError):
+                    pass
+    proc.wait()
+    return failed
 
 
 def report(paths):
@@ -267,8 +277,9 @@ def cmd_generate(kind, args):
     run = expand(jobs)
     ready, waiting = split_ready(run)
     check_inputs(ready)
+    failed = {}
     if ready:
-        run_batch(ready, kind, args.dry_run)
+        failed = run_batch(ready, kind, args.dry_run)
         args.dry_run or report([j["output"] for j in ready])
     else:
         print("nothing to generate: every output exists or waits on another shot")
@@ -277,7 +288,37 @@ def cmd_generate(kind, args):
     pending = [shot(j) for j in jobs if not Path(j["output"]).is_file() and any(p.is_file() for p in variant_paths(Path(j["output"])))]
     if pending:
         print(f"\nVariants waiting for a pick: {', '.join(pending)}  (make.py review {kind}, then make.py pick SHOT TAKE)")
+    if not args.dry_run:
+        not_made(kind, [j["id"] for j in ready], waiting, failed, pending)
     sync()
+
+
+def not_made(kind, ran, waiting, failed, pending):
+    """Every job in the manifest without an output, and why, so no shot is left out silently."""
+    rows = []
+    for j in load_jobs(kind):
+        if Path(j["output"]).is_file():
+            continue
+        s = shot(j)
+        errs = [e for i, e in failed.items() if i == j["id"] or i.startswith(j["id"] + "-take")]
+        if errs:
+            why = "FAILED " + errs[0]
+        elif s in pending:
+            why = "takes made, waiting for a pick"
+        elif s in waiting:
+            why = f"not run: waits for {', '.join(waiting[s])}"
+        elif any(i == j["id"] or i.startswith(j["id"] + "-take") for i in ran):
+            why = "FAILED: no output (see the log)"
+        else:
+            missing = [p for p in [j["prompt_file"], *j["ingredient"]] if not Path(p).is_file()]
+            why = f"not run: missing {', '.join(Path(p).name for p in missing)}" if missing else "not run: not named in this command"
+        rows.append((s, why))
+    if rows:
+        print(f"\nNot made ({len(rows)} of {len(load_jobs(kind))} {kind}):")
+        for s, why in rows:
+            print(f"  {s:<6} {why}")
+    else:
+        print(f"\nAll {kind} in the manifest are made.")
 
 
 def cmd_finals(args):
@@ -313,6 +354,33 @@ def cmd_finals(args):
                 shutil.copy2(p, dest / p.name)
                 print(f"copied  {p.name} -> clips/{args.into}/")
     print("\nFinals are new generations: run `make.py review finals` and compare them with the drafts.")
+
+
+def cmd_sheet(args):
+    """One 16:9 sheet straight through `flow image`: no manifest, nothing written outside the asset folder."""
+    prompt = Path(args.prompt).resolve()
+    if not prompt.is_file():
+        die(f"no prompt file {args.prompt}")
+    if prompt.parent.name != "prompts" or prompt.suffix != ".md":
+        die("a sheet prompt lives at <client>/characters|environments|props/<name>/prompts/<name>-vK.md")
+    out = prompt.parent.parent / f"{prompt.stem}.jpg"
+    if out.is_file():
+        die(f"{out} exists: write the next version's prompt instead of overwriting")
+    refs = [Path(r).resolve() for r in args.ref]
+    missing = [str(r) for r in refs if not r.is_file()]
+    if missing:
+        die("missing files:\n  " + "\n  ".join(missing))
+    cmd = ["flow", "image", "--prompt-file", str(prompt), "--aspect", "16:9", "-o", str(out)]
+    for r in refs:
+        cmd += ["--ingredient", str(r)]
+    if args.seed is not None:
+        cmd += ["--seed", str(args.seed)]
+    if args.dry_run:
+        cmd.append("--dry-run")
+    code = subprocess.run(cmd).returncode
+    if code:
+        sys.exit(code)
+    args.dry_run or print(f"\n{out}")
 
 
 def cmd_pick(args):
@@ -553,6 +621,11 @@ def main():
     p.add_argument("--into")
     p.add_argument("--no-draft", action="store_true")
     p.add_argument("--dry-run", action="store_true")
+    p = sub.add_parser("sheet")
+    p.add_argument("prompt")
+    p.add_argument("--ref", action="append", default=[])
+    p.add_argument("--seed", type=int)
+    p.add_argument("--dry-run", action="store_true")
     p = sub.add_parser("pick")
     p.add_argument("shot")
     p.add_argument("take", type=int, choices=range(1, MAX_TAKES + 1))
@@ -567,6 +640,7 @@ def main():
         "stills": lambda: cmd_generate("stills", args),
         "clips": lambda: cmd_generate("clips", args),
         "finals": lambda: cmd_finals(args),
+        "sheet": lambda: cmd_sheet(args),
         "pick": lambda: cmd_pick(args),
         "review": lambda: cmd_review(args),
         "animatic": lambda: cmd_animatic(args),

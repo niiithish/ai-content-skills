@@ -55,9 +55,9 @@ Every video starts with the `video-plan` skill. It writes `video-N/PLAN.md` (bri
 
 ## Phase 2: reference sheets
 
-1. Run `bash <skill-dir>/scripts/init-project.sh <client-folder> video-N`, where `<skill-dir>` is the folder holding this file. It adds `AGENTS.md`, the sheet folders, `project.conf`, the manifests and `scripts/make.py`, and never overwrites existing files. After the skill is updated, refresh a video's copy of `make.py` with `--update-scripts`.
+1. Run `bash <skill-dir>/scripts/init-project.sh <client-folder> video-N`, where `<skill-dir>` is the folder holding this file. It adds `AGENTS.md`, the sheet folders, `project.conf`, the manifests and `scripts/make.py`, and never overwrites existing files. After the skill is updated, refresh a video's copy of `make.py` with `--update-scripts`. For a standalone video (its own `AGENTS.md` and brief inside the video folder; see `video-plan` step 1), pass `.` as the video: `init-project.sh <client>/video-2 .` puts everything, sheets included, straight into `video-2/`.
 2. Take every recurring character, location and prop from the plan's "Sheets to make". Write each sheet prompt with the matching sheet skill in its animated mode: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes. Save it to `characters/<name>/prompts/`, `environments/<name>/prompts/` or `props/<name>/prompts/`.
-3. Generate them one or two at a time: sheets need individual attention.
+3. Generate them one or two at a time, because sheets need individual attention: `video-N/scripts/make.py sheet characters/rocco/prompts/rocco-v1.md` saves `characters/rocco/rocco-v1.jpg`. Add `--ref <image>` for a reference (a new version made from an approved one). Don't write your own batch files or scripts for sheets or anything else `make.py` covers; they litter the video folder. If `make.py` can't do something you need, say so in `RUN-LOG.md`.
 4. **Hero still per environment:** one still in each location, usually its first shot, becomes its look reference, fixing brightness, light direction, colour and render style. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient. Video 1 of the Milo project lost most of its rejected versions to shots in a location that had no hero still.
 5. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
 
@@ -80,10 +80,11 @@ Every video starts with the `video-plan` skill. It writes `video-N/PLAN.md` (bri
    - Duration from the plan's Clip column.
    - Ingredients: the approved still first, then the sheet of every character in the shot.
    - One variant by default, because clips cost credits. Use `"variants": 2` only for a shot that has already failed twice.
-3. The user runs `make.py clips`.
-4. Run `make.py review clips` (start, middle and end frames for each clip) and check them against the list. For motion problems the frames can't show, ask the user to watch those clips.
-5. Rejects become the next version, as with stills. Approvals go in `clips/all/APPROVED.md`.
-6. **Gate:** every clip is approved.
+3. The user runs `make.py clips`. Every clip starts from its own approved still, so every clip in the plan can run in the first batch. Chaining (starting a clip from the previous clip's last frame) is only used when the user asks for it.
+4. Every clip report lists all the plan's clips as made, failed (with the error) or not run (with the reason). A clip is never left out of a command without saying so. `make.py clips` ends with this "Not made" list: copy it into the report.
+5. Run `make.py review clips` (start, middle and end frames for each clip) and check them against the list. For motion problems the frames can't show, ask the user to watch those clips.
+6. Rejects become the next version, as with stills. Approvals go in `clips/all/APPROVED.md`.
+7. **Gate:** every clip is approved.
 
 ## Phase 5: 1080p finals
 
@@ -115,8 +116,9 @@ Run it from anywhere as `video-N/scripts/make.py <command>`:
 |---|---|
 | `status` | Warns when `PLAN.pdf` is older than `PLAN.md`; every shot in story order: newest still, clip, whether a 1080p exists, takes waiting for a pick |
 | `stills [shots] [--dry-run]` | Stills batch (all shots, or only those named); skips outputs that exist, holds back jobs waiting on an unmade still; syncs `scenes/all` |
-| `clips [shots] [--dry-run]` | 360p clip batch; syncs `clips/all` |
+| `clips [shots] [--dry-run]` | 360p clip batch; ends with every manifest job that has no output and why (failed with its code, waiting, missing input, not named); syncs `clips/all` |
 | `finals [shots] [--into DIR] [--no-draft] [--dry-run]` | 720p + 1080p upsample; flow sends these only to paid accounts; skips finals that exist. `--into` also copies the named shots' 1080p files to `clips/DIR/` |
+| `sheet PROMPT [--ref IMG] [--seed N] [--dry-run]` | One 16:9 reference sheet from its prompt file, saved next to `prompts/` with the same name (`rocco-v2.md` → `rocco-v2.jpg`); refuses to overwrite |
 | `pick SHOT TAKE [--clip]` | Copies a take (`scene-1a/takes/scene-1a-v1-take2.jpg`) up to the shot's version file (`scene-1a/scene-1a-v1.jpg`) |
 | `review stills\|clips\|finals [shots]` | Contact sheets in `review/`, 10 stills or 4 clips per image |
 | `animatic` | `edit/animatic.mp4`: clips where they exist, stills elsewhere, labelled, over `voiceover/recording.*` or the scratch read |
@@ -157,6 +159,8 @@ Optional: `"seed"` to force a fresh job, since Flow resumes a job whose prompt, 
     clips/all/                newest clip per shot, 1080p once it exists + APPROVED.md
     review/  edit/
 ```
+
+A standalone video has the same contents with no client level above it: `video-2/` holds `AGENTS.md`, `brief/`, `characters/`, `environments/`, `props/`, `PLAN.md`, `scripts/make.py`, `voiceover/`, `scenes/`, `clips/`, `review/` and `edit/`.
 
 Shot ids are a scene number with no leading zero. A letter only ever means another shot in the same scene, a different beat of the line with its own camera (the cat grabs the bread in `5a`, the police give chase in `5b`); it never means another try of the same shot. Tries are versions (`-v2`) and seeds of one version are takes (`takes/…-take2`). A scene with one shot has no letter (`3`: `scenes/scene-3/scene-3-v1.jpg`); a scene with several gets one letter per shot and a folder each (`1a`, `1b`: `scenes/scene-1/scene-1a/scene-1a-v1.jpg`). Clips mirror scenes. An inserted shot gets the next free letter in its scene (`2c`), and its place in the manifest sets its position in the edit. If a one-shot scene gains a second shot, first move its files to `scene-3/scene-3a/` (and `clip-3/clip-3a/`), renaming `scene-3-` to `scene-3a-` in the files, prompts and manifests; `make.py` refuses a scene with both.
 

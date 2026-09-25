@@ -15,10 +15,12 @@ Use the structured JSON style in [references/prompt-blueprints.md](references/pr
 
 Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The defaults below still apply: one 16:9 landscape establishing plate. What changes:
 
-- **Render** the place as feature-animation CG: sculpted, slightly stylized architecture and props, rich but controlled colour, layered set dressing, soft 3D shading. Replace the photoreal and `photograph` wording with this.
+- **Render** the place as feature-animation CG: believable real-world architecture and proportions (doors a person can walk through, straight walls, level sills, real materials such as painted clapboard, brick, grass, wood), rendered with simplified textures, rich but controlled colour, layered set dressing and soft 3D shading. Replace the photoreal and `photograph` wording with this. Think of the sets in Over the Hedge or Toy Story's houses: the stylization is in the render and the colour, not in bent geometry.
+- **Not a toy or clay set.** Never ask for rounded, bulging, curved, wobbly or "exaggerated" walls, windows or doors, and never for clay, plasticine or miniature: the model turns those into a melted toy-town with doll-sized doors and lumpy grass. If a first sheet looks too photographic, fix the render words (simplified textures, soft 3D shading, cleaner saturated colour, no photographic grain), not the geometry.
+- **Every landmark the shots use is on the sheet.** Go through the plan's Shots table and list each place a shot happens at, at its story size: the porch *with the dog's bed on it*, the sill low enough for the ladder gag, the cat flap wide enough for the small one and too tight for the big one. A step instead of the porch, or a missing hedge, means every still there invents its own. Leave out props that move or vanish during the story (the pie on the sill); the stills place them.
 - **Light** with the location's real source at the time of day the story needs, and state its brightness. No golden hour unless the brief asks for it. This light becomes the reference for every still shot there.
 - **View:** 3/4 stays the default. When the shot list frames the place head-on (a building facade seen straight on), make the sheet head-on too, so stills and sheet agree.
-- **Empty of characters,** but include the fixed props the story uses (a bench, the bins, a box and quilt) at their story positions.
+- **Empty of characters,** but include the fixed props the story uses (a bench, the bins, a dog bed) at their story positions.
 - **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
 ## Defaults
