@@ -1,6 +1,18 @@
 ---
 name: prop-generation
-description: Write detailed JSON image prompts for consistent multi-view prop and product reference sheets on a #504f50 studio background, choosing a tight set of views that explain the object for video and ad workflows (jewellery often 2-view loop + clasp; otherwise 3-4). Outputs prompt text only and never generates the image itself. Use whenever a physical product or object must appear in AI images or video — jewellery, apparel, footwear, cosmetics, packaging, gadgets, toys, appliances, tools, vehicles, furniture, or any other non-character item — including for a product ad, campaign, or video clip. Also use to design or remix a product, turn a concept or reference photo into front, side, rear, three-quarter, or detail views, or lock a product's exact appearance across shots. Trigger on "prompt for my product", "reference sheet for this necklace", or an uploaded product photo that needs consistent views. Has an animated mode for stylized 3D projects.
+description: >-
+  Write detailed JSON image prompts for consistent multi-view prop and product reference
+  sheets on a #504f50 studio background, choosing a tight set of views that explain the
+  object for video and ad workflows (jewellery often 2-view loop + clasp; otherwise 3-4).
+  Outputs prompt text only and never generates the image itself. Use whenever a physical
+  product or object must appear in AI images or video — jewellery, apparel, footwear,
+  cosmetics, packaging, gadgets, toys, appliances, tools, vehicles, furniture, or any
+  other non-character item — including for a product ad, campaign, or video clip. Also use
+  to design or remix a product, turn a concept or reference photo into front, side, rear,
+  three-quarter, or detail views, or lock a product's exact appearance across shots.
+  Trigger on "prompt for my product", "reference sheet for this necklace", or an uploaded
+  product photo that needs consistent views. Has an animated mode for stylized 3D
+  projects.
 ---
 
 # Prop Generation

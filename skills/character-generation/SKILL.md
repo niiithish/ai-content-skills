@@ -1,6 +1,15 @@
 ---
 name: character-generation
-description: Write JSON image prompts for three-panel character reference sheets — headless full-body front, full-body back, and a large 3/4 close portrait — on a #504f50 studio background. Photoreal by default, with an animated mode for stylized 3D characters and animals. Outputs prompt text only. Use whenever a person or recurring character must appear in AI images or video and needs a consistent face, hair, wardrobe and accessories across shots: an AI model, spokesmodel, brand model, creator, influencer, UGC creator, presenter, avatar, persona, or an animated character. Also use to design or remix a character. Trigger on "I want an AI model", "give me a model for my brand", "creator for this ad", "character sheet", or "character for a jewelry ad".
+description: >-
+  Write JSON image prompts for three-panel character reference sheets — headless full-body
+  front, full-body back, and a large 3/4 close portrait — on a #504f50 studio background.
+  Photoreal by default, with an animated mode for stylized 3D characters and animals.
+  Outputs prompt text only. Use whenever a person or recurring character must appear in AI
+  images or video and needs a consistent face, hair, wardrobe and accessories across
+  shots: an AI model, spokesmodel, brand model, creator, influencer, UGC creator,
+  presenter, avatar, persona, or an animated character. Also use to design or remix a
+  character. Trigger on "I want an AI model", "give me a model for my brand", "creator for
+  this ad", "character sheet", or "character for a jewelry ad".
 ---
 
 # Character Generation
