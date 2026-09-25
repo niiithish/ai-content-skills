@@ -38,6 +38,8 @@ What the errors mean:
 - A final `QUOTA` means the live account pool lacks enough credits.
 - `TIMEOUT` means an accepted job may still be resumable.
 - If accepted media vanishes twice, `PROMPT_REJECTED` means rewrite or simplify the prompt.
+- `UNSAFE_GENERATION` means Google's safety filter blocked the prompt or a reference. The same prompt is rejected every time, and flow refuses to resend it, so rewrite the flagged wording (or swap the reference) and rerun.
+- `NETWORK` on a clip that was already accepted means Google's status check stopped answering, not that the clip failed. Rerun the same command; it picks the clip up without spending credits.
 
 Seeds:
 - A job resumes by its prompt, ingredients and seed. After a lost job (`NOT_FOUND`), or to get a genuinely new take of the same prompt, set a new `"seed"` on it.
