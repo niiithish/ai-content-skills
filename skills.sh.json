@@ -3,16 +3,14 @@
   "groupings": [
     {
       "title": "AI Content Generation",
-      "description": "An end-to-end short-form video pipeline: ad scripts, model-ready image prompts for props, characters and environments, and AI video generation prompts.",
+      "description": "An end-to-end short-form video pipeline: ad scripts, model-ready image prompts for props, characters and environments, and animated video production.",
       "skills": [
         "script-generation",
         "prop-generation",
         "character-generation",
         "environment-generation",
         "photoreal-still-prompt",
-        "animated-video-production",
-        "animated-scene-still",
-        "video-generation"
+        "animated-video-production"
       ]
     },
     {
@@ -38,7 +36,7 @@
     },
     {
       "title": "Google Flow",
-      "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images and Omni Flash videos. The CLI rotates saved Google accounts on quota; agents must not switch mid-job.",
+      "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images, Omni Flash videos, batch manifests and 1080p upsample. The CLI rotates saved Google accounts on quota.",
       "skills": [
         "flow"
       ]

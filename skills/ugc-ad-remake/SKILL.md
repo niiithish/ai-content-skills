@@ -9,7 +9,7 @@ Remake a winning talking-head UGC ad with a **new talent** and **new product**, 
 
 Write **prompt text only**. Put the finished prompt in a code block and stop. Do not generate images/video unless the user asks. Do not dump a whole production package on "note the goal" or "don't do anything."
 
-This skill overrides **script-generation** and **video-generation** for talking-head remakes: on-camera speech is allowed, the camera stays locked to the still, and the room does not change every cut.
+This skill overrides **script-generation** for talking-head remakes: on-camera speech is allowed, the camera stays locked to the still, and the room does not change every cut.
 
 ## Working style
 

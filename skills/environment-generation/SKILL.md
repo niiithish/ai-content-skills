@@ -1,6 +1,6 @@
 ---
 name: environment-generation
-description: Write detailed JSON image prompts for spatially clear wide 3/4-view environment references used in AI image generation, photo remixing, and AI video. Outputs prompt text only and never generates the image itself. Use whenever a scene needs a place — a location, setting, backdrop, background, set, room, or venue — for an AI image, product ad, or video clip, including a bedroom, bathroom, kitchen, living room, office, shop, gym, cafe, warehouse, stadium, street, poolside, courtyard, garden, landscape, or fantasy and sci-fi environment. Also use to establish or remix a location from a concept or reference photo, or to keep one place consistent across several shots. Trigger on "where should this be shot", "background for this clip", or a cut list naming places that need references.
+description: Write detailed JSON image prompts for spatially clear wide 3/4-view environment references used in AI image generation, photo remixing, and AI video. Outputs prompt text only and never generates the image itself. Use whenever a scene needs a place — a location, setting, backdrop, background, set, room, or venue — for an AI image, product ad, or video clip, including a bedroom, bathroom, kitchen, living room, office, shop, gym, cafe, warehouse, stadium, street, poolside, courtyard, garden, landscape, or fantasy and sci-fi environment. Also use to establish or remix a location from a concept or reference photo, or to keep one place consistent across several shots. Trigger on "where should this be shot", "background for this clip", or a cut list naming places that need references. Has an animated mode for stylized 3D projects.
 ---
 
 # Environment Generation
@@ -10,6 +10,16 @@ Write one image-generation prompt for a coherent environment reference: depth, b
 **Output is a JSON image prompt only.** Return one valid JSON object in a `json` code block and stop. Do not generate, render, preview, or offer to generate the image.
 
 Use the structured JSON style in [references/prompt-blueprints.md](references/prompt-blueprints.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
+
+## Animated mode
+
+Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels and separators. What changes:
+
+- **Render** the place as feature-animation CG: sculpted, slightly stylized architecture and props, rich but controlled colour, layered set dressing, soft 3D shading. Replace the photoreal and `photograph` wording with this.
+- **Light** with the location's real source at the time of day the story needs, and state its brightness. No golden hour unless the brief asks for it. This light becomes the reference for every still shot there.
+- **View:** 3/4 stays the default. When the shot list frames the place head-on (a building facade seen straight on), make the sheet head-on too, so stills and sheet agree.
+- **Empty of characters,** but include the fixed props the story uses (a bench, the bins, a box and quilt) at their story positions.
+- **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
 ## Defaults
 

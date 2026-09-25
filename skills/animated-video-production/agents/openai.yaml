@@ -1,0 +1,4 @@
+interface:
+  display_name: "Animated Video Production"
+  short_description: "Run a 3D animated short-form video project from client brief to 1080p clips with Flow"
+  default_prompt: "Use $animated-video-production to run this animated video project: intake the brief, lock the story, then stills, clips and finals with make.py batches."

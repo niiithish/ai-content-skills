@@ -120,7 +120,7 @@ If they asked for variations: three full scripts, each a different hook mechanic
 
 If they asked for AI video / animation / storyboard, append:
 
-7. **Cut list** — table: # · duration · line · shot · environment. 2–3s per cut, new environment or subject at least every other cut. Nobody needs to speak on camera (lip-sync is the AI tell). Hand the cut list to **video-generation**.
+7. **Cut list** — table: # · duration · line · shot · environment. 2–3s per cut, new environment or subject at least every other cut. Nobody needs to speak on camera (lip-sync is the AI tell). For an animated project, the cut list feeds the shot list in **animated-video-production**.
 
 ## Revision map
 

@@ -8,8 +8,7 @@ description: >
   runs /simple-talking-head. Triggers: talking video, talking head, woman saying,
   man saying, he says, she says, holding the phone, selfie ugc, tripod talking
   head, no product in hand. Do not use to remake a winning ad, swap a product
-  into a reference clip, or write silent cinematic b-roll — those are
-  ugc-ad-remake or video-generation.
+  into a reference clip (that is ugc-ad-remake), or write silent cinematic b-roll.
 ---
 
 # Simple talking head

@@ -1,6 +1,6 @@
 ---
 name: character-generation
-description: Write JSON image prompts for photorealistic three-panel character reference sheets — headless full-body front, full-body back, and a large 3/4 close portrait — on a #504f50 studio background. Outputs prompt text only and never generates the image. Use whenever a person must appear in AI images or video, including an AI model, virtual model, spokesmodel, brand model, creator, influencer, UGC creator, presenter, talent, avatar, persona, or any human character, for a product ad, jewellery or fashion shoot, campaign, or video clip. Also use to design or remix a character, or to lock a consistent face, hair, wardrobe, and accessories across shots. Trigger on "I want an AI model", "give me a model for my brand", "creator for this ad", "character for a jewelry ad", or a bare mention of a model, girl, guy, or person who needs generating.
+description: Write JSON image prompts for three-panel character reference sheets — headless full-body front, full-body back, and a large 3/4 close portrait — on a #504f50 studio background. Photoreal by default, with an animated mode for stylized 3D characters and animals. Outputs prompt text only. Use whenever a person or recurring character must appear in AI images or video and needs a consistent face, hair, wardrobe and accessories across shots: an AI model, spokesmodel, brand model, creator, influencer, UGC creator, presenter, avatar, persona, or an animated character. Also use to design or remix a character. Trigger on "I want an AI model", "give me a model for my brand", "creator for this ad", "character sheet", or "character for a jewelry ad".
 ---
 
 # Character Generation
@@ -10,6 +10,16 @@ Write one image-generation prompt for a wide landscape character reference sheet
 **Output is a JSON image prompt only.** Return one valid JSON object in a `json` code block and stop. Do not generate, render, preview, or offer to generate the image. A required smile variant is a second, separate JSON object in its own `json` code block.
 
 Use the structured JSON style in [references/prompt-blueprint.md](references/prompt-blueprint.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
+
+## Animated mode
+
+Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels and separators. What changes:
+
+- **Render** the character as sculpted, slightly stylized feature-animation CG: appealing proportions, large expressive eyes with catch-lights, shaped hair or groomed fur, simplified skin with soft subsurface shading. Replace the photoreal skin rules (pores, oil, fine lines) and `studio photograph` wording with this. Keep the studio sheet neutral and evenly lit.
+- **Animals and creatures** use the same three panels: headless front body, back body, and a large 3/4 head portrait. Describe fur colour, pattern and markings concretely, since they are the identity.
+- **A group** of near-identical characters (a litter of kittens, a squad) can be one lineup sheet of complete characters instead of three panels. Say so in the prompt, and in every scene prompt that uses it.
+- **Scale:** state the character's size against a familiar reference ("a small young cat, back at an adult's shin"). Scene prompts reuse it.
+- **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
 ## Composition (always)
 

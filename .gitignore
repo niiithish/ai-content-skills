@@ -21,3 +21,4 @@ skills-lock.json
 # Superseded image-generation attempts; keep only the final named examples
 /examples/flow-skill-samples/*-v*.jpg
 /examples/flow-skill-samples/*-v*.json
+__pycache__/

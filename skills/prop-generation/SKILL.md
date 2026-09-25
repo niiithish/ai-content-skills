@@ -1,6 +1,6 @@
 ---
 name: prop-generation
-description: Write detailed JSON image prompts for consistent multi-view prop and product reference sheets on a #504f50 studio background, choosing a tight set of views that explain the object for video and ad workflows (jewellery often 2-view loop + clasp; otherwise 3-4). Outputs prompt text only and never generates the image itself. Use whenever a physical product or object must appear in AI images or video — jewellery, apparel, footwear, cosmetics, packaging, gadgets, toys, appliances, tools, vehicles, furniture, or any other non-character item — including for a product ad, campaign, or video clip. Also use to design or remix a product, turn a concept or reference photo into front, side, rear, three-quarter, or detail views, or lock a product's exact appearance across shots. Trigger on "prompt for my product", "reference sheet for this necklace", or an uploaded product photo that needs consistent views.
+description: Write detailed JSON image prompts for consistent multi-view prop and product reference sheets on a #504f50 studio background, choosing a tight set of views that explain the object for video and ad workflows (jewellery often 2-view loop + clasp; otherwise 3-4). Outputs prompt text only and never generates the image itself. Use whenever a physical product or object must appear in AI images or video — jewellery, apparel, footwear, cosmetics, packaging, gadgets, toys, appliances, tools, vehicles, furniture, or any other non-character item — including for a product ad, campaign, or video clip. Also use to design or remix a product, turn a concept or reference photo into front, side, rear, three-quarter, or detail views, or lock a product's exact appearance across shots. Trigger on "prompt for my product", "reference sheet for this necklace", or an uploaded product photo that needs consistent views. Has an animated mode for stylized 3D projects.
 ---
 
 # Prop Generation
@@ -10,6 +10,14 @@ Write one image-generation prompt for a multi-view prop/product reference sheet 
 **Output is a JSON image prompt only.** Return one valid JSON object in a `json` code block and stop. Do not generate, render, preview, or offer to generate the image.
 
 Use the structured JSON style in [references/prompt-blueprints.md](references/prompt-blueprints.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
+
+## Animated mode
+
+Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels and separators. What changes:
+
+- **Render** the prop as feature-animation CG: slightly simplified, appealing shapes, clear readable colour, soft 3D shading, and materials that still read (glossy metal, wax paper, cardboard). Replace the `studio photograph` wording with this.
+- **Scale:** state its size against a character ("about the length of the cat's body") so scenes keep it consistent.
+- **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
 ## Defaults
 
