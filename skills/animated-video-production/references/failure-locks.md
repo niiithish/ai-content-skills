@@ -73,7 +73,9 @@ For every tile, check:
 
 | Symptom | Fix |
 |---|---|
-| `NOT_FOUND`, or a lost job that resumes to nothing | Rerun once; if it's still `NOT_FOUND`, put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
+| `lost by Google · regenerating on another account` | Normal: Google dropped the clip or left it stuck for 5 minutes, and flow is regenerating it once in the same run. Let the batch finish; don't stop or rerun it. |
+| `NOT_FOUND`, or `QUEUE_STALLED`, after that regeneration | Rerun the batch once later; if it fails the same way, put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
+| `PROMPT_REJECTED` | Google discarded that exact clip on two accounts. Simplify or rewrite the shot's prompt. |
 | `BATCH_WORKER_FAILED` | Rerun the same command. |
 | A job stuck with no progress; there is no cancel command | Stop and report it to the user (command, last output, what you think is stuck); don't wait it out. See `flow`. |
 | A chained clip's opening frame soft or different | Frame taken from the 360p draft, or redrawn with an image model | `make.py lastframe` from the approved clip's 1080p final. |
