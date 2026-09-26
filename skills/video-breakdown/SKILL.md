@@ -1,91 +1,55 @@
 ---
 name: video-breakdown
 description: >
-  Break down a local video into shots, cuts, scene changes, on-screen actions,
-  and spoken lines using cheap 2fps contact sheets plus offline transcription.
-  Use when the user wants a detailed video breakdown, shot list, cut list,
-  scene changes, what someone is doing or saying, "what happens in this video",
-  or runs /video-breakdown. Triggers: "detailed breakdown of the video",
-  "her actions", "the cuts", "scene changes", "what she is saying", shot-by-shot,
-  beat-by-beat, analyze this clip/ad/reel.
+  Decode a reference video into a remake bible. Gemini 3.1 Pro watches the video
+  (the user pastes our prompt into gemini.google.com) and returns a v3 JSON: the
+  video's pattern and hook, one scene per hard cut with camera moves, start and
+  end states, how the picture builds on the spoken words, overlay captions and a
+  timestamped transcript. The agent then checks it against contact sheets of the
+  real frames. Use when the user wants a video breakdown, decode, shot list, cut
+  list, scene changes, remake bible, "what happens in this video", when a client
+  sends a reference or inspiration video with a brief, or on /video-breakdown.
+  Triggers: decode this video, detailed breakdown, the cuts, scene changes,
+  shot-by-shot, beat-by-beat, analyze this clip/ad/reel, recreate this ad.
 ---
 
-# Video breakdown (contact sheets + transcript)
+# Video breakdown (Gemini remake bible + contact sheets)
 
-Default method for any local video the user wants broken down. Optimize for **cost and speed**, not frame-by-frame viewing.
+Most agent models can't take video as input; they only see still frames. Gemini 3.1 Pro watches the whole video with its sound, so it writes the breakdown, and you check it against real frames. `<skill-dir>` is the folder holding this file.
 
-Do **not** open every extracted still one by one. Do **not** stitch the whole video into a single packed grid. Do **not** spawn a subagent just to look at a sheet.
+## 1. Get the JSON
 
-Needs `ffmpeg`, `magick` (ImageMagick), and `python3`. Speech needs `voxtype` (or the **voxtype-transcribe** skill).
+If there is no v3 JSON yet, tell the user this, then **stop and wait**. Don't invent a breakdown in the meantime.
 
-## Pipeline (run in parallel)
+1. Open https://gemini.google.com/app and set the model to **Gemini 3.1 Pro** (not Flash).
+2. Attach the video.
+3. Paste the prompt in [references/gemini-prompt.md](references/gemini-prompt.md) word for word. Give the user the file path, or print it in one `text` block they can copy.
+4. Save Gemini's reply as `<video name>.breakdown.json` next to the video, or attach it here.
 
-1. Confirm the file exists. `ffprobe` duration, fps, size, and whether there is an audio stream.
-2. **At the same time:**
-   - Build contact sheets with the script below.
-   - Transcribe if there is audio. Do not use cloud STT unless the user asks.
-3. Read **every contact sheet** (each sheet is one image). Then write the breakdown.
-4. Pull a full-size still only when a sheet cell is ambiguous (wardrobe change, product text, a cut you cannot place). Usually 0–2 extra frames.
+A JSON is usable only if it has `"schema_version": 3`, a `pattern` object and `scenes` that cover 0.0 to `duration_sec` with no gaps, and every scene has `camera`, `build`, `still` and `timeline`. Anything else (an older schema, missing keys, one-line scenes): name what's missing and ask the user to rerun Gemini with the prompt. A JSON someone saved earlier in `brief/` gets the same check before you rely on it.
 
-## Contact sheets
+## 2. Check it against the frames
 
-`<skill-dir>` is the folder that contains this `SKILL.md`. Run:
+Gemini can miss or invent things, and the plan depends on getting the pattern right. Look at the video yourself, cheaply:
 
 ```bash
 bash "<skill-dir>/scripts/contact-sheets.sh" "/abs/path/to/video.mp4" /tmp/video-breakdown-$$
 ```
 
-Do not hardcode `~/.grok/skills`. Resolve the script from this skill's directory.
+It samples at 2 fps, labels each frame with its time and puts 12 frames (6 s) on each sheet. Stdout gives `OUT=`, `MANIFEST=` and one row per sheet: `sheet_path  start_sec  end_sec  count  label`. Read every sheet in time order: never open the frames one by one, and don't spawn a subagent to look.
 
-It samples at **2 fps**, labels each still with a timestamp, and stitches **12 stills (6 seconds) per image**, 4 across. Stdout includes `OUT=`, `MANIFEST=`, and a TSV: `sheet_path  start_sec  end_sec  count  label`.
+Check the JSON's cuts, settings, characters and `build` against the sheets. Where they disagree, trust the frames for what's visible and Gemini for the sound, motion between frames and the words. Pull a full-size frame (`ffmpeg -ss T -i video -frames:v 1 out.jpg`) only when a sheet cell is unclear: product text, a cut you can't place.
 
-- Short-form / ads / Reels / product clips: keep 2 fps and 6s chunks (the script default).
-- Longer than ~3 minutes: still use the script. Read sheets in time order. Summarize repeating beats instead of narrating every half-second.
+If the user doesn't want to use Gemini, write the breakdown from the sheets plus a local transcript (`ffmpeg -i video -ar 16000 -ac 1 -c:a pcm_s16le /tmp/a.wav && voxtype transcribe /tmp/a.wav`), and say it's weaker on motion and timing.
 
-Read the sheets yourself, in order. Each sheet is the context for that 6-second window.
+## 3. Write it up
 
-## What to extract from a sheet
+Lead with what a remake needs first:
 
-- Hard cuts (wardrobe, location, bag/product state, camera jump).
-- Continuous action vs a new shot.
-- Hands, props, on-screen text you can actually read.
-- Order: left → right, top → bottom, then the next sheet.
+- **Pattern:** the repeating formula, the hook, why it works, each character's world. This is what planning copies.
+- **Form, length, size and premise.**
+- **Transcript**, phrase by phrase.
+- **Each scene in time order**, as written in the JSON (don't paraphrase or pad): shot, times, purpose; camera (framing, angle, move); set; characters; elements; build; timeline with its words; still; overlay captions (or none).
+- **Checked against the frames:** what you confirmed, what you corrected, and anything neither source settles.
 
-Do not invent motion that is not on the sheet. If a zip or set-down happens *between* cells, say the gap, do not describe the missing frames.
-
-## Transcript
-
-If **voxtype-transcribe** is installed, follow it.
-
-Otherwise convert to 16 kHz mono WAV and run `voxtype transcribe` (it rejects any other format):
-
-```bash
-INPUT="/abs/path/to/video.mp4"
-WAV="/tmp/voxtype-$(basename "${INPUT%.*}").wav"
-ffmpeg -y -i "$INPUT" -acodec pcm_s16le -ar 16000 -ac 1 "$WAV"
-voxtype transcribe "$WAV"
-rm -f "$WAV"
-```
-
-Align lines to shots using the sheet timestamps and mouth/action changes — not by splitting audio unless a line is clearly wrong.
-
-Proper names and product words may be wrong. Correct only when the picture makes it obvious (logo, packing into two wells, etc.) and note the correction.
-
-No audio stream, or no `voxtype`: skip transcription and say so.
-
-## Write-up
-
-Lead with duration, format (e.g. vertical 1080×1920), and a one-line premise.
-
-Then a **cut list** (shot number, timecode, length, what changed).
-
-Then **shot-by-shot**:
-
-- Time range
-- Location / wardrobe if it changed
-- What the person does (hands, face, product)
-- What they say in that range, quoted
-
-End with anything the sheets plus transcript cannot settle.
-
-Do not dump the contact-sheet files on the user unless they ask. `/tmp` is fine.
+Save the write-up as `<video name>.breakdown.md` next to the JSON when the video belongs to a project, so planning reads it instead of redoing it.

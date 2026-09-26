@@ -24,12 +24,16 @@ Generation runs through the `flow` skill's CLI. Flow chooses the account for eve
 
 - **The user runs batches.** For anything with more than one shot, write the prompts and manifest jobs, then give the one `make.py` command to run, in its own code block. Don't run long generations yourself or sit waiting on them. A single test still is fine to run inline when it settles a question. Everything else in `make.py` (`status`, `review`, `pick`, `animatic`, `handoff`, `sync`, and `--dry-run`) is quick: run it yourself, never hand it to the user.
 - **Stop at every gate** and wait for approval. Show results as review sheets, never as a list of file paths to open one by one.
+- **Report short, and decide.** After every batch, one table of every shot in the command: made, failed (with the error) or waiting (with the reason). Then the next command in its own code block, saying what it leaves out and why, and your recommendation. Never end on a menu of options, and leave out detail the user didn't ask for.
 - **Nothing is overwritten.** A new attempt is the next version (`v2`, `v3`) with its own prompt file and a manifest job that replaces the old one. An approved still or clip is listed in `APPROVED.md` in `scenes/all/` or `clips/all/`, and from then on it's locked unless the user asks to redo it.
-- **Check your own work before the user sees it.** After every batch, build the review sheet, read it yourself against the checklist in `failure-locks.md`, and report per shot: which take you'd pick, and what's wrong with any you wouldn't. Write the fix for any shot you'd reject before the user asks.
+- **Check your own work before the user sees it.** After every batch, build the review sheet, read it yourself against the checklist in `failure-locks.md`, and report per shot: which take you'd pick, and what's wrong with any you wouldn't. Write the fix for any shot you'd reject before the user asks. When the user says they review clips (or stills) themselves, stop: no review sheets, frame reads or transcripts of those until they ask.
+- **Make only what was asked.** When the user has picked a take or a base to build on, work from exactly that file and make one take, not several. No extra variants or new designs they didn't ask for.
+- **A rule change redoes only the rejected shots.** When feedback changes a rule, write new versions for the shots the user rejected; approved and working prompts stay as they are unless the user names them.
+- **Stop when flow is broken.** If `flow` hangs with no progress for about 5 minutes, or fails the same way twice after following its hint, stop at once. Report the exact command, the last lines of output, the error code and what you think is wrong (a stuck lock, an expired login, a Google error) in a few lines the user can hand to whoever fixes flow. Don't wait longer, work around it or offer a list of options.
 - **Standing defaults, in every project, overridden only when the user says so:**
   - Generated stills and clips never contain captions, subtitles, text overlays or music. This holds even when the brief asks for captions or music: the user adds those in the edit.
   - Clip audio is what you would hear if you were standing in that scene: ambience, footsteps, objects, animals, and wordless character sounds (gasps, grunts, laughs, sighs), each tied to a visible action.
-  - No music, narration or spoken words.
+  - No music, narration or spoken words, unless the plan has characters speaking their lines on camera: then each clip carries its line (see "Characters who speak on camera" in `clip-prompt.md`).
 
   The clip template in `clip-prompt.md` writes all of this into every prompt. Keep it.
 - **Record decisions.** When the user or the client decides something that changes a default, add it with the date to the Decisions list in the project `AGENTS.md`, and to `failure-locks.md` if it's a prompt lesson that would apply to other projects too.
@@ -41,7 +45,7 @@ Only when the user says to run the whole video without them (they are away and w
 - **You run every batch yourself** and wait for it to finish, including sheets, `stills`, `clips` and `finals`.
 - **You are the reviewer at every gate.** Approve the plan and sheets yourself, read every review sheet against `failure-locks.md`, pick takes with `make.py pick`, and add each approval to `APPROVED.md` marked `(agent)`.
 - **Retry limits.** A still gets at most 2 new versions and a clip at most 1; after that, keep the best one and flag it. The video-credit budget is 200 unless the user gives one: check `flow accounts` before each clip batch, and don't start one that would go over.
-- **Stop only for** `LOGIN_REQUIRED`, a spent budget, or a CLI error whose hint doesn't resolve it.
+- **Stop only for** `LOGIN_REQUIRED`, a spent budget, a CLI error whose hint doesn't resolve it, or flow hanging with no progress (report it as in "Stop when flow is broken").
 - **Log everything in `video-N/RUN-LOG.md`** as you go: each gate you passed, what you picked or rejected and why, credits spent, and a final "Check these" list of anything the user should look at.
 - **Finish with** `make.py handoff` and `make.py status`, and end your reply with the summary from `RUN-LOG.md`.
 
@@ -59,7 +63,8 @@ Every video starts with the `video-plan` skill. It writes `video-N/PLAN.md` (bri
 2. Take every recurring character, location and prop from the plan's "Sheets to make". Write each sheet prompt with the matching sheet skill in its animated mode: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes. Save it to `characters/<name>/prompts/`, `environments/<name>/prompts/` or `props/<name>/prompts/`.
 3. Generate them one or two at a time, because sheets need individual attention: `video-N/scripts/make.py sheet characters/rocco/prompts/rocco-v1.md` saves `characters/rocco/rocco-v1.jpg`. Add `--ref <image>` for a reference (a new version made from an approved one). Don't write your own batch files or scripts for sheets or anything else `make.py` covers; they litter the video folder. If `make.py` can't do something you need, say so in `RUN-LOG.md`.
 4. **Hero still per environment:** one still in each location, usually its first shot, becomes its look reference, fixing brightness, light direction, colour and render style. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient. Video 1 of the Milo project lost most of its rejected versions to shots in a location that had no hero still.
-5. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
+5. **Product mascots** (a real product with a face and limbs): image models redraw logos and labels wrong. Make the sheet by editing the client's real product photo with `--ref`, adding only the face, arms and legs, and quote the label text exactly; never generate the product or its logo from a description.
+6. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
 
 ## Phase 3: stills
 
@@ -80,7 +85,9 @@ Every video starts with the `video-plan` skill. It writes `video-N/PLAN.md` (bri
    - Duration from the plan's Clip column.
    - Ingredients: the approved still first, then the sheet of every character in the shot.
    - One variant by default, because clips cost credits. Use `"variants": 2` only for a shot that has already failed twice.
-3. The user runs `make.py clips`. Every clip starts from its own approved still, so every clip in the plan can run in the first batch. Chaining (starting a clip from the previous clip's last frame) is only used when the user asks for it.
+3. The user runs `make.py clips`. Every clip starts from its own approved still, so every clip in the plan can run in the first batch. Chaining (starting a clip from the previous clip's last frame) is only used when the user asks for it, or when the plan splits one spoken line across clips so it plays as one shot.
+   - **Chained clips** can't run until the clip before them is approved and has its final: approve `8a`, run `make.py finals 8a`, then `make.py lastframe 8a 8b` saves a frame 0.5 s before the end of the 1080p final as `8b`'s opening still. Never take the frame from a 360p draft, and never redraw it with an image model: both come out soft or different.
+   - Say which clips are chained and in what order before the first batch, and list them as "waiting on 8a" in every report, so none is held back silently.
 4. Every clip report lists all the plan's clips as made, failed (with the error) or not run (with the reason). A clip is never left out of a command without saying so. `make.py clips` ends with this "Not made" list: copy it into the report.
 5. Run `make.py review clips` (start, middle and end frames for each clip) and check them against the list. For motion problems the frames can't show, ask the user to watch those clips.
 6. Rejects become the next version, as with stills. Approvals go in `clips/all/APPROVED.md`.
@@ -119,6 +126,7 @@ Run it from anywhere as `video-N/scripts/make.py <command>`:
 | `clips [shots] [--dry-run]` | 360p clip batch; ends with every manifest job that has no output and why (failed with its code, waiting, missing input, not named); syncs `clips/all` |
 | `finals [shots] [--into DIR] [--no-draft] [--dry-run]` | 720p + 1080p upsample; flow sends these only to paid accounts; skips finals that exist. `--into` also copies the named shots' 1080p files to `clips/DIR/` |
 | `sheet PROMPT [--ref IMG] [--seed N] [--dry-run]` | One 16:9 reference sheet from its prompt file, saved next to `prompts/` with the same name (`rocco-v2.md` → `rocco-v2.jpg`); refuses to overwrite |
+| `lastframe FROM TO` | Opening still for a chained clip: the frame 0.5 s before the end of clip FROM's 1080p final, saved as TO's next still version (`make.py lastframe 8a 8b` → `scene-8b-vK.jpg`) |
 | `pick SHOT TAKE [--clip]` | Copies a take (`scene-1a/takes/scene-1a-v1-take2.jpg`) up to the shot's version file (`scene-1a/scene-1a-v1.jpg`) |
 | `review stills\|clips\|finals [shots]` | Contact sheets in `review/`, 10 stills or 4 clips per image |
 | `animatic` | `edit/animatic.mp4`: clips where they exist, stills elsewhere, labelled, over `voiceover/recording.*` or the scratch read |
@@ -162,7 +170,7 @@ Optional: `"seed"` to force a fresh job, since Flow resumes a job whose prompt, 
 
 A standalone video has the same contents with no client level above it: `video-2/` holds `AGENTS.md`, `brief/`, `characters/`, `environments/`, `props/`, `PLAN.md`, `scripts/make.py`, `voiceover/`, `scenes/`, `clips/`, `review/` and `edit/`.
 
-Shot ids are a scene number with no leading zero. A letter only ever means another shot in the same scene, a different beat of the line with its own camera (the cat grabs the bread in `5a`, the police give chase in `5b`); it never means another try of the same shot. Tries are versions (`-v2`) and seeds of one version are takes (`takes/…-take2`). A scene with one shot has no letter (`3`: `scenes/scene-3/scene-3-v1.jpg`); a scene with several gets one letter per shot and a folder each (`1a`, `1b`: `scenes/scene-1/scene-1a/scene-1a-v1.jpg`). Clips mirror scenes. An inserted shot gets the next free letter in its scene (`2c`), and its place in the manifest sets its position in the edit. If a one-shot scene gains a second shot, first move its files to `scene-3/scene-3a/` (and `clip-3/clip-3a/`), renaming `scene-3-` to `scene-3a-` in the files, prompts and manifests; `make.py` refuses a scene with both.
+Shot ids are a scene number with no leading zero. A letter only ever means another shot in the same scene, a different beat of the line with its own camera (the cat grabs the bread in `5a`, the police give chase in `5b`); it never means another try of the same shot. Tries are versions (`-v2`) and seeds of one version are takes (`takes/…-take2`). A scene with one shot has no letter (`3`: `scenes/scene-3/scene-3-v1.jpg`); a scene with several gets one letter per shot and a folder each (`1a`, `1b`: `scenes/scene-1/scene-1a/scene-1a-v1.jpg`). Clips mirror scenes. Letters follow play order: a shot inserted between `8a` and `8b` becomes `8b`, and the old `8b` and every later letter move up one (files, prompts, manifest ids and the plan). Never give it the next free letter, because `8c` playing before `8b` confuses everyone. If a one-shot scene gains a second shot, first move its files to `scene-3/scene-3a/` (and `clip-3/clip-3a/`), renaming `scene-3-` to `scene-3a-` in the files, prompts and manifests; `make.py` refuses a scene with both.
 
 ## Visual direction
 
@@ -180,6 +188,6 @@ Shot ids are a scene number with no leading zero. A letter only ever means anoth
 
 - **Plan:** `video-plan`'s own checks passed, and the user approved `PLAN.pdf`.
 - **Stills:** you read the review sheets yourself, and each shot has a pick or a fix.
-- **Clips:** the frame stays locked, everyone keeps moving, and the audio is scene-only.
+- **Clips:** the frame stays locked (or makes its one smooth move in a talking clip), everyone keeps moving, and the audio is scene-only or the exact line, each word once.
 - **Finals:** each one was compared with its draft.
 - **Hand-off:** it matches what the brief asks for, no more.

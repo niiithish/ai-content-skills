@@ -1,4 +1,4 @@
 interface:
   display_name: "Video Breakdown"
-  short_description: "Shot list, cuts, actions, and spoken lines from a local video"
-  default_prompt: "Use $video-breakdown to break down this video: shots, cuts, her actions, scene changes, and what she is saying."
+  short_description: "Gemini 3.1 Pro remake bible of a reference video: pattern, per-cut scenes, build on spoken words, transcript"
+  default_prompt: "Use $video-breakdown to decode this video: give me the Gemini prompt, then turn the v3 JSON into a breakdown."

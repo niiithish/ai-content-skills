@@ -62,6 +62,9 @@ Music:
 
 ## Coverage check
 
+- [ ] Every sentence of the script is in a shot, word for word: tick them off against the brief's `.md`. Rerun this after any clips are merged, split or dropped.
+- [ ] A line spoken on camera is never split mid-sentence, and a long one uses the fewest clips (up to 10 s each).
+- [ ] If the client sent a reference video, the plan follows its pattern (hook, how each segment builds, each character's world).
 - [ ] Every voiceover line has shots under it, and they add up to at least its clip length in `voiceover/timing.md`.
 - [ ] Each shot is one visible beat that can start from a still: characters already in place, nothing growing on screen, nobody walking in through a wall.
 - [ ] No two shots in a row share the same camera, and something happens in every shot. Every character's facing and eyeline is stated, and no POV shot shows the character whose eyes it is.

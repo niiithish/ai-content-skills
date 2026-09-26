@@ -6,6 +6,8 @@
                                                the real voiceover/recording.* if present (faster-whisper),
                                                otherwise a Cartesia scratch read; writes
                                                voiceover/timing.md
+  plan.py voiceover VIDEO_DIR --on-camera      lines spoken inside the clips (Flow makes the voice): time each
+                                               from its word count, no Cartesia; writes voiceover/timing.md
   plan.py pdf VIDEO_DIR                        PLAN.pdf from PLAN.md (rerun after every edit); first rewrites
                                                the totals line under the shot table (shots, length, credits)
 
@@ -31,11 +33,13 @@ import wave
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parent.parent
-CLIP_LENGTHS = (4, 6, 8)
+CLIP_LENGTHS = (4, 6, 8, 10)
 HEADROOM = 1.0  # seconds of picture past a line's slot; a clip that is too long only gets trimmed
-DRAFT_CREDITS = {4: 4, 6: 5, 8: 6}  # Flow credits per clip at 360p (labflow config.CREDIT_TABLE_360P)
-FINAL_CREDITS = {4: 7, 6: 10, 8: 12}  # at 720p; the 1080p upsample is free on the paid account
+DRAFT_CREDITS = {4: 4, 6: 5, 8: 6, 10: 7}  # Flow credits per clip at 360p (labflow config.CREDIT_TABLE_360P)
+FINAL_CREDITS = {4: 7, 6: 10, 8: 12, 10: 15}  # at 720p; the 1080p upsample is free on the paid account
 TOTALS = re.compile(r"^(\d+ shots · )?Voiceover .*$", re.M)
+ON_CAMERA_WPS = 3.2  # words per second Flow speaks a line asked for "at a brisk, natural pace" (Mysa video 2, measured: 3.0-3.3)
+ON_CAMERA_HEADROOM = 0.5  # the clip ends this soon after the last word; the character holds the pose
 LINE_GAP = 0.4  # pause between lines in the scratch read
 CARTESIA = "https://api.cartesia.ai"
 CARTESIA_VERSION = "2026-08-14"
@@ -186,9 +190,33 @@ def clip_for(seconds):
     return next((n for n in CLIP_LENGTHS if n >= seconds + HEADROOM), None)
 
 
+def on_camera_timing(video, lines):
+    """Lines spoken by characters inside the clip: Flow makes the voice, so time each line from its word count."""
+    rows = ["| Line | Words | Length | Clips | Text |", "|---|---|---|---|---|"]
+    total = sum(len(t.split()) for t in lines) / ON_CAMERA_WPS
+    for i, text in enumerate(lines, 1):
+        words = len(text.split())
+        length = words / ON_CAMERA_WPS
+        clip = next((n for n in CLIP_LENGTHS if n >= length + ON_CAMERA_HEADROOM), None)
+        if clip:
+            clips = f"{clip} s"
+        else:  # the fewest clips of up to 10 s, each holding whole sentences
+            n = -(-(length + ON_CAMERA_HEADROOM) // 10)
+            clips = f"split into {int(n)} × 10 s at a sentence break"
+        rows.append(f"| {i} | {words} | {length:.1f} s | {clips} | {text} |")
+    body = (f"# Line timing (spoken on camera)\n\nSource: word count. Length {total:.1f} s of speech.\n\nFlow generates the voice inside each clip, so each line is timed from "
+            f"its word count at {ON_CAMERA_WPS:g} words a second, a brisk delivery. Clips is the shortest Flow length that "
+            f"holds the line plus {ON_CAMERA_HEADROOM:g} s; a longer line gets the fewest 10 s clips, split only at a sentence break, "
+            f"chained so it plays as one shot.\n\n" + "\n".join(rows) + "\n")
+    (video / "voiceover" / "timing.md").write_text(body)
+    print(body + f"\n{video / 'voiceover' / 'timing.md'}")
+
+
 def cmd_voiceover(args):
     video = Path(args.video).expanduser().resolve()
     c = conf(video)
+    if args.on_camera:
+        return on_camera_timing(video, script_lines(video))
     if args.voices is not None:
         q = urllib.parse.urlencode({"limit": 100, **({"q": args.voices} if args.voices else {})})
         for v in json.loads(cartesia(c, f"/voices?{q}"))["data"]:
@@ -309,7 +337,7 @@ def totals(md, video):
         return md
     bad = sorted({n for n in clips if n not in DRAFT_CREDITS})
     if bad:
-        die(f"clip lengths must be 4, 6 or 8 s, not {bad}")
+        die(f"clip lengths must be 4, 6, 8 or 10 s, not {bad}")
     timing = video / "voiceover" / "timing.md"
     m = timing.is_file() and re.search(r"Length ([\d.]+) s", timing.read_text())
     line = (f"{len(clips)} shots · Voiceover {m[1] + ' s' if m else 'not timed'} · picture {sum(clips)} s · "
@@ -351,6 +379,7 @@ def main():
     p.add_argument("video", nargs="?", default="video-1")
     p = sub.add_parser("voiceover")
     p.add_argument("video")
+    p.add_argument("--on-camera", action="store_true", help="lines spoken inside the clips: time them from word count, no Cartesia")
     p.add_argument("--voices", nargs="?", const="", metavar="WORD", help="list Cartesia English voices, optionally matching WORD")
     p = sub.add_parser("pdf")
     p.add_argument("video")

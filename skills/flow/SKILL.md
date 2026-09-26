@@ -11,6 +11,13 @@ description: >
 
 Run `flow` and deliver the requested media. Do not stop after writing a prompt unless the user explicitly asks for prompt text only. When a project skill says the user runs batches (for example `animated-video-production`), write the manifest and give the command instead of running it.
 
+## When a job is stuck or flow is broken
+
+- There is no cancel command. Don't kill and relaunch in a loop.
+- `NOT_FOUND`: rerun the same command once. If it's still `NOT_FOUND`, put a new `"seed"` on that job and rerun.
+- `BATCH_WORKER_FAILED`: rerun the same command.
+- **No progress for about 5 minutes, or the same failure twice after following the hint: stop.** Tell the user at once, in a few lines they can hand to whoever fixes flow: the exact command, the last lines of output, the error code, and what looks wrong (a stuck profile lock, an expired login, a Google error). Don't keep waiting, work around it or offer a menu of options.
+
 ## Let the CLI manage itself
 
 Run the requested generation command directly. Labflow owns:

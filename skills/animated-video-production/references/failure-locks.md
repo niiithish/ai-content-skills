@@ -17,7 +17,7 @@ For every tile, check:
 9. **Start state:** the still works as the first frame of the clip's action.
 10. **Eyelines:** everyone faces and looks where the plan says: at the pie, at each other, at the dog. Nobody poses for the camera unless the plan asks for it.
 11. **New picture:** the camera differs from the shot before and from the look still. A still that is the look still again with small changes is a reject.
-12. **Clips:** the frame stays put from start to end, everyone moves, and props don't multiply or vanish.
+12. **Clips:** the frame stays put from start to end (or makes its one smooth move in a talking clip), everyone moves, and props don't multiply or vanish. A talking clip says its whole line, each word once, with no gaps.
 13. **Finals:** the same content as the draft.
 
 ## Stills
@@ -39,6 +39,7 @@ For every tile, check:
 | A character holding a prop they shouldn't have (Daniel with bread in 2B) | Prop state unstated | State both hands' contents: "holds only the empty open lunch box; nothing else in his hands". |
 | A fake-looking or pasted-on door | A door invented for a close shot | Shoot from a side the environment sheet already shows (6C: straight behind Daniel, from the alley). |
 | The flaws of a rejected still come back | The rejected still was passed as a reference | Never pass a rejected attempt; describe the wanted composition in words or use an approved still. |
+| A product mascot's logo or label redrawn wrong (Mysa bottle, four tries) | The product generated from a description or restyled from a sheet | Edit the real product photo with `--ref`, adding only the face and limbs; quote the label text exactly. Once the user likes a take, build on that exact file. |
 | An environment sheet like a melted toy or clay town (curved walls, doll-sized door, lumpy grass) | "Rounded", "curved", "exaggerated" or "playful" geometry asked for to escape a photoreal first try | Real-world architecture and proportions; stylize through the render words (simplified textures, soft 3D shading, controlled saturated colour). See `environment-generation` animated mode. |
 | Photoreal cats or animals | A real-animal word dominating | Keep the "stylized feature-animation fur, big glossy eyes" wording and pass the sheet. |
 
@@ -58,13 +59,24 @@ For every tile, check:
 | Unwanted voices or creature sounds (kitten cries in 6A) | Sound named for an off-screen source | Leave it out of the clip and add it in the edit from another clip. |
 | Thunder or rain nobody asked for | Weather words in the prompt | Describe only the wanted ambience in Sound. |
 | Words spoken on camera | Character "shouts" or "says" | "Never says any words; only wordless sounds such as…". |
+| A word said twice with a gap ("growing… growing") | Impact sounds (stamp, thud, slam) under the speech, or the line's words quoted again in Action as timing cues | Quote the line once, in Dialogue; time Action in seconds; "The spoken line above is the only dialogue… every word said exactly once, in order"; no impact sounds while anyone speaks. See `clip-prompt.md`. |
+| A sentence cut off at the end of a clip (Mysa 8a) | One sentence split across two clips | Never split a sentence; a clip holds whole sentences, up to 10 s. |
+| A mascot sad, flat or grumpy all clip | Mood words in the prompt ("deadpan stare", "yikes face", "awkward grin") | Only the plan's expression, said positively, held first frame to last. |
+| A "continuous" clip jumps back to its opening frame midway | @image1 read as a frame to return to | The one-take paragraph: changes only go forward, the effect never vanishes, "@image1 is only the first frame, never a frame to return to", the camera never returns to the opening framing. |
+| A clip comes back complete but silent, line and action gone | The content filter on sensitive words ("lube", "vaginal") | Soften the wording around the line; ask the user before changing the client's line. |
+| Boring first drafts (Mysa v1, "5/10") | A locked camera, gestures only, no visual idea | A slow smooth camera move and a playful visual idea per line that builds on its words, planned in `PLAN.md`. |
+| Over-the-top fixes (crash zooms, fire, dirt on the mascot) | "Make it exciting" read as violence and speed | Smooth moves only; big effects that transform the world, never damage or dirty the character, unless the plan asks. |
+| Speech with gaps, or action after the last word | Action timed to pause the line, sparkles or gags written for the end | Speech starts on frame one and never waits; after the last word the character only holds the pose. |
 | A random object (red box, glitch box) | An ambiguous prop in the still | Simplify the still's props, or name the object and its fixed place in the clip. |
 
 ## Flow and batches
 
 | Symptom | Fix |
 |---|---|
-| `NOT_FOUND`, or a lost job that resumes to nothing | Put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
+| `NOT_FOUND`, or a lost job that resumes to nothing | Rerun once; if it's still `NOT_FOUND`, put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
+| `BATCH_WORKER_FAILED` | Rerun the same command. |
+| A job stuck with no progress; there is no cancel command | Stop and report it to the user (command, last output, what you think is stuck); don't wait it out. See `flow`. |
+| A chained clip's opening frame soft or different | Frame taken from the 360p draft, or redrawn with an image model | `make.py lastframe` from the approved clip's 1080p final. |
 | A 1080p final differs from the approved draft | Finals are new generations. Review finals against drafts; rename the bad one `rejected-…`, change the seed, rerun that shot. |
 | The 1080p upsample fails or costs credits | It is free only on a paid account; flow sends upsample jobs only to paid accounts; if none has credits, finals fail with a hint. A 360p draft cannot be upscaled. |
 | A batch interrupted | Rerun the same command; outputs that exist are skipped and accepted jobs resume. |

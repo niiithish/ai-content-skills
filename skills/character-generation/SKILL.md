@@ -28,6 +28,7 @@ Use this mode when the project is stylized 3D animation (the `animated-video-pro
 - **Animals and creatures** use the same three panels: headless front body, back body, and a large 3/4 head portrait. Describe fur colour, pattern and markings concretely, since they are the identity.
 - **A group** of near-identical characters (a litter of kittens, a squad) can be one lineup sheet of complete characters instead of three panels. Say so in the prompt, and in every scene prompt that uses it.
 - **Scale:** state the character's size against a familiar reference ("a small young cat, back at an adult's shin"). Scene prompts reuse it.
+- **Product mascots** (a real product given a face and limbs): don't write the product from a description, because logos and labels get redrawn wrong. Pass the client's real product photo as the reference and ask for an edit that adds only the face, arms and legs, keeping the label, logo, colours and shape exactly; quote the label text. When the user already likes a take, edit that exact file, one take at a time.
 - **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
 ## Composition (always)

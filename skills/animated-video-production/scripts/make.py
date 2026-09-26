@@ -13,6 +13,7 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
                                        one reference sheet from characters/, environments/ or
                                        props/<name>/prompts/<name>-vK.md, saved as <name>/<name>-vK.jpg
   make.py pick 1a 2 [--clip]           keep take 2 as the shot's version
+  make.py lastframe 8a 8b              chained clip: scene-8b-vK.jpg from the end of clip 8a's 1080p final
   make.py review stills|clips|finals [shots]
                                        contact sheets in review/ (one image per page)
   make.py animatic                     edit/animatic.mp4: clips where they exist,
@@ -397,6 +398,34 @@ def cmd_pick(args):
     sync()
 
 
+def cmd_lastframe(args):
+    """The opening still of a chained clip: a frame 0.5 s before the end of the previous clip's 1080p final."""
+    src_shot, dest_shot = args.from_shot.lower(), args.to_shot.lower()
+    jobs = [j for j in load_jobs("clips") if shot(j) == src_shot]
+    if not jobs:
+        die(f"no clip job for {src_shot}")
+    draft = Path(jobs[-1]["output"])
+    final = draft.parent / "final" / f"{draft.stem}-1080p.mp4"
+    if not final.is_file():
+        die(f"no {final.relative_to(VIDEO)}: approve {draft.name}, then run `make.py finals {src_shot}`. "
+            "A 360p frame is too soft, and a redrawn one drifts.")
+    m = re.match(r"^(\d+)([a-z]?)$", dest_shot)
+    if not m:
+        die(f"{dest_shot} is not a shot id like 3 or 8b")
+    folder = VIDEO / "scenes" / f"scene-{m[1]}" / (f"scene-{dest_shot}" if m[2] else "")
+    taken = [int(n) for n in re.findall(rf"scene-{dest_shot}-v(\d+)\.", " ".join(p.name for p in folder.glob("**/*")))]
+    v = max(taken, default=0) + 1
+    out = folder / f"scene-{dest_shot}-v{v}.jpg"
+    t = max(ffprobe_duration(final) - 0.5, 0)
+    (folder / "prompts").mkdir(parents=True, exist_ok=True)
+    frame(final, t, out)
+    (folder / "prompts" / f"{out.stem}.md").write_text(
+        f"# {out.stem}: not generated\n\nFrame {t:.2f} s (0.5 s before the end) of "
+        f"{final.relative_to(VIDEO)}, the opening frame of the chained clip {dest_shot}.\n")
+    print(f"{out.relative_to(VIDEO)}  (frame {t:.2f} s of {final.name})")
+    print(f"Use it as @image1 of clip {dest_shot}'s job.")
+
+
 def ffprobe_duration(path):
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
                        capture_output=True, text=True)
@@ -630,6 +659,9 @@ def main():
     p.add_argument("shot")
     p.add_argument("take", type=int, choices=range(1, MAX_TAKES + 1))
     p.add_argument("--clip", action="store_true")
+    p = sub.add_parser("lastframe")
+    p.add_argument("from_shot")
+    p.add_argument("to_shot")
     p = sub.add_parser("review")
     p.add_argument("kind", choices=["stills", "clips", "finals"])
     p.add_argument("shots", nargs="*")
@@ -642,6 +674,7 @@ def main():
         "finals": lambda: cmd_finals(args),
         "sheet": lambda: cmd_sheet(args),
         "pick": lambda: cmd_pick(args),
+        "lastframe": lambda: cmd_lastframe(args),
         "review": lambda: cmd_review(args),
         "animatic": lambda: cmd_animatic(args),
         "handoff": lambda: cmd_handoff(args),

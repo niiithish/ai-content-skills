@@ -46,7 +46,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
-| [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON: form, one detailed scene per cut, start/end states. |
+| [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON (pattern, hook, one scene per cut, how each builds on the spoken words), then check it against contact sheets of the real frames. |
 | [`flow`](./skills/flow) | Run Google Flow via the local Labflow `flow` CLI: Nano Banana Pro 1K images, Omni Flash video, `flow batch` manifests, seeds, and 1080p upsample. Rotates saved accounts on quota. |
 
 ## Pipeline
