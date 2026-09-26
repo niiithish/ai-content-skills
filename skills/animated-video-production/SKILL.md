@@ -42,7 +42,7 @@ Generation runs through the `flow` skill's CLI. Flow chooses the account for eve
 
 Only when the user says to run the whole video without them (they are away and won't review). Then everything above changes like this:
 
-- **You run every batch yourself** and wait for it to finish, including sheets, `stills`, `clips` and `finals`.
+- **You run every batch yourself** and wait for it to finish, including sheets, `stills`, `clips` and `finals`: run the command itself in the background and let its exit notify you, never a `pgrep -f` wait loop (see `flow`, Waiting on a run).
 - **You are the reviewer at every gate.** Approve the plan and sheets yourself, read every review sheet against `failure-locks.md`, pick takes with `make.py pick`, and add each approval to `APPROVED.md` marked `(agent)`.
 - **Retry limits.** A still gets at most 2 new versions and a clip at most 1; after that, keep the best one and flag it. The video-credit budget is 200 unless the user gives one: check `flow accounts` before each clip batch, and don't start one that would go over.
 - **Stop only for** `LOGIN_REQUIRED`, a spent budget, a CLI error whose hint doesn't resolve it, or flow hanging with no progress (report it as in "Stop when flow is broken").

@@ -77,6 +77,7 @@ For every tile, check:
 | `NOT_FOUND`, or `QUEUE_STALLED`, after that regeneration | Rerun the batch once later; if it fails the same way, put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
 | `PROMPT_REJECTED` | Google discarded that exact clip on two accounts. Simplify or rewrite the shot's prompt. |
 | `BATCH_WORKER_FAILED` | Rerun the same command. |
+| The same shots `NOT_FOUND` ("media vanished", "not visible to this account") on every account and seed while the rest succeed (Mysa video 3: 4 of 31) | Google's content filter took the finished clip down, not flow. Stop rerunning (each try spends credits on another account). Soften the still and the prompt: clothed or abstract figures, no bedroom or couple-in-bed staging, no quoted intimate label text (Mysa 8 went through as the couple at the bathroom sink). Tell the user the changes before rerunning as a new version. |
 | A job stuck with no progress; there is no cancel command | Stop and report it to the user (command, last output, what you think is stuck); don't wait it out. See `flow`. |
 | A chained clip's opening frame soft or different | Frame taken from the 360p draft, or redrawn with an image model | `make.py lastframe` from the approved clip's 1080p final. |
 | A 1080p final differs from the approved draft | Finals are new generations. Review finals against drafts; rename the bad one `rejected-…`, change the seed, rerun that shot. |
