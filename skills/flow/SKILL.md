@@ -44,6 +44,7 @@ Treat queue and resume progress as informational, and let the command finish. On
 
 For independent bulk jobs, use `flow batch` with one manifest entry per output. Do not launch many separate CLI processes.
 - **Pacing:** the default is three accepted jobs in flight and at most six new submissions per minute, with per-account video-credit accounting.
+- **Stills** render `--concurrency` at a time in the one browser, so `--rpm` is what caps a large still batch: at `--rpm 6`, 20 stills take about 3.5 minutes.
 - **Sequencing:** keep review-dependent or sequential shots in separate batches.
 - **Resume:** rerun the same batch after an interruption; completed outputs are skipped and accepted jobs resume. Do not wrap Flow commands in an external retry loop.
 
