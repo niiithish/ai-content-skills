@@ -16,7 +16,7 @@ Run `flow` and deliver the requested media. Do not stop after writing a prompt u
 - There is no cancel command. Don't kill and relaunch in a loop.
 - `NOT_FOUND`: rerun the same command once. If it's still `NOT_FOUND`, put a new `"seed"` on that job and rerun.
 - `BATCH_WORKER_FAILED`: rerun the same command.
-- **No progress for about 5 minutes, or the same failure twice after following the hint: stop.** Tell the user at once, in a few lines they can hand to whoever fixes flow: the exact command, the last lines of output, the error code, and what looks wrong (a stuck profile lock, an expired login, a Google error). Don't keep waiting, work around it or offer a menu of options.
+- **No progress for about 10 minutes, or the same failure twice after following the hint: stop.** Tell the user at once, in a few lines they can hand to whoever fixes flow: the exact command, the last lines of output, the error code, and what looks wrong (a stuck profile lock, an expired login, a Google error). Don't keep waiting, work around it or offer a menu of options.
 
 ## Let the CLI manage itself
 
@@ -44,7 +44,8 @@ For independent bulk jobs, use `flow batch` with one manifest entry per output. 
 What the errors mean:
 - A final `QUOTA` means the live account pool lacks enough credits.
 - `TIMEOUT` means an accepted job may still be resumable.
-- If accepted media vanishes twice, `PROMPT_REJECTED` means rewrite or simplify the prompt.
+- A clip Google drops, or leaves generating for 5 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
+- If accepted media is lost on two accounts, `PROMPT_REJECTED` means rewrite or simplify the prompt.
 - `UNSAFE_GENERATION` means Google's safety filter blocked the prompt or a reference. The same prompt is rejected every time, and flow refuses to resend it, so rewrite the flagged wording (or swap the reference) and rerun.
 - `NETWORK` means Google answered slowly or not at all, not that the job failed. Rerun the same command once: accepted jobs are picked up without spending credits, and jobs that never went through are sent again. Stop and report only if the rerun fails with `NETWORK` too.
 - A failed batch lists each job's `error` and `hint` under `failedJobs`; follow the hint.
