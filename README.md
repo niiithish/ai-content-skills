@@ -18,7 +18,10 @@ npx skills add niiithish/ai-content-skills --skill prop-generation
 npx skills add niiithish/ai-content-skills --skill character-generation
 npx skills add niiithish/ai-content-skills --skill environment-generation
 npx skills add niiithish/ai-content-skills --skill photoreal-still-prompt
+npx skills add niiithish/ai-content-skills --skill video-production
 npx skills add niiithish/ai-content-skills --skill animated-video-production
+npx skills add niiithish/ai-content-skills --skill photoreal-video-production
+npx skills add niiithish/ai-content-skills --skill captions
 npx skills add niiithish/ai-content-skills --skill clay-animation-video-prompt
 npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
 npx skills add niiithish/ai-content-skills --skill simple-talking-head
@@ -42,7 +45,10 @@ npx skills add niiithish/ai-content-skills --list
 | [`environment-generation`](./skills/environment-generation) | JSON wide 3/4-view location references for image and video. |
 | [`photoreal-still-prompt`](./skills/photoreal-still-prompt) | JSON prompts for one believable real-world image or video start frame, defaulting to 9:16 portrait, with grounded product packaging, camera, and light. |
 | [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or faster-whisper), with suggested visuals marked. |
-| [`animated-video-production`](./skills/animated-video-production) | Approved plan to 1080p clips for DreamWorks-style 3D animation on Google Flow: sheets, still and clip prompts, a `make.py` batch/review/hand-off tool, and a failure-locks checklist. |
+| [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
+| [`animated-video-production`](./skills/animated-video-production) | The DreamWorks-style 3D animation layer on `video-production`: look, still and clip prompts, product mascots, on-camera speech. |
+| [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
+| [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, whisper timing, a preview frame first. |
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
@@ -60,12 +66,12 @@ environment-generation
 flow                   →  stills and clips on Google Flow
 ```
 
-Animated projects run as one skill that calls the others:
+Animated and photoreal projects run on one shared pipeline, with a style layer on top:
 
 ```text
-animated-video-production
-  intake → story lock → sheets (character / environment / prop, animated mode)
-  → stills → 360p clips → 1080p finals → hand-off      (generation via flow)
+video-plan → video-production + animated- or photoreal-video-production
+  sheets (character / environment / prop) → stills → 360p clips (agent runs and reviews)
+  → 1080p finals (user runs) → hand-off → the user's edit → captions      (generation via flow)
 ```
 
 | Stage | Delivers |
@@ -75,7 +81,8 @@ animated-video-production
 | **character-generation** | Front/back wardrobe + large face sheet for consistent talent. |
 | **environment-generation** | Spatially clear 3/4 location sheet. |
 | **photoreal-still-prompt** | One photoreal lifestyle, product-in-context, or scene image prompt. |
-| **animated-video-production** | A whole animated project: brief digest, shot list timed to the voiceover, sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
+| **animated-video-production** / **photoreal-video-production** | A whole animated or photoreal project on `video-production`: sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
+| **captions** | Captions and section labels burned into the user's finished edit. |
 | **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
 | **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
 | **video-breakdown** | Gemini 3.1 Pro JSON → form + one rebuildable scene per hard cut (not a props dump). |
@@ -91,8 +98,8 @@ skills/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   ├── references/        load-on-demand blueprints and checklists
-│   ├── scripts/           helper scripts (video-breakdown, animated-video-production)
-│   └── templates/         project files (animated-video-production)
+│   ├── scripts/           helper scripts (video-breakdown, video-production, captions)
+│   └── templates/         project files (video-production)
 ```
 
 - `SKILL.md` — name, description (auto-invoke triggers), actionable instructions

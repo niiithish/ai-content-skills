@@ -45,13 +45,13 @@ After approval, add or cut shots only when the user asks, and reprint the PDF af
 
 ## Hand-over
 
-Once the plan is approved, load the skill for its style. It starts from `PLAN.md` and doesn't repeat the intake.
+Once the plan is approved, load the skill for its style. It starts from `PLAN.md` and doesn't repeat the intake. Every Flow scene video (animated or photoreal) goes through `video-production`: its layout, `make.py` and gates. Never hand-write batch files instead.
 
 | Style | Skill |
 |---|---|
-| 3D feature animation (DreamWorks, Pixar) | `animated-video-production` |
+| 3D feature animation (DreamWorks, Pixar) | `animated-video-production` (it loads `video-production`) |
 | Claymation or stop-motion | `clay-animation-video-prompt` |
-| Photoreal scenes under a voiceover | `photoreal-still-prompt` for the stills; the sheet skills in photoreal mode |
+| Photoreal scenes under a voiceover (ads, b-roll) | `photoreal-video-production` (it loads `video-production`) |
 | UGC: a person talking to camera | `ugc-ad-remake` to remake a winning ad, `simple-talking-head` for a single line |
 
 The sheet skills (`character-generation`, `environment-generation`, `prop-generation`) follow the style: photoreal by default, animated mode for 3D animation.

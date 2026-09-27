@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One tool for an animated video project: Flow batches, review sheets, picks, rough cut, handoff.
+"""One tool for a Flow video project (any style): batches, review sheets, picks, rough cut, handoff.
 
 Run from anywhere; it works on the video folder that contains this scripts/ folder.
 
@@ -14,6 +14,7 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
                                        props/<name>/prompts/<name>-vK.md, saved as <name>/<name>-vK.jpg
   make.py pick 1a 2 [--clip]           keep take 2 as the shot's version
   make.py lastframe 8a 8b              chained clip: scene-8b-vK.jpg from the end of clip 8a's 1080p final
+  make.py reuse 4 /path/clip.mp4       an approved still or clip from another video becomes shot 4's next version
   make.py review stills|clips|finals [shots]
                                        contact sheets in review/ (one image per page)
   make.py animatic                     edit/animatic.mp4: clips where they exist,
@@ -23,13 +24,18 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
 
 Shots are ids like 3 (a scene with one shot), 1a or 10b. Story order is the job order in scenes/stills-batch.json.
 
-A manifest job may carry "variants": 2-4. Each variant is a take with its own seed, saved in the
+One take per shot is the default. Only when the user asks for more takes, a job carries "variants": 2-4.
+Each variant is a take with its own seed, saved in the
 shot's takes/ folder (scene-4/takes/scene-4-v1-take1.jpg, -take2, ...) until `pick` copies one
 up to scene-4-v1.jpg. Letters in a name only ever mean a shot (4a, 4b), never a take. Jobs whose
 output already exists are skipped, so any command can be rerun after an interruption.
 
+Every run file, flow state file and log lives in .flow/; scenes/ and clips/ hold only the manifests,
+the shot folders and all/. Never write manifests of your own (one per retry round, redo lists): add or
+replace the job in scenes/stills-batch.json or clips/clips-batch.json and name the shots on the command.
+
 Settings come from ../project.conf (CONCURRENCY, RPM). Accounts are flow's job: it sends stills and
-360p drafts to free accounts first, and finals (720p + 1080p upsample) only to paid ones.
+360p drafts only to free accounts (QUOTA when none has credits), and finals (720p + 1080p upsample) only to paid ones.
 """
 import argparse
 import json
@@ -187,12 +193,13 @@ def split_ready(run):
 
 
 def run_batch(jobs, name, dry):
+    """flow keeps its state (<run>.flow-batch.json) next to the run file, so both live in .flow/."""
     c = conf()
-    folder = VIDEO / ("scenes" if name == "stills" else "clips")
-    run_file = folder / f".run-{name}.json"
+    state = VIDEO / ".flow"
+    logs = state / "logs"
+    logs.mkdir(parents=True, exist_ok=True)
+    run_file = state / f"{name}.json"
     run_file.write_text(json.dumps({"jobs": jobs}, indent=2))
-    logs = folder / ".logs"
-    logs.mkdir(exist_ok=True)
     log = logs / f"{name}-{datetime.now():%Y%m%d-%H%M%S}.log"
     print(f"{len(jobs)} jobs · log {log}")
     cmd = ["flow", "batch", str(run_file), "--concurrency", c["CONCURRENCY"], "--rpm", c["RPM"], "--continue-on-error"]
@@ -327,6 +334,10 @@ def cmd_finals(args):
     jobs = select(load_jobs("clips"), args.shots)
     if not jobs:
         die("clips/clips-batch.json has no jobs")
+    reused = [shot(j) for j in jobs if "reused_from" in j]
+    if reused:
+        print(f"reused, no final made: {', '.join(reused)} (make.py reuse copied the source's 1080p when it had one)")
+    jobs = [j for j in jobs if "reused_from" not in j]
     no_draft = [j["id"] for j in jobs if not Path(j["output"]).is_file()]
     if no_draft and not args.no_draft:
         die(f"no approved draft for {', '.join(no_draft)}: make or pick it, name only the shots that have one, or pass --no-draft")
@@ -424,6 +435,90 @@ def cmd_lastframe(args):
         f"{final.relative_to(VIDEO)}, the opening frame of the chained clip {dest_shot}.\n")
     print(f"{out.relative_to(VIDEO)}  (frame {t:.2f} s of {final.name})")
     print(f"Use it as @image1 of clip {dest_shot}'s job.")
+
+
+def shot_folder(kind, s):
+    m = re.match(r"^(\d+)([a-z]?)$", s)
+    if not m:
+        die(f"{s} is not a shot id like 3 or 8b")
+    k = KINDS[kind]
+    return VIDEO / k["folder"] / f"{k['stem']}-{m[1]}" / (f"{k['stem']}-{s}" if m[2] else "")
+
+
+def next_version(kind, s):
+    k = KINDS[kind]
+    folder = shot_folder(kind, s)
+    taken = [int(n) for n in re.findall(rf"{k['stem']}-{s}-v(\d+)\b", " ".join(p.name for p in folder.glob("**/*")))]
+    taken += [version(j) for j in load_jobs(kind) if shot(j) == s]
+    return max(taken, default=0) + 1
+
+
+def video_height(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=height",
+                        "-of", "csv=p=0", str(path)], capture_output=True, text=True)
+    try:
+        return int(r.stdout.strip().split(",")[0])
+    except ValueError:
+        return 0
+
+
+def cmd_reuse(args):
+    """An approved still or clip from another video becomes this shot's next version, with a manifest job
+    so status, sync, animatic and handoff see it. A clip of 1080p or more also counts as its final."""
+    src = Path(args.src).resolve()
+    if not src.is_file():
+        die(f"no file {args.src}")
+    kind = "clips" if src.suffix.lower() in (".mp4", ".mov", ".m4v") else "stills"
+    k, s = KINDS[kind], args.shot.lower()
+    folder = shot_folder(kind, s)
+    v = next_version(kind, s)
+    name = f"{k['stem']}-{s}-v{v}"
+    out = folder / f"{name}{k['ext']}"
+    (folder / "prompts").mkdir(parents=True, exist_ok=True)
+    if kind == "stills" and src.suffix.lower() not in (".jpg", ".jpeg"):
+        subprocess.run(["magick", str(src), "-quality", "92", str(out)], check=True)
+    elif kind == "clips" and src.suffix.lower() != ".mp4":
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-c", "copy", str(out)], check=True)
+    else:
+        shutil.copy2(src, out)
+    prompt = folder / "prompts" / f"{name}.md"
+    prompt.write_text(f"# {name}: not generated\n\nReused from {src}.\n")
+    if kind == "clips" and video_height(out) >= 1080:
+        (folder / "final").mkdir(exist_ok=True)
+        shutil.copy2(out, folder / "final" / f"{name}-1080p.mp4")
+    path = manifest_path(kind)
+    data = json.loads(path.read_text()) if path.is_file() else {"jobs": []}
+    jobs = data["jobs"] if isinstance(data, dict) else data
+    job = {"id": name, "kind": "video" if kind == "clips" else "image",
+           "prompt_file": os.path.relpath(prompt, path.parent), "output": os.path.relpath(out, path.parent),
+           "reused_from": str(src)}
+    if kind == "clips":
+        job["duration"] = round(ffprobe_duration(out), 2)
+    at = [i for i, j in enumerate(jobs) if JOB_ID.match(j.get("id", "")) and JOB_ID.match(j["id"])[2] == s]
+    if at:
+        jobs[at[0]] = job
+    else:
+        jobs.append(job)
+    path.write_text(json.dumps({"jobs": jobs}, indent=2) + "\n")
+    print(f"{out.relative_to(VIDEO)}  (from {src})")
+    sync()
+
+
+def loose_files():
+    """Files that break the layout: anything in scenes/ or clips/ besides the manifest, all/ and shot
+    folders, and flow state or logs anywhere in the video folder outside .flow/."""
+    bad = []
+    for kind, k in KINDS.items():
+        root = VIDEO / k["folder"]
+        if not root.is_dir():
+            continue
+        for p in root.iterdir():
+            ok = p.name.startswith(".") or p.name in (k["manifest"], "all") or (
+                p.is_dir() and re.match(rf"^{k['stem']}-\d+$", p.name))
+            if not ok:
+                bad.append(p)
+    bad += [p for p in VIDEO.glob("*") if p.is_file() and (p.name.endswith(".flow-batch.json") or p.suffix == ".log")]
+    return bad
 
 
 def ffprobe_duration(path):
@@ -615,6 +710,13 @@ def cmd_status(args):
     plan, pdf = VIDEO / "PLAN.md", VIDEO / "PLAN.pdf"
     if plan.is_file() and (not pdf.is_file() or pdf.stat().st_mtime < plan.stat().st_mtime):
         print("PLAN.pdf is older than PLAN.md: reprint it with the video-plan skill's plan.py pdf\n")
+    bad = loose_files()
+    if bad:
+        print(f"{len(bad)} files outside the layout (move media into its shot folder, delete stray manifests, logs "
+              "and flow state; make.py keeps its own in .flow/):")
+        for p in bad[:12]:
+            print(f"  {p.relative_to(VIDEO)}")
+        print("  ..." if len(bad) > 12 else "")
     if not story_order():
         die("no jobs yet: add them to scenes/stills-batch.json")
     print(f"{'shot':>5}  {'still':<22}{'clip':<22}final")
@@ -662,6 +764,9 @@ def main():
     p = sub.add_parser("lastframe")
     p.add_argument("from_shot")
     p.add_argument("to_shot")
+    p = sub.add_parser("reuse")
+    p.add_argument("shot")
+    p.add_argument("src")
     p = sub.add_parser("review")
     p.add_argument("kind", choices=["stills", "clips", "finals"])
     p.add_argument("shots", nargs="*")
@@ -675,6 +780,7 @@ def main():
         "sheet": lambda: cmd_sheet(args),
         "pick": lambda: cmd_pick(args),
         "lastframe": lambda: cmd_lastframe(args),
+        "reuse": lambda: cmd_reuse(args),
         "review": lambda: cmd_review(args),
         "animatic": lambda: cmd_animatic(args),
         "handoff": lambda: cmd_handoff(args),

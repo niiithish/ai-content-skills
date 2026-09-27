@@ -9,7 +9,7 @@ description: >
 
 # Flow
 
-Run `flow` and deliver the requested media. Do not stop after writing a prompt unless the user explicitly asks for prompt text only. When a project skill says the user runs batches (for example `animated-video-production`), write the manifest and give the command instead of running it.
+Run `flow` and deliver the requested media. Do not stop after writing a prompt unless the user explicitly asks for prompt text only. In a video project, `video-production` decides who runs what: the agent runs stills and 360p draft batches through `make.py` and reviews them; the user runs only the 1080p finals, from the command the agent gives.
 
 ## When a job is stuck or flow is broken
 
@@ -34,7 +34,7 @@ Run the requested generation command directly. Labflow owns:
 
 What not to do:
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits` or `flow doctor` unless the user explicitly asks for account diagnostics.
-- Let flow pick the account: it sends stills and 360p drafts to free accounts first and upsample jobs only to paid ones. Do not run `flow account use`, `flow rotate` or `flow sync`. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
+- Let flow pick the account: it sends stills and 360p drafts only to free accounts and upsample jobs only to paid ones. A 360p draft never falls back to a paid account: with no free credits left it fails with `QUOTA`. Only when the user says to spend paid credits on drafts, rerun with `FLOW_ALLOW_PAID_DRAFTS=1`. Do not run `flow account use`, `flow rotate` or `flow sync`. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
 - Do not pass `--no-rotate` unless the user explicitly asks to lock one account. Normal generation leaves rotation on so depleted or unhealthy accounts are replaced automatically.
 - Never expose or request session tokens, cookies, passwords, recovery data or vault credentials.
 
@@ -59,7 +59,7 @@ What the errors mean:
 
 Seeds:
 - A job resumes by its prompt, ingredients and seed. After a lost job (`NOT_FOUND`), or to get a genuinely new take of the same prompt, set a new `"seed"` on it.
-- Different seeds on the same prompt are the cheap way to get variants.
+- Different seeds on the same prompt are the cheap way to get variants, but make one take unless the user asks for more.
 
 ```json
 {"jobs": [
@@ -112,7 +112,7 @@ Use absolute paths for prompt files, ingredients and outputs. Inspect every refe
   Nano Banana Pro stills cost nothing (there is a daily cap per account).
 - 1080p is a download upscale of a **native 720p** generation, free only on a paid account. A 360p draft cannot be upscaled, so a final reruns the same prompt at 720p with `--upsample 1080p`. That is a new generation and can differ from the draft; check it.
 - Never request 1080p, 2K or 4K generation, and never invent endpoints.
-- For story work, a single coherent multi-beat generation can replace several tiny clips. Project skills that lock one shot per clip (such as `animated-video-production`) take precedence.
+- For story work, a single coherent multi-beat generation can replace several tiny clips. Project skills that lock one shot per clip (`video-production` and its style skills) take precedence.
 
 ## Prompt hygiene
 

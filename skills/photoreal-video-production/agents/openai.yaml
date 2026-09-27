@@ -1,0 +1,4 @@
+interface:
+  display_name: "Photoreal Video Production"
+  short_description: "Photoreal short-form ad scenes with Flow, on the shared video-production pipeline"
+  default_prompt: "Use $photoreal-video-production (with $video-production) to make this photoreal video: sheets, stills, 360p clips and finals with make.py, in the standard project layout."

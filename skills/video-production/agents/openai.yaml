@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Production"
+  short_description: "Shared Flow video pipeline: project layout, make.py batches, review gates and hand-off"
+  default_prompt: "Use $video-production with the project's style skill to run this video from its approved plan: sheets, stills, 360p clips and 1080p finals with make.py."

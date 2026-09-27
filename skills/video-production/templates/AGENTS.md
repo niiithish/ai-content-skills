@@ -1,6 +1,6 @@
-# CLIENT NAME: animated videos
+# CLIENT NAME: {{STYLE}} videos
 
-**Load the `animated-video-production` skill before any work in this folder, and `video-plan` to plan a new video.** The skill holds the pipeline, the prompt rules and the `make.py` commands. This file holds only what is specific to this client. The client's files in `brief/` are the source of truth for story, characters and editing. Where this file and the skill disagree, this file wins.
+**Load the `{{STYLE}}-video-production` skill before any work in this folder (it loads `video-production`, which holds the pipeline, the folder layout and the `make.py` commands), and `video-plan` to plan a new video.** This file holds only what is specific to this client. The client's files in `brief/` are the source of truth for story, characters and editing. Where this file and the skills disagree, this file wins.
 
 ## Plans
 
@@ -27,7 +27,7 @@ One paragraph: the render style and the light, as the approved sheets and hero s
 
 ## Decisions
 
-Choices the user or client made that override the skill's defaults. Date each one.
+Choices the user or client made that override the skills' defaults. Date each one.
 
 - 
 
