@@ -34,5 +34,5 @@ Natural real-life motion at normal speed, real skin and fabric. Ambient room sou
   - 5–6 s: she sets down the glass, now clearly less full.
 - **Count what matters** in the prompt ("only one softgel", "exactly two softgels in her palm") and again in review.
 - **Real-life logic.** A monitor faces its user; a person drinks from a glass that was on the table; a paper that is handed over leaves one hand and arrives in the other.
-- **Intimacy.** Google's filter returns `NOT_FOUND` for night + pyjamas + bed however mild the action. Evening + knitwear + armchair or sofa + laughing together passes. Aim for romantic, not sexual, and put the couple in a living room, not a bedroom.
+- **Intimacy.** Google's filter takes down the finished clip (`NOT_FOUND`, then `PROMPT_REJECTED` once it vanishes on a second account) for night + pyjamas + bed however mild the action. Evening + knitwear + armchair or sofa + laughing together passes. Aim for romantic, not sexual, and put the couple in a living room, not a bedroom.
 - **Camera.** Never fully static. If the push-in wobbles or reframes, the next version is locked-off, and the slow zoom goes on in post (ffmpeg `zoompan`, about 1.00 → 1.06 over the clip) on the final.

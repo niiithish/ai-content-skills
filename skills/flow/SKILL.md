@@ -14,7 +14,7 @@ Run `flow` and deliver the requested media. Do not stop after writing a prompt u
 ## When a job is stuck or flow is broken
 
 - There is no cancel command. Don't kill and relaunch in a loop.
-- `NOT_FOUND`: rerun the same command once. If it's still `NOT_FOUND`, put a new `"seed"` on that job and rerun. If the same jobs keep vanishing on every account while the rest of the batch succeeds, it's the content filter removing finished media: stop rerunning and soften the prompt and start image instead.
+- `NOT_FOUND` in the final summary: flow has already spent its one regeneration on another account, so rerunning unchanged won't help. Put a new `"seed"` on that job and rerun. If the same jobs keep vanishing (`NOT_FOUND` or `PROMPT_REJECTED`) while the rest of the batch succeeds, it's the content filter removing finished media: stop rerunning and soften the prompt and start image instead.
 - `BATCH_WORKER_FAILED`: rerun the same command.
 - **No progress for about 10 minutes, or the same failure twice after following the hint: stop.** Tell the user at once, in a few lines they can hand to whoever fixes flow: the exact command, the last lines of output, the error code, and what looks wrong (a stuck profile lock, an expired login, a Google error). Don't keep waiting, work around it or offer a menu of options.
 

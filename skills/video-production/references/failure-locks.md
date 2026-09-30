@@ -28,10 +28,11 @@ For every tile, check:
 | Symptom | Fix |
 |---|---|
 | `lost by Google · regenerating on another account` | Normal: Google dropped the clip or left it stuck for 5 minutes, and flow is regenerating it once in the same run. Let the batch finish; don't stop or rerun it. |
-| `NOT_FOUND`, or `QUEUE_STALLED`, after that regeneration | Rerun the batch once later; if it fails the same way, put a new `"seed"` on the job: the batch resumes jobs by prompt, ingredients and seed. |
+| `NOT_FOUND` after that regeneration | Put a new `"seed"` on the job and rerun: the batch resumes jobs by prompt, ingredients and seed, so an unchanged rerun won't retry it. |
+| `QUEUE_STALLED` after that regeneration | Rerun the batch once later; if it stalls again, put a new `"seed"` on the job. |
 | `PROMPT_REJECTED` | Google discarded that exact clip on two accounts. Simplify or rewrite the shot's prompt. |
 | `BATCH_WORKER_FAILED` | Rerun the same command. |
-| The same shots `NOT_FOUND` ("media vanished", "not visible to this account") on every account and seed while the rest succeed (Mysa video 3: 4 of 31) | Google's content filter took the finished clip down, not flow. Stop rerunning (each try spends credits on another account). Soften the still and the prompt: clothed or abstract figures, no bedroom or couple-in-bed staging, no quoted intimate label text (Mysa 8 went through as the couple at the bathroom sink). Tell the user the changes before rerunning as a new version. |
+| The same shots `PROMPT_REJECTED` or `NOT_FOUND` ("media vanished", "not visible to this account") on every account and seed while the rest succeed (Mysa video 3: 4 of 31) | Google's content filter took the finished clip down, not flow. Stop rerunning (each try spends credits on another account). Soften the still and the prompt: clothed or abstract figures, no bedroom or couple-in-bed staging, no quoted intimate label text (Mysa 8 went through as the couple at the bathroom sink). Tell the user the changes before rerunning as a new version. |
 | Manifests, `.flow-batch.json` state and `batch-*.log` files piling up beside the media, one per retry round (video-3: about 80 in `clips/` and `stills/`) | Only `make.py` batches, and it keeps its run files, flow state and logs in `.flow/`. A retry is a new version's job in the one manifest plus `make.py clips 3b 7a`, never a new manifest. `make.py status` lists files outside the layout. |
 | A job stuck with no progress; there is no cancel command | Stop and report it to the user (command, last output, what you think is stuck); don't wait it out. See `flow`. |
 | A chained clip's opening frame soft or different | Frame taken from the 360p draft, or redrawn with an image model | `make.py lastframe` from the approved clip's 1080p final. |
