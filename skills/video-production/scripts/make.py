@@ -10,7 +10,7 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
   make.py finals [shots] [--into DIR] [--no-draft] [--dry-run]
                                        native 720p + 1080p upsample of each clip
   make.py sheet PROMPT [--ref IMG ...] [--seed N] [--dry-run]
-                                       one reference sheet from characters/, environments/ or
+                                       one reference sheet from assets/characters/, environments/ or
                                        props/<name>/prompts/<name>-vK.md, saved as <name>/<name>-vK.jpg
   make.py pick 1a 2 [--clip]           keep take 2 as the shot's version
   make.py lastframe 8a 8b              chained clip: scene-8b-vK.jpg from the end of clip 8a's 1080p final
@@ -374,7 +374,7 @@ def cmd_sheet(args):
     if not prompt.is_file():
         die(f"no prompt file {args.prompt}")
     if prompt.parent.name != "prompts" or prompt.suffix != ".md":
-        die("a sheet prompt lives at <client>/characters|environments|props/<name>/prompts/<name>-vK.md")
+        die("a sheet prompt lives at <client>/assets/characters|environments|props/<name>/prompts/<name>-vK.md")
     out = prompt.parent.parent / f"{prompt.stem}.jpg"
     if out.is_file():
         die(f"{out} exists: write the next version's prompt instead of overwriting")

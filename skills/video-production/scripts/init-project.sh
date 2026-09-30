@@ -12,7 +12,7 @@
 # Creates, without overwriting anything that exists:
 #   AGENTS.md                     client rules, look, sheets, decisions (from the template)
 #   brief/                        the client's brief files go here
-#   characters/ environments/ props/   reference sheets, shared by every video
+#   assets/characters/ assets/environments/ assets/props/   reference sheets, shared by every video
 #   video-N/project.conf          batch pacing
 #   video-N/scenes/stills-batch.json   video-N/clips/clips-batch.json
 #   video-N/edit/ review/ deliverables/ .flow/   (.flow/ holds flow state and batch logs)
@@ -41,7 +41,7 @@ REL="$VIDEO_NAME/"
 
 made() { echo "created $1"; }
 
-mkdir -p "$ROOT"/{brief,characters,environments,props} \
+mkdir -p "$ROOT"/brief "$ROOT"/assets/{characters,environments,props} \
          "$VIDEO"/{scenes,clips,edit,review,scripts,deliverables,.flow}
 
 if [[ ! -e "$ROOT/AGENTS.md" ]]; then

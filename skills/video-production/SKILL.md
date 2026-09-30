@@ -110,8 +110,8 @@ Don't start phase 2 until the user has approved the plan.
    - It adds `AGENTS.md` (naming the style skill), the sheet folders, `project.conf`, the manifests, `.flow/` and `scripts/make.py`. It never overwrites existing files.
    - After the skill is updated, refresh a video's copy of `make.py` with `--update-scripts`.
    - For a standalone video (its own `AGENTS.md` and brief inside the video folder), pass `.` as the video: `init-project.sh <client>/video-2 . --style animated`.
-2. Take every recurring character, location and prop from the plan's "Sheets to make". Write each sheet prompt with the matching sheet skill (`character-generation`, `environment-generation`, `prop-generation`) in the mode the style skill names. Save it to `characters/<name>/prompts/`, `environments/<name>/prompts/` or `props/<name>/prompts/`.
-3. Generate them one or two at a time, because sheets need individual attention: `video-N/scripts/make.py sheet characters/rocco/prompts/rocco-v1.md` saves `characters/rocco/rocco-v1.jpg`. Add `--ref <image>` for a reference (a new version made from an approved one).
+2. Take every recurring character, location and prop from the plan's "Sheets to make". Write each sheet prompt with the matching sheet skill (`character-generation`, `environment-generation`, `prop-generation`) in the mode the style skill names. Save it to `assets/characters/<name>/prompts/`, `assets/environments/<name>/prompts/` or `assets/props/<name>/prompts/`. Sheets always live under `assets/`, never loose in the client folder's root.
+3. Generate them one or two at a time, because sheets need individual attention: run from the client folder, `video-N/scripts/make.py sheet assets/characters/rocco/prompts/rocco-v1.md` saves `assets/characters/rocco/rocco-v1.jpg`. Add `--ref <image>` for a reference (a new version made from an approved one).
 4. **Hero still per environment:** one still in each location, usually its first shot, becomes its look reference. It fixes brightness, light direction, colour and render. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient.
 5. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
 
@@ -189,15 +189,15 @@ Run it from anywhere as `video-N/scripts/make.py <command>`:
 | `handoff` | Numbered final clips in `edit/clips/` |
 | `sync` | Refreshes `scenes/all/` and `clips/all/` to the newest version of each shot (1080p once it exists) |
 
-Manifest job shapes. Paths are absolute or relative to the manifest (from `scenes/`, a sheet is `../../characters/milo/milo-v1.png`). The id is the output's file name without the extension:
+Manifest job shapes. Paths are absolute or relative to the manifest (from `scenes/`, a sheet is `../../assets/characters/milo/milo-v1.png`). The id is the output's file name without the extension:
 
 ```json
 {"id": "scene-1a-v1", "kind": "image", "prompt_file": "/ABS/scenes/scene-1/scene-1a/prompts/scene-1a-v1.md",
- "aspect": "9:16", "ingredient": ["/ABS/characters/milo/milo.png", "/ABS/environments/street/street-v1.jpg"],
+ "aspect": "9:16", "ingredient": ["/ABS/assets/characters/milo/milo.png", "/ABS/assets/environments/street/street-v1.jpg"],
  "output": "/ABS/scenes/scene-1/scene-1a/scene-1a-v1.jpg"}
 {"id": "clip-1a-v1", "kind": "video", "prompt_file": "/ABS/clips/clip-1/clip-1a/prompts/clip-1a-v1.md",
  "aspect": "9:16", "duration": 4, "resolution": "360p", "timeout": 900,
- "ingredient": ["/ABS/scenes/scene-1/scene-1a/scene-1a-v1.jpg", "/ABS/characters/milo/milo.png"],
+ "ingredient": ["/ABS/scenes/scene-1/scene-1a/scene-1a-v1.jpg", "/ABS/assets/characters/milo/milo.png"],
  "output": "/ABS/clips/clip-1/clip-1a/clip-1a-v1.mp4"}
 ```
 
@@ -209,8 +209,9 @@ Optional: `"seed"` to force a fresh job, since Flow resumes a job whose prompt, 
 <client>/
   AGENTS.md                 client rules, style, look, sheets, decisions
   brief/                    the client's files, untouched
-  characters/<name>/<name>-v1.jpg + prompts/     shared by every video
-  environments/<name>/...   props/<name>/...
+  assets/                   reference sheets, shared by every video
+    characters/<name>/<name>-v1.jpg + prompts/
+    environments/<name>/...   props/<name>/...
   video-1/
     PLAN.md  PLAN.pdf  project.conf  scripts/make.py
     .flow/                    make.py's run files, flow batch state and logs (never beside the media)

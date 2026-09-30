@@ -2,7 +2,8 @@
 name: video-breakdown
 description: >
   Decode a reference video into a remake bible. Gemini 3.1 Pro watches the video
-  (the user pastes our prompt into gemini.google.com) and returns a v3 JSON: the
+  (the agent runs gemini.google.com in its built-in browser when it has one, or
+  the user pastes our prompt there) and returns a v3 JSON: the
   video's pattern and hook, one scene per hard cut with camera moves, start and
   end states, how the picture builds on the spoken words, overlay captions and a
   timestamped transcript. The agent then checks it against contact sheets of the
@@ -19,14 +20,27 @@ Most agent models can't take video as input; they only see still frames. Gemini 
 
 ## 1. Get the JSON
 
-If there is no v3 JSON yet, tell the user this, then **stop and wait**. Don't invent a breakdown in the meantime.
+If there is no v3 JSON yet, get one from Gemini. Don't invent a breakdown in the meantime.
+
+**With a built-in browser** (Claude or ChatGPT app browser tools; the user is signed in to Google there), run Gemini yourself:
+
+1. Open https://gemini.google.com/app in the browser pane. If it asks for sign-in, stop and ask the user to sign in there. Never type credentials yourself.
+2. Open the mode picker and choose **Pro** (Gemini 3.1 Pro). Never run it on Flash.
+3. Attach the video:
+   - a YouTube link: put the link on the first line of the message;
+   - a local file: the browser tools can't pick files from disk. Ask for this one step: "Drag `<abs path>` into the Gemini box in the browser pane." Wait until the video chip shows in the input box.
+4. Put the full text of [references/gemini-prompt.md](references/gemini-prompt.md) in the input box, word for word, with a `type` action (read the file first), and send it.
+5. Wait for the reply to finish (the stop button goes away; long videos take a few minutes), then read it with `get_page_text` or the reply's copy button. Save the JSON object as `<video name>.breakdown.json` next to the video.
+6. If Gemini refuses, cuts off or returns something other than one JSON object, send "Return the complete JSON object only." once in the same chat. If that fails too, fall back to the steps below.
+
+**Without a browser**, hand it to the user, then **stop and wait**:
 
 1. Open https://gemini.google.com/app and set the model to **Gemini 3.1 Pro** (not Flash).
 2. Attach the video.
 3. Paste the prompt in [references/gemini-prompt.md](references/gemini-prompt.md) word for word. Give the user the file path, or print it in one `text` block they can copy.
 4. Save Gemini's reply as `<video name>.breakdown.json` next to the video, or attach it here.
 
-A JSON is usable only if it has `"schema_version": 3`, a `pattern` object and `scenes` that cover 0.0 to `duration_sec` with no gaps, and every scene has `camera`, `build`, `still` and `timeline`. Anything else (an older schema, missing keys, one-line scenes): name what's missing and ask the user to rerun Gemini with the prompt. A JSON someone saved earlier in `brief/` gets the same check before you rely on it.
+A JSON is usable only if it has `"schema_version": 3`, a `pattern` object and `scenes` that cover 0.0 to `duration_sec` with no gaps, and every scene has `camera`, `build`, `still` and `timeline`. Anything else (an older schema, missing keys, one-line scenes): name what's missing and rerun Gemini with the prompt (yourself when you have a browser, otherwise ask the user). A JSON someone saved earlier in `brief/` gets the same check before you rely on it.
 
 ## 2. Check it against the frames
 
