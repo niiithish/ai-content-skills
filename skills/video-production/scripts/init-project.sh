@@ -57,7 +57,7 @@ done
 if [[ ! -e "$VIDEO/project.conf" ]]; then
   cat > "$VIDEO/project.conf" <<EOF
 # flow batch pacing (flow itself picks free accounts for stills and drafts, paid ones for finals)
-CONCURRENCY=3
+CONCURRENCY=5
 RPM=6
 EOF
   made "${REL}project.conf"

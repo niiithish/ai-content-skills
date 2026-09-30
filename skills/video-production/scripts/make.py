@@ -71,7 +71,7 @@ def die(msg):
 
 
 def conf():
-    c = {"CONCURRENCY": "3", "RPM": "6"}
+    c = {"CONCURRENCY": "5", "RPM": "6"}
     p = VIDEO / "project.conf"
     if p.is_file():
         for line in p.read_text().splitlines():
