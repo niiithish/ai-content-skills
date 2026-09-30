@@ -24,6 +24,7 @@ Run every command yourself: they take seconds. `<skill-dir>` is the folder holdi
    - Match the read to the brief's tone: `CARTESIA_SPEED=0.9` in `video-N/project.conf` for slow storytelling. `plan.py voiceover <video-folder> --voices narrat` lists voices; set one with `CARTESIA_VOICE=<id>`.
    - The result is `voiceover/timing.md`: each line's in and out time, its slot (until the next line starts) and the clip length that covers the slot plus 1 s.
    - **Characters who speak their lines on camera** (Flow generates the voice inside each clip): run `plan.py voiceover <video-folder> --on-camera` instead. No Cartesia read, since its pacing isn't Flow's: it times each line from its word count at the rate Flow was measured speaking (3.2 words a second) and gives the clip length, or how many 10 s clips a long line needs.
+   - **A sung ad** (the song replaces the voiceover): write the song and get the chosen take with `song-ad` stages 1–2 first. `song.py lyrics --video` writes `script.md` from the lyric sheet, and the take is `voiceover/recording.wav`; then run `plan.py voiceover` as usual.
    - A brief with no spoken words at all skips this step: time each shot by its action instead.
 5. **Story and shots.** Write the Story paragraph, then the shot table.
    - Each line's shots add up to at least its clip length. Never go shorter; a longer clip is only trimmed in the edit. A line marked `split` gets two or more shots.
@@ -50,6 +51,7 @@ Once the plan is approved, load the skill for its style. It starts from `PLAN.md
 | Style | Skill |
 |---|---|
 | 3D feature animation (DreamWorks, Pixar) | `animated-video-production` (it loads `video-production`) |
+| A sung ad (the song replaces the voiceover) | `song-ad` (song first, before step 4; its stage 4 for lip-sync shots), with `animated-video-production` for the B-roll |
 | Claymation or stop-motion | `clay-animation-video-prompt` |
 | Photoreal scenes under a voiceover (ads, b-roll) | `photoreal-video-production` (it loads `video-production`) |
 | UGC: a person talking to camera | `ugc-ad-remake` to remake a winning ad, `simple-talking-head` for a single line |

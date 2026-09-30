@@ -215,7 +215,8 @@ Optional: `"seed"` to force a fresh job, since Flow resumes a job whose prompt, 
   video-1/
     PLAN.md  PLAN.pdf  project.conf  scripts/make.py
     .flow/                    make.py's run files, flow batch state and logs (never beside the media)
-    voiceover/                script.md, timing.md, scratch.wav, recording.* (the real read)
+    voiceover/                script.md, timing.md, scratch.wav, recording.* (the real read; a sung ad's chosen song take), slices/ (song-ad)
+    song/                     a sung ad's lyric sheets (song-ad)
     scenes/stills-batch.json  scenes/scene-1/scene-1a/{scene-1a-v1.jpg, prompts/scene-1a-v1.md}   scene with several shots
                               scenes/scene-3/{scene-3-v1.jpg, prompts/scene-3-v1.md}             scene with one shot
     scenes/all/               newest still per shot + APPROVED.md

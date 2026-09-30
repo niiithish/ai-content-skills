@@ -1,0 +1,4 @@
+interface:
+  display_name: "Song Ad"
+  short_description: "Sung video sales letters: story, real song lyrics and music direction, the song as the timing source, lip-sync slices and animated B-roll"
+  default_prompt: "Use $song-ad to write a singing ad for this product: sub-avatar, hook, the song script with music direction, then plan it to the generated song."

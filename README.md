@@ -22,6 +22,7 @@ npx skills add niiithish/ai-content-skills --skill video-production
 npx skills add niiithish/ai-content-skills --skill animated-video-production
 npx skills add niiithish/ai-content-skills --skill photoreal-video-production
 npx skills add niiithish/ai-content-skills --skill captions
+npx skills add niiithish/ai-content-skills --skill song-ad
 npx skills add niiithish/ai-content-skills --skill clay-animation-video-prompt
 npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
 npx skills add niiithish/ai-content-skills --skill simple-talking-head
@@ -49,6 +50,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`animated-video-production`](./skills/animated-video-production) | The DreamWorks-style 3D animation layer on `video-production`: look, still and clip prompts, product mascots, on-camera speech. |
 | [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
 | [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, whisper timing, a preview frame first. |
+| [`song-ad`](./skills/song-ad) | AI singing ads: a sung story with a hook, real lyrics (rhyme, refrain, backing answers) and a music direction per section, the song generated first as the timing source, gapless lip-sync slices and animated B-roll. |
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
@@ -98,7 +100,7 @@ skills/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   ├── references/        load-on-demand blueprints and checklists
-│   ├── scripts/           helper scripts (video-breakdown, video-production, captions)
+│   ├── scripts/           helper scripts (video-breakdown, video-production, captions, song-ad)
 │   └── templates/         project files (video-production)
 ```
 
