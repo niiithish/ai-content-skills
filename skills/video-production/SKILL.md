@@ -110,15 +110,15 @@ Don't start phase 2 until the user has approved the plan.
    - It adds `AGENTS.md` (naming the style skill), the sheet folders, `project.conf`, the manifests, `.flow/` and `scripts/make.py`. It never overwrites existing files.
    - After the skill is updated, refresh a video's copy of `make.py` with `--update-scripts`.
    - For a standalone video (its own `AGENTS.md` and brief inside the video folder), pass `.` as the video: `init-project.sh <client>/video-2 . --style animated`.
-2. Take every recurring character, location and prop from the plan's "Sheets to make". Write each sheet prompt with the matching sheet skill (`character-generation`, `environment-generation`, `prop-generation`) in the mode the style skill names. Save it to `assets/characters/<name>/prompts/`, `assets/environments/<name>/prompts/` or `assets/props/<name>/prompts/`. Sheets always live under `assets/`, never loose in the client folder's root.
+2. Take every recurring character, location and prop from the plan's "Sheets to make". Make only the environment sheets the plan lists, and push back on any that isn't a real place seen in several shots from different angles (see `video-plan` step 7): CGI, macro and one-shot sets get no sheet. Write each sheet prompt with the matching sheet skill (`character-generation`, `environment-generation`, `prop-generation`) in the mode the style skill names. Save it to `assets/characters/<name>/prompts/`, `assets/environments/<name>/prompts/` or `assets/props/<name>/prompts/`. Sheets always live under `assets/`, never loose in the client folder's root.
 3. Generate them one or two at a time, because sheets need individual attention: run from the client folder, `video-N/scripts/make.py sheet assets/characters/rocco/prompts/rocco-v1.md` saves `assets/characters/rocco/rocco-v1.jpg`. Add `--ref <image>` for a reference (a new version made from an approved one).
-4. **Hero still per environment:** one still in each location, usually its first shot, becomes its look reference. It fixes brightness, light direction, colour and render. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient.
+4. **Hero still per location:** one still in each location or recurring set (with or without an environment sheet), usually its first shot, becomes its look reference. It fixes brightness, light direction, colour and render. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient.
 5. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
 
 ## Phase 3: stills
 
 1. Load the style skill's still reference and both `failure-locks.md` files. Write one prompt per shot to `scenes/scene-N/scene-Nx/prompts/scene-Nx-v1.md`.
-2. Add one job per shot to `scenes/stills-batch.json`, one variant. A hero still's ingredients are the environment sheet and character sheets. Every other still in that location lists the hero's output path (`scene-1a-v1.jpg`) first.
+2. Add one job per shot to `scenes/stills-batch.json`, one variant. A hero still's ingredients are the environment sheet (if the location has one) and the character and prop sheets. Every other still in that location lists the hero's output path (`scene-1a-v1.jpg`) first.
 3. **Heroes first.** Run `make.py stills 1a 3a` with just the hero shots. Review them, fix any you'd reject, show the user, and record the approved ones in `AGENTS.md`.
 4. Run `make.py stills` for the rest.
    - A job whose ingredient is a still that isn't made yet is held back and named in the output.

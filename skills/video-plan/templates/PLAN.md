@@ -33,6 +33,8 @@ Two or three sentences: what happens, whose story it is, and the feeling at the 
 
 ### Environments
 
+<!-- Only real places characters move through across several shots and angles. None for CGI, macro, diagram or abstract sets, voids, product close-ups or one-shot places: often this table stays empty. -->
+
 | Location | Description | Light and time of day | Shots |
 |---|---|---|---|
 
@@ -68,6 +70,6 @@ Music:
 - [ ] Every voiceover line has shots under it, and they add up to at least its clip length in `voiceover/timing.md`.
 - [ ] Each shot is one visible beat that can start from a still: characters already in place, nothing growing on screen, nobody walking in through a wall.
 - [ ] No two shots in a row share the same camera, and something happens in every shot. Every character's facing and eyeline is stated, and no POV shot shows the character whose eyes it is.
-- [ ] Every character, location and prop in the shots is in "Sheets to make".
+- [ ] Every recurring character and prop in the shots is in "Sheets to make", and every environment there is a real place seen in several shots from different angles (no CGI, macro or one-shot sets).
 - [ ] Captions are only in Edit notes, at the moments the brief names, in the client's exact wording; the Shots table has none.
 - [ ] Every suggested visual is marked in *italic*.
