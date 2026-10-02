@@ -16,6 +16,7 @@ Files, loaded when a stage needs them:
 | [references/story-structure.md](references/story-structure.md) | Stage 1: length tiers, hook archetypes, the beat map with percentages, where the selling goes, how far to push |
 | [references/song-craft.md](references/song-craft.md) | Stages 1–2: lyric rules, music direction (measured on the references), genre map, ElevenLabs and Suno, checking a take |
 | [references/example-mysa.md](references/example-mysa.md) | Stage 1: a full song script at the quality bar |
+| [references/gemini-audio-decode.md](references/gemini-audio-decode.md) | Stage 2: the prompt that has Gemini decode a reference ad's sound into an ElevenLabs prompt |
 | `scripts/song.py` | `lyrics` checks a sheet and writes the plan's script; `slice` cuts gapless song slices for lip-sync shots |
 
 `<skill-dir>` is the folder holding this file. Run every command yourself.
@@ -33,8 +34,12 @@ Files, loaded when a stage needs them:
 
 ## Stage 2: the song
 
-1. Give the user what to paste: the ElevenLabs composition plan (global styles and the section table with lyrics) or Suno custom mode (a style under 25 words and the lyric sheet). Recommend a short test first (the first three sections) to check that the voice holds.
-2. The user generates 4–6 full takes and picks one by ear. You can't hear the music. Never regenerate a single section except to fix one line.
+Follow "Generating the song" in `song-craft.md`. In short:
+
+1. **Find the sound first.** If the client has a reference ad, have Gemini decode its audio with [references/gemini-audio-decode.md](references/gemini-audio-decode.md) (yourself in a built-in browser, as in `video-breakdown`, or the user pastes it). Check its BPM and key with librosa: Gemini's are rough.
+2. **A 30 s test of the hook,** one generation per prompt. The user listens and picks; you can't hear the music, so never judge the taste. Adjust and retest until they like one.
+3. **The full song in one run:** the liked test prompt word for word, plus timed section changes. Never generate the body apart from the hook, and never reword a liked prompt.
+4. With the ElevenLabs connector, generate it yourself, **always with `generations_count: 1`** (the default is 4, about 1,800 credits each). Otherwise give the user what to paste (ElevenLabs or Suno).
 3. Put the chosen take at `video-N/voiceover/recording.wav`, then write the plan's script from the sheet:
 
    ```bash
