@@ -25,7 +25,7 @@ Use the structured JSON style in [references/prompt-blueprints.md](references/pr
 
 ## Animated mode
 
-Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels and separators. What changes:
+Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same cells, butted edge to edge with no divider lines. What changes:
 
 - **Render** the prop as feature-animation CG: slightly simplified, appealing shapes, clear readable colour, soft 3D shading, and materials that still read (glossy metal, wax paper, cardboard). Replace the `studio photograph` wording with this.
 - **Scale:** state its size against a character ("about the length of the cat's body") so scenes keep it consistent.
@@ -35,7 +35,7 @@ Use this mode when the project is stylized 3D animation (the `animated-video-pro
 
 - **3 views** by default, **4 max** (unless the user asks for more)
 - **Jewellery exception:** when the user asks for 2 views, or a necklace/bracelet is defined by its silhouette plus clasp, use **2 views** (full loop left, clasp closeup right). Do not pad to 3.
-- **One output image**, always a 16:9 landscape composite sheet; each view occupies one cell on the same canvas, never a separate image or file. Layout: 2 → 1×2 row; 3 → 1×3 row; 4 → 2×2 grid. Use thin solid `#d1d1d2` separators between cells (one vertical and one horizontal for a 2×2 grid).
+- **One output image**, always a 16:9 landscape composite sheet; each view occupies one cell on the same canvas, never a separate image or file. Layout: 2 → 1×2 row; 3 → 1×3 row; 4 → 2×2 grid. Cells butt edge to edge like separate photos placed side by side: no drawn divider, separator line, gap, gutter or border. The only boundary is where one shot ends and the next begins.
 - Seamless **`#504f50`** studio background in every cell
 - Soft product lighting, subtle contact shadows, orthographic / near-orthographic, deep focus
 - In the JSON image prompt, show the intended photographic look through material response, lens geometry, contact shadows, sharpness, and exposure rather than using `realistic`, `photorealistic`, or `cinematic` as a style label. Default to neutral studio light; no amber glow or sunset-style rim light unless requested.
@@ -86,7 +86,7 @@ Skip surfaces the audience never sees (blender underside, plain appliance base).
 
 ## Final check
 
-- One 16:9 landscape output image containing every view in separate cells; 2 views for jewellery loop + clasp when appropriate, otherwise 3–4; `#d1d1d2` separators
+- One 16:9 landscape output image containing every view in separate cells; 2 views for jewellery loop + clasp when appropriate, otherwise 3–4; cells butted edge to edge, no divider lines or gutters
 - Every view earns its place for on-camera surfaces or identity
 - `#504f50` background in every cell; orthographic/near-orthographic; sharp; uncropped
 - Materials, markings, wear agree across views

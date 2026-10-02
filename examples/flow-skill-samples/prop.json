@@ -12,7 +12,7 @@
     "aspect_ratio": "16:9 landscape",
     "composite_rule": "All three views appear together on one image canvas; never separate images or files.",
     "view_count": 3,
-    "grid": "One horizontal row of three equal cells with thin solid #d1d1d2 vertical separators.",
+    "grid": "One horizontal row of three equal cells butted edge to edge with no divider lines, gaps or gutters.",
     "framing": "One complete uncropped shoe centered in each cell with generous margins; full-object views have comparable scale, while the top view shows the complete shoe from directly overhead.",
     "labels": "No captions, view names, orientation labels, or overlaid text."
   },
@@ -40,7 +40,7 @@
   "camera_and_optics": "Orthographic side profile, exact overhead top, and orthographic rear; deep sharp focus. Each panel has a clearly different camera angle.",
   "material_detail": "Woven rust-orange fabric, stitched curved side overlay, gray synthetic cap and heel reinforcement, black laces, metal eyelets, and black tread, all consistent between cells.",
   "consistency_locks": [
-    "Exactly one 16:9 landscape output image contains three cells in one row with thin solid #d1d1d2 separators and uniform solid #504f50 backgrounds.",
+    "Exactly one 16:9 landscape output image contains three cells in one row butted edge to edge with no divider lines, and uniform solid #504f50 backgrounds.",
     "All three panels show the identical left shoe, without changing sole, upper, color, laces, eyelets, overlays, or condition.",
     "The views must be visibly distinct: horizontal left side, overhead top, straight rear; not three repeated three-quarter or side views."
   ],
@@ -51,5 +51,5 @@
     "dramatic shadows, shallow focus, motion blur, wide-angle distortion",
     "three similar orientations, duplicate side views, same view repeated"
   ],
-  "final_generation_instruction": "ONE single 16:9 landscape composite image, not three images: three side-by-side cells with thin solid #d1d1d2 vertical separators and uniform flat #504f50 background. Show the SAME rust-orange left hiking shoe from three clearly distinct angles: LEFT CELL strict horizontal side profile, CENTER CELL direct overhead top view, RIGHT CELL straight rear heel view. Entire shoe uncropped in each cell; no words or labels."
+  "final_generation_instruction": "ONE single 16:9 landscape composite image, not three images: three side-by-side cells butted edge to edge with no divider lines, and uniform flat #504f50 background. Show the SAME rust-orange left hiking shoe from three clearly distinct angles: LEFT CELL strict horizontal side profile, CENTER CELL direct overhead top view, RIGHT CELL straight rear heel view. Entire shoe uncropped in each cell; no words or labels."
 }

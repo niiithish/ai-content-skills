@@ -41,8 +41,8 @@ npx skills add niiithish/ai-content-skills --list
 | Skill | Description |
 | --- | --- |
 | [`script-generation`](./skills/script-generation) | Spoken TikTok/Reels UGC scripts. Cut list only when you ask for AI video. |
-| [`prop-generation`](./skills/prop-generation) | One 16:9 JSON composite prop sheet (2 for loop-and-clasp jewellery, otherwise 3–4) with #504f50 background and #d1d1d2 dividers. |
-| [`character-generation`](./skills/character-generation) | One 16:9 JSON three-panel sheet: headless front + back bodies, large 3/4 portrait; #504f50 background and #d1d1d2 dividers. |
+| [`prop-generation`](./skills/prop-generation) | One 16:9 JSON composite prop sheet (2 for loop-and-clasp jewellery, otherwise 3–4) on a #504f50 background, cells butted edge to edge with no divider lines. |
+| [`character-generation`](./skills/character-generation) | One 16:9 JSON three-panel sheet: headless front + back bodies, large 3/4 portrait; #504f50 background, panels butted edge to edge with no divider lines. |
 | [`environment-generation`](./skills/environment-generation) | JSON wide 3/4-view location references for image and video. |
 | [`photoreal-still-prompt`](./skills/photoreal-still-prompt) | JSON prompts for one believable real-world image or video start frame, defaulting to 9:16 portrait, with grounded product packaging, camera, and light. |
 | [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or faster-whisper), with suggested visuals marked. |

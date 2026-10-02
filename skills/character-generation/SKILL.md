@@ -22,7 +22,7 @@ Use the structured JSON style in [references/prompt-blueprint.md](references/pro
 
 ## Animated mode
 
-Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels and separators. What changes:
+Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels, butted edge to edge with no divider lines. What changes:
 
 - **Render** the character as sculpted, slightly stylized feature-animation CG: appealing proportions, large expressive eyes with catch-lights, shaped hair or groomed fur, simplified skin with soft subsurface shading. Replace the photoreal skin rules (pores, oil, fine lines) and `studio photograph` wording with this. Keep the studio sheet neutral and evenly lit.
 - **Animals and creatures** use the same three panels: headless front body, back body, and a large 3/4 head portrait. Describe fur colour, pattern and markings concretely, since they are the identity.
@@ -33,7 +33,7 @@ Use this mode when the project is stylized 3D animation (the `animated-video-pro
 
 ## Composition (always)
 
-Exactly **one output image**: a single 16:9 landscape sheet containing three panels left → right, separated by thin solid `#d1d1d2` vertical lines. Never render or request three separate images, files, canvases, or sequential outputs for the three views. No portrait-orientation canvas. Never two-panel. Never put a face on a full-body panel.
+Exactly **one output image**: a single 16:9 landscape sheet containing three panels left → right, butted edge to edge like separate photos placed side by side. No drawn divider, separator line, gap, gutter or border between panels: the only boundary is where one shot ends and the next begins (framing and scale change there). Never render or request three separate images, files, canvases, or sequential outputs for the three views. No portrait-orientation canvas. Never two-panel. Never put a face on a full-body panel.
 
 | Panel | ~Width | Content |
 |---|---|---|
@@ -96,7 +96,7 @@ Infer restrained defaults. Ask only when a missing choice would change identity.
 
 ## Final check
 
-- One 16:9 landscape output image containing exactly three panels; left→right: headless front, back (no face), large 3/4 portrait; `#d1d1d2` separators
+- One 16:9 landscape output image containing exactly three panels; left→right: headless front, back (no face), large 3/4 portrait; panels butted edge to edge, no divider lines or gutters
 - No face on either body panel; front head and neck fully gone, with no skin above the collar
 - Portrait: shoulder-up visible 25–35° 3/4 turn (unless front requested), one cheek/ear more visible, both eyes readable, no hands/arms; face matches reference if any; catch-light in eyes
 - No moles/beauty marks unless requested or on reference; natural no-makeup skin; upper outfit matches body panels

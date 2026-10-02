@@ -10,7 +10,7 @@ Write a valid JSON image prompt using this structure. Replace all bracketed valu
     "output_image_count": 1,
     "aspect_ratio": "16:9 landscape",
     "composite_rule": "All three views share one image canvas; do not create separate images or files for individual panels.",
-    "layout": "Three panels left to right with thin solid #d1d1d2 vertical separators: headless front body about 30%, no-face back body about 30%, shoulder-up portrait about 40%.",
+    "layout": "Three panels left to right, butted edge to edge like separate studio photos placed side by side, with no drawn divider line, gap, gutter or border; the boundary is only the cut where one shot's framing ends and the next begins: headless front body about 30%, no-face back body about 30%, shoulder-up portrait about 40%.",
     "framing": "Full outfit and footwear uncropped in body panels; portrait hair and shoulders inside frame with no hands or arms.",
     "labels": "No captions, panel names, decorative border, or watermark."
   },
@@ -53,7 +53,7 @@ Write a valid JSON image prompt using this structure. Replace all bracketed valu
     "detail": "Visible skin pores and tonal variation, separate hair strands, fabric weave, stitching, hardware, and natural drape; no beauty-filter smoothing or heavy color grade."
   },
   "consistency_locks": [
-    "Exactly one 16:9 landscape output image contains all three panels, with #d1d1d2 dividers; panel 3 is the only face source.",
+    "Exactly one 16:9 landscape output image contains all three panels butted edge to edge with no divider lines; panel 3 is the only face source.",
     "All panels show one person and one unchanged outfit.",
     "Front and back construction, footwear, colors, materials, graphics, and left/right asymmetries agree through rotation.",
     "The portrait upper outfit and accessories exactly match the body views.",
@@ -61,11 +61,11 @@ Write a valid JSON image prompt using this structure. Replace all bracketed valu
   ],
   "negative_prompt": [
     "head, exposed neck skin, chin, or neck stump above front-panel collar", "readable face or profile on back body panel", "frontal symmetrical portrait, hands or arms in portrait panel",
-    "separate images for each view, portrait canvas, extra panels or people", "cropped outfit or footwear", "mannequin or hollow flat-lay body",
+    "separate images for each view, portrait canvas, extra panels or people", "divider lines, white or light gutters, borders or frames between panels", "cropped outfit or footwear", "mannequin or hollow flat-lay body",
     "sheer, mesh, translucent, or see-through clothing", "visible nipples or underwear outline",
     "unrequested marks, jewelry, text, or logos", "wardrobe or identity drift", "airbrushed skin, heavy color grading, labels, watermarks"
   ],
-  "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a three-panel character sheet: front body with no head or exposed neck above its collar, no-face full-body back, and large shoulder-up portrait visibly turned 25–35 degrees with one cheek and ear more visible. Keep [identity and outfit] consistent against a uniform #504f50 studio backdrop with thin #d1d1d2 panel separators and soft neutral light, natural detail, fully opaque clothing, and no scenery or labels."
+  "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a three-panel character sheet: front body with no head or exposed neck above its collar, no-face full-body back, and large shoulder-up portrait visibly turned 25–35 degrees with one cheek and ear more visible. Keep [identity and outfit] consistent against a uniform #504f50 studio backdrop with panels meeting edge to edge and no divider lines, and soft neutral light, natural detail, fully opaque clothing, and no scenery or labels."
 }
 ```
 

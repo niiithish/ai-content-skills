@@ -17,7 +17,7 @@ Use this structure to write a valid JSON image prompt. Replace bracketed values 
     "aspect_ratio": "16:9 landscape",
     "composite_rule": "All views occupy cells on this single image canvas; do not create separate images or files for individual views.",
     "view_count": 3,
-    "grid": "One horizontal row of three equal cells, with thin solid #d1d1d2 separators between cells.",
+    "grid": "One horizontal row of three equal cells butted edge to edge like separate studio photos placed side by side, with no drawn divider line, gap, gutter or border; the boundary is only the cut where one shot ends and the next begins.",
     "framing": "For full-object views, keep the same visual scale and camera height; center each view with balanced margins and no crop or overlap. A selected detail closeup may be magnified.",
     "labels": "No orientation labels, view names, captions, or overlaid text; only text physically on the prop."
   },
@@ -45,7 +45,7 @@ Use this structure to write a valid JSON image prompt. Replace bracketed values 
   "camera_and_optics": "Orthographic or near-orthographic front, side, rear, top, or bottom views; controlled normal-lens perspective only for a selected three-quarter view. Rectilinear geometry, no tilt, deep sharp focus in every panel.",
   "material_detail": "[Weave, grain, seams, fasteners, ports, controls, tread, print, engraving, reflections, and wear, consistent between views].",
   "consistency_locks": [
-    "Exactly one 16:9 landscape output image contains all views in cells separated by #d1d1d2 lines.",
+    "Exactly one 16:9 landscape output image contains all views in cells butted edge to edge with no divider lines.",
     "All panels show one physical object with identical proportions, components, colors, materials, markings, condition, and attachments.",
     "Left/right asymmetries rotate correctly; no mirrored or invented surfaces.",
     "Each view has a visibly distinct silhouette or a justified detail crop; no repeated near-identical angle.",
@@ -53,25 +53,25 @@ Use this structure to write a valid JSON image prompt. Replace bracketed values 
   ],
   "negative_prompt": [
     "alternate product variants, duplicated or missing parts, mirrored asymmetry, repeated near-identical angles",
-    "separate images for each view, portrait canvas, cropped edges, inconsistent scale, overlapping views, exploded parts",
+    "separate images for each view, portrait canvas, cropped edges, inconsistent scale, overlapping views, exploded parts", "divider lines, white or light gutters, borders or frames between cells",
     "people, hands, unrelated props, lifestyle environment",
     "orientation labels, captions, garbled or misspelled text, logos not in the design, watermarks",
     "dramatic shadows, shallow focus, motion blur, wide-angle distortion"
   ],
-  "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a [three/four]-view studio reference sheet of the same [prop] in [ordered orientations]. Preserve [defining features] through rotation, keep the full object uncropped in each panel at consistent scale, using a uniform #504f50 background, thin #d1d1d2 cell separators, soft product light, and no labels or unrelated objects."
+  "final_generation_instruction": "Generate exactly one 16:9 landscape studio photograph containing a [three/four]-view studio reference sheet of the same [prop] in [ordered orientations]. Preserve [defining features] through rotation, keep the full object uncropped in each panel at consistent scale, using a uniform #504f50 background, cells meeting edge to edge with no divider lines, soft product light, and no labels or unrelated objects."
 }
 ```
 
-For four views, set `view_count` to `4`, change `grid` to `2×2 with one vertical and one horizontal thin solid #d1d1d2 separator`, and give the four `views` positions `top-left`, `top-right`, `bottom-left`, and `bottom-right`. The fourth view must resolve a surface needed on camera or a small identity feature unreadable at full scale. Choose views based on the object: a shoe may need lateral, medial, top, and three-quarter; a compact device may need front, side, and rear; a vehicle may need front, side, rear, and three-quarter. Keep handedness locked. Do not add an underside unless it matters to the shot.
+For four views, set `view_count` to `4`, change `grid` to `2×2 grid of cells butted edge to edge, no divider lines or gutters`, and give the four `views` positions `top-left`, `top-right`, `bottom-left`, and `bottom-right`. The fourth view must resolve a surface needed on camera or a small identity feature unreadable at full scale. Choose views based on the object: a shoe may need lateral, medial, top, and three-quarter; a compact device may need front, side, and rear; a vehicle may need front, side, rear, and three-quarter. Keep handedness locked. Do not add an underside unless it matters to the shot.
 
 ## Jewellery loop and clasp: two views
 
-When asked for two views, or when a necklace or bracelet is defined by its complete loop and front clasp, adapt the object above to `view_count: 2`, `grid: "1×2 row with thin solid #d1d1d2 separator"`, and two `views` only:
+When asked for two views, or when a necklace or bracelet is defined by its complete loop and front clasp, adapt the object above to `view_count: 2`, `grid: "1×2 row of cells butted edge to edge, no divider line or gutter"`, and two `views` only:
 
 - **Left:** near-orthographic top-down full closed oval loop, entire circumference visible and uncropped. Beads or pearls continue across the top or nape arc; no chain-only gap, open horseshoe, or worn-on-neck V. Put the front clasp and drop, if any, at 6 o'clock.
 - **Right:** near-orthographic magnified closeup of the *same* 6 o'clock hardware, with a few beads and spacers on each side. It is a detail of the left view, not a second piece. Show exactly how it opens and closes.
 
-In `canonical_prop_design`, specify strand rhythm, bead or pearl shape and luster, metal, clasp ownership, and left/right attachment. For a ring-and-T-bar clasp, lock the ring wire and T-bar to the same gauge; the T-bar passes through the ring and is only slightly longer than its outer diameter. The viewer-left strand's jump ring connects through the receiver ring; the viewer-right strand owns the T-bar and does not also attach to the receiver. A drop, if present, hangs from the bottom of the receiver. Adapt these mechanics if the supplied product uses a different clasp. Lock the full loop, hardware, and handedness in `consistency_locks` and exclude hidden rear clasps, duplicate pendants, and missing nape beads. Keep the one-image 16:9 landscape canvas, #504f50 background, #d1d1d2 separator, light, label, and no-wearer rules from the main blueprint.
+In `canonical_prop_design`, specify strand rhythm, bead or pearl shape and luster, metal, clasp ownership, and left/right attachment. For a ring-and-T-bar clasp, lock the ring wire and T-bar to the same gauge; the T-bar passes through the ring and is only slightly longer than its outer diameter. The viewer-left strand's jump ring connects through the receiver ring; the viewer-right strand owns the T-bar and does not also attach to the receiver. A drop, if present, hangs from the bottom of the receiver. Adapt these mechanics if the supplied product uses a different clasp. Lock the full loop, hardware, and handedness in `consistency_locks` and exclude hidden rear clasps, duplicate pendants, and missing nape beads. Keep the one-image 16:9 landscape canvas, #504f50 background, edge-to-edge cells with no divider, light, label, and no-wearer rules from the main blueprint.
 
 ## Reference and scoped edits
 

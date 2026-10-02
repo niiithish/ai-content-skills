@@ -4,7 +4,7 @@
   "canvas": {
     "output_image_count": 1,
     "aspect_ratio": "16:9 landscape",
-    "layout": "A single image divided left to right into three panels, approximately 30%, 30%, and 40% width, with two thin solid #d1d1d2 vertical lines. All panels use the same solid #504f50 studio background. No margins, captions, labels, or separate images."
+    "layout": "A single image divided left to right into three panels, approximately 30%, 30%, and 40% width, butted edge to edge with no divider lines, gaps or gutters. All panels use the same solid #504f50 studio background. No margins, captions, labels, or separate images."
   },
   "panels": [
     {
@@ -45,7 +45,7 @@
     "detail": "Photoreal skin, hair strands, fabric weave, seams, and drape, without beauty retouching or cinematic color grade."
   },
   "consistency_locks": [
-    "Exactly one output image, 16:9 landscape, with three adjacent panels and two #d1d1d2 separators.",
+    "Exactly one output image, 16:9 landscape, with three panels butted edge to edge with no divider lines.",
     "The left front body is completely headless; center back body has no readable face; right portrait is the only face source.",
     "All panels show the same person wearing the same outfit with matching fabric, cut, colors, and footwear.",
     "All fabrics are fully opaque."
@@ -58,5 +58,5 @@
     "any exposed neck above front-panel crewneck",
     "frontal right portrait; portrait must show obvious 30-degree head rotation"
   ],
-  "final_generation_instruction": "ONE single 16:9 landscape composite image only: three side-by-side panels, separated by thin solid #d1d1d2 lines; solid uniform #504f50 background in every panel. Left: full-length front body in cream sweatshirt with no head and no neck above its collar. Center: full-length back body with hair seen only from behind. Right: large shoulder-up portrait of the same woman visibly turned 30 degrees into a three-quarter angle. Same clothes, no labels, no extra images."
+  "final_generation_instruction": "ONE single 16:9 landscape composite image only: three side-by-side panels, butted edge to edge with no divider lines; solid uniform #504f50 background in every panel. Left: full-length front body in cream sweatshirt with no head and no neck above its collar. Center: full-length back body with hair seen only from behind. Right: large shoulder-up portrait of the same woman visibly turned 30 degrees into a three-quarter angle. Same clothes, no labels, no extra images."
 }
