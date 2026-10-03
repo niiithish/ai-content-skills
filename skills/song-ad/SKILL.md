@@ -1,6 +1,6 @@
 ---
 name: song-ad
-description: Make an AI singing ad, a video sales letter that is sung like a song over 3D feature-animation. It covers the sub-avatar and hook, the song script (real lyrics with rhyme, meter, a refrain that returns and flips, backing answers and a section-by-section music direction, never plain voiceover), the song generated first in ElevenLabs Music or Suno as the timing source, a plan timed to the sung lyrics, lip-sync shots cut from gapless song slices, and silent B-roll on the animated pipeline. Use when the user wants a song ad, singing ad, sung VSL, music-video ad, musical ad or jingle, lyrics for an ad, or to remake a winning song ad (Resilia, Rise style) for a new product. Not for spoken voiceover ads (script-generation, video-plan).
+description: Make an AI singing ad, a video sales letter that is sung like a song over 3D feature-animation. It covers the sub-avatar and hook, the song script (real lyrics with rhyme, meter, a refrain that returns and flips, backing answers and a section-by-section music direction, never plain voiceover), the song generated first in Suno (ElevenLabs Music only when asked) as the timing source, a plan timed to the sung lyrics, lip-sync shots cut from gapless song slices, and silent B-roll on the animated pipeline. Use when the user wants a song ad, singing ad, sung VSL, music-video ad, musical ad or jingle, lyrics for an ad, or to remake a winning song ad (Resilia, Rise style) for a new product. Not for spoken voiceover ads (script-generation, video-plan).
 ---
 
 # Song Ad
@@ -16,7 +16,7 @@ Files, loaded when a stage needs them:
 | [references/story-structure.md](references/story-structure.md) | Stage 1: length tiers, hook archetypes, the beat map with percentages, where the selling goes, how far to push |
 | [references/song-craft.md](references/song-craft.md) | Stages 1–2: lyric rules, music direction (measured on the references), genre map, ElevenLabs and Suno, checking a take |
 | [references/example-mysa.md](references/example-mysa.md) | Stage 1: a full song script at the quality bar |
-| [references/gemini-audio-decode.md](references/gemini-audio-decode.md) | Stage 2: the prompt that has Gemini decode a reference ad's sound into an ElevenLabs prompt |
+| [references/gemini-audio-decode.md](references/gemini-audio-decode.md) | Stage 2, ElevenLabs only: the prompt that has Gemini decode a reference ad's sound into an ElevenLabs prompt |
 | `scripts/song.py` | `lyrics` checks a sheet and writes the plan's script; `slice` cuts gapless song slices for lip-sync shots |
 
 `<skill-dir>` is the folder holding this file. Run every command yourself.
@@ -34,19 +34,18 @@ Files, loaded when a stage needs them:
 
 ## Stage 2: the song
 
-Follow "Generating the song" in `song-craft.md`. In short:
+Follow "Generating the song" in `song-craft.md`. **Suno (a paid plan) is the default**: the user preferred it over ElevenLabs Music on a real job. Follow the method as written; don't improvise on it.
 
-1. **Find the sound first.** If the client has a reference ad, have Gemini decode its audio with [references/gemini-audio-decode.md](references/gemini-audio-decode.md) (yourself in a built-in browser, as in `video-breakdown`, or the user pastes it). Check its BPM and key with librosa: Gemini's are rough.
-2. **A 30 s test of the hook,** one generation per prompt. The user listens and picks; you can't hear the music, so never judge the taste. Adjust and retest until they like one.
-3. **The full song in one run:** the liked test prompt word for word, plus timed section changes. Never generate the body apart from the hook, and never reword a liked prompt.
-4. With the ElevenLabs connector, generate it yourself, **always with `generations_count: 1`** (the default is 4, about 1,800 credits each). Otherwise give the user what to paste (ElevenLabs or Suno).
-3. Put the chosen take at `video-N/voiceover/recording.wav`, then write the plan's script from the sheet:
+1. Write the Suno paste (Create → Advanced): the **Style** field from the style template, and the **Lyrics** field with the lyrics word for word under plain section tags, the brand name on its own line. Save both in `video-N/song/suno/` (`style.txt`, `lyrics.txt`).
+2. The user generates and listens all the way through. You can't hear it, so never judge the taste. Before any visuals, they confirm every lyric is sung as written, the brand name is clear on a phone speaker, vocals start at once, and the length and tone fit.
+3. A failed take: fix only that piece. A mispronounced brand name is respelled (hyphens, the stressed syllable in capitals) and only its section is regenerated.
+4. Put the chosen take at `video-N/voiceover/recording.wav`, then write the plan's script from the sheet:
 
    ```bash
    python3 <skill-dir>/scripts/song.py lyrics video-N/song/lyrics-v1.md --video video-N
    ```
 
-4. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with faster-whisper. A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
+5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with faster-whisper. A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
 
 ## Stage 3: plan
 

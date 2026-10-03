@@ -38,11 +38,34 @@ Write an energy line (`intro 3/10 → verses 4–5 → refrain 6 → bridge 3 �
 | Latino market | reggaeton, Latin pop, bachata |
 | Short, light ads | upbeat musical theatre, Disney-style |
 
-**Style prompt:** under 25 words, `[genre], [lead vocal: gender, age, texture], [BPM], [mood arc], [production]`. Never an artist or band name (Suno rejects it, and it's a likeness problem). Example: `soul gospel ballad, raw smoky female alto with gospel choir, 74 BPM, heartbreak to triumph, warm vintage live-band production`.
+**Style prompt:** for Suno, use the style template under "Generating the song". The genre, vocal and BPM come from here. Elsewhere: under 25 words, `[genre], [lead vocal: gender, age, texture], [BPM], [mood arc], [production]`. Never an artist or band name (Suno rejects it, and it's a likeness problem). Example: `soul gospel ballad, raw smoky female alto with gospel choir, 74 BPM, heartbreak to triumph, warm vintage live-band production`.
 
 ## Generating the song
 
-The user picks every take by ear; you can't hear it, so hand takes over without judging the taste. What worked on a real job (Mysa video 6, a 3:53 song the client approved):
+The user picks every take by ear; you can't hear it, so hand takes over without judging the taste.
+
+### Suno (default)
+
+On Mysa video 6 the user compared both tools and took Suno: "this turned out so much better". The method comes from a singing-ads guide the user follows as written ("why think when someone has a good system"), so don't add to it. Make it on a **paid Suno plan**: songs from the free plan can't be used in ads.
+
+Paste in Create → Advanced:
+
+- **Style:** the template, filled in, short, positive words only. A negative ("no intro") backfires. The approved one:
+
+  ```text
+  short commercial jingle, acoustic pop, 136 BPM, mature female vocal, warm and confident, clear diction, brand name sung clearly, vocals start at 00:00, no build-up, memorable hook, tight ending
+  ```
+
+  The guide's template: `short commercial jingle, [GENRE], [BPM] BPM, [VOCAL: gender + tone], clear diction, brand name sung clearly, vocals start at 00:00, no build-up, memorable hook, tight ending`. Its starting tempos by genre: hip-hop 100–110, pop 118, R&B 120, hype 126, playful 112, warm acoustic 92 (match the reference ad when there is one; Mysa used 136).
+- **Lyrics:** the approved lyrics word for word, under plain section tags only: `[Verse]`, `[Chorus]`, `[Outro]`, `[End]`. No descriptions inside the tags, no exclude-styles list, no timed section directions. Put the brand name on its own line ("…from a company called / Mysa"). Our lyric sheet's `{music cues}` and `(backing answers)` stay out of the paste.
+
+A failed take: fix only that piece. Respell a mispronounced brand name phonetically (hyphens, the stressed syllable in capitals) and regenerate only its section.
+
+### ElevenLabs Music (only when asked)
+
+The guide's short-tag method failed on ElevenLabs (`eleven_music_v2_5`): it ignored the asked length (3:00 instead of 30 s), opened with a 30 s instrumental intro, left long gaps between lines and sang one line four times at the end. ElevenLabs needs its own long, timed prompt:
+
+Use it only when the user asks for ElevenLabs. What got a 3:53 song approved there (Mysa video 6), before Suno beat it:
 
 1. **Decode the reference.** Gemini listens to the first 60 s of the client's reference ad with [gemini-audio-decode.md](gemini-audio-decode.md) and writes an ElevenLabs prompt, a negative list and lyric-phrasing notes. Its BPM and key are only roughly right (it called an F-major take minor): measure them with librosa and correct the prompt.
 2. **A 30 s test of the hook,** one generation. Adjust and retest until the user likes one. A prompt Gemini decoded from a second "expression" reference came out mostly music with hardly any vocal: one reference at a time.
@@ -63,8 +86,6 @@ Light acoustic pop from the 2010s, 136 BPM, straight 4/4 feel in F major. Vocal-
 **ElevenLabs connector** (`eleven_music_v2_5`, node type `music`): `lyrics_type: custom`, `instrumental: false`, `lyrics`; leave `duration_seconds` out for a full song (the model chose about 3:55). **Always pass `generations_count: 1` to `creative_run_flow_nodes`**: the default is 4, at about 1,800 credits each. Never wire an approved take into the node's audio reference port: the rest of the song came back as plain voiceover with almost no music. The composition plan (per-section styles) and inpainting (re-singing only the hook, for hook variants) are API-only: they need an ElevenLabs API key or the web editor.
 
 **ElevenLabs Music API or web editor** (composition plan): one song up to 10 minutes, in up to 30 sections of 3–120 s. Each section gets its own lyrics, duration and positive/negative styles, so the key changes, the drum drop and the double-time climb can be written per section. Give global styles plus the section table. Check the current field names in ElevenLabs' docs before writing JSON for the API; in the web app, paste section by section. It also inpaints one section, useful only as a last resort for a single line. Test first: generate the first three sections (about 75 s) and check the lead stays the same singer across section boundaries.
-
-**Suno** (custom mode, so the lyrics are sung exactly as written): style box = the style prompt, lyrics box = the sheet with its `[Section]` tags. A long song won't fit in one prompt: split it at the bridge and use Extend for the second half.
 
 **Checks on a take before it's used:**
 
