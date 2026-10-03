@@ -34,7 +34,7 @@ Run the requested generation command directly. Labflow owns:
 
 What not to do:
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits` or `flow doctor` unless the user explicitly asks for account diagnostics.
-- Let flow pick the account: it sends stills and 360p drafts only to free accounts and upsample jobs only to paid ones. A 360p draft never falls back to a paid account: with no free credits left it fails with `QUOTA`. Only when the user says to spend paid credits on drafts, rerun with `FLOW_ALLOW_PAID_DRAFTS=1`. Do not run `flow account use`, `flow rotate` or `flow sync`. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
+- Let flow pick the account: it sends stills and 360p drafts only to free accounts and upsample jobs only to paid ones. A 360p draft never falls back to a paid account: with no free credits left it fails with `QUOTA`. Only when the user says to spend paid credits on drafts, rerun with `FLOW_ALLOW_PAID_DRAFTS=1`. When a draft batch fails with `RECAPTCHA_FAILED` (Google refusing every free account), tell the user right away and ask whether to use that override; premium is rarely refused. Do not run `flow account use`, `flow rotate` or `flow sync`. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
 - Do not pass `--no-rotate` unless the user explicitly asks to lock one account. Normal generation leaves rotation on so depleted or unhealthy accounts are replaced automatically.
 - Never expose or request session tokens, cookies, passwords, recovery data or vault credentials.
 

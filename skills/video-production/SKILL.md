@@ -23,7 +23,7 @@ Files, loaded only when a phase needs them:
 | `scripts/make.py` | Copied into each video by init; every batch, review, reuse and hand-off command |
 | `templates/AGENTS.md` | Used by init: the client file skeleton |
 
-Generation runs through the `flow` skill's CLI. Flow chooses the account for every job: stills and 360p drafts go only to free accounts, and finals go only to paid ones, since the 1080p upscale needs one. If no free account has credits, a draft batch stops with `QUOTA` rather than spend paid credits: run `flow account refresh`, and if that doesn't help, tell the user. Never set `FLOW_ALLOW_PAID_DRAFTS=1` unless the user says to. Don't pin or switch accounts.
+Generation runs through the `flow` skill's CLI. Flow chooses the account for every job: stills and 360p drafts go only to free accounts, and finals go only to paid ones, since the 1080p upscale needs one. If no free account has credits, a draft batch stops with `QUOTA` rather than spend paid credits: run `flow account refresh`, and if that doesn't help, tell the user. If it stops with `RECAPTCHA_FAILED` (Google refusing every free account), don't just wait and rerun: tell the user right away and ask whether to spend premium credits with `FLOW_ALLOW_PAID_DRAFTS=1`; premium is rarely refused. Never set `FLOW_ALLOW_PAID_DRAFTS=1` unless the user says to. Don't pin or switch accounts.
 
 ## Working with the user
 
