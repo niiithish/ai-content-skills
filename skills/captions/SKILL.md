@@ -1,13 +1,13 @@
 ---
 name: captions
-description: Burn captions and section labels into a finished 9:16 edit in one locked style (TikTok Sans SemiBold, black on a merged white box at the bottom of the Meta/TikTok safe area, red label boxes at the top). The wording comes from the voiceover script and the timing from Parakeet word timestamps (the transcribe skill). It shows one preview frame before any render and writes <Brand>_<Concept>_<Variant>_<Ratio>.mp4 deliverables. Use when the user asks for captions, subtitles or supers on their edit, or on any video they've cut. Not for captions inside generated stills or clips (those never carry text).
+description: Burn captions and section labels into a finished 9:16 edit in one locked style (TikTok Sans SemiBold, black on a merged white box at the bottom of the Meta/TikTok safe area, red label boxes at the top). The wording comes from the voiceover script and the timing from ElevenLabs Scribe word timestamps (the transcribe skill). It shows one preview frame before any render and writes <Brand>_<Concept>_<Variant>_<Ratio>.mp4 deliverables. Use when the user asks for captions, subtitles or supers on their edit, or on any video they've cut. Not for captions inside generated stills or clips (those never carry text).
 ---
 
 # Captions
 
 The user edits the video; we burn captions into their finished edit. The style below took seven rounds with the user to lock (Mysa video 3). Use it as is, and change it only when the user asks.
 
-Tool: `scripts/captions.py` (Python 3 with Pillow and onnx-asr, plus ffmpeg), which gets word times from the `transcribe` skill's helper (Parakeet; faster-whisper only as a fallback). Install `transcribe` alongside it, with the font bundled in `fonts/` (TikTok Sans, OFL).
+Tool: `scripts/captions.py` (Python 3 with Pillow, plus ffmpeg), which gets word times from the `transcribe` skill's helper (ElevenLabs Scribe; Parakeet and faster-whisper as offline fallbacks). Install `transcribe` alongside it, with the font bundled in `fonts/` (TikTok Sans, OFL).
 
 ## Locked style
 
@@ -25,7 +25,7 @@ Layout on a 1080×1920 canvas, scaled to the edit. The Meta/TikTok caption safe 
 ## Process
 
 1. Find what the brief says about captions and quote it to the user in one line. Get the edit (the user's file, e.g. `video-N/my-edits/hook-1.mp4`) and the script text as voiced in that edit (the hook variant plus the body). Save it as a text file in `video-N/captions/`.
-2. Time the words (under a minute for a 2–3 minute file on CPU):
+2. Time the words (seconds with ElevenLabs; under a minute for a 2–3 minute file with Parakeet):
 
    ```bash
    <skill-dir>/scripts/captions.py words video-N/my-edits/hook-1.mp4

@@ -3,7 +3,7 @@
 
   plan.py init CLIENT_DIR [video-N]            brief/, video-N/PLAN.md, video-N/voiceover/ (never overwrites)
   plan.py voiceover VIDEO_DIR [--voices WORD]  time each line of VIDEO_DIR/voiceover/script.md:
-                                               the real voiceover/recording.* if present (Parakeet),
+                                               the real voiceover/recording.* if present (transcribe skill),
                                                otherwise a Cartesia scratch read; writes
                                                voiceover/timing.md
   plan.py voiceover VIDEO_DIR --on-camera      lines spoken inside the clips (Flow makes the voice): time each
@@ -164,13 +164,13 @@ def scratch_read(c, video, lines):
 
 
 def heard_times(audio, lines):
-    """Start and end of each script line in the real voiceover, from Parakeet word timestamps (transcribe skill)."""
+    """Start and end of each script line in the real voiceover, from speech-to-text word timestamps (transcribe skill)."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "transcribe" / "scripts"))
     try:
         from transcribe import words
     except ImportError:
         die("needs the transcribe skill next to this one (skills/transcribe), used to time the real voiceover")
-    print(f"transcribing {audio.name} with Parakeet ...")
+    print(f"transcribing {audio.name} ...")
     norm = lambda w: re.sub(r"[^a-z0-9']", "", w.lower())
     heard = [(norm(w), s, e) for w, s, e in words(audio) if norm(w)]
     script = [(i, norm(w)) for i, line in enumerate(lines) for w in line.split() if norm(w)]
@@ -226,7 +226,7 @@ def cmd_voiceover(args):
     lines = script_lines(video)
     audio = real_voiceover(video)
     if audio:
-        timings, source = heard_times(audio, lines), f"{audio.name} (the real voiceover, timed with Parakeet)"
+        timings, source = heard_times(audio, lines), f"{audio.name} (the real voiceover, timed with speech-to-text)"
     else:
         audio, timings = scratch_read(c, video, lines)
         source = f"{audio.name} (Cartesia scratch read, voice {c['CARTESIA_VOICE']}, speed {c['CARTESIA_SPEED']})"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Burn the locked caption style into a finished 9:16 edit.
 
-  captions.py words   EDIT                          Parakeet word times -> captions/<stem>.words.json
+  captions.py words   EDIT                          speech-to-text word times -> captions/<stem>.words.json
   captions.py plan    EDIT --script S [--labels L]  captions and labels with times -> captions/<stem>.plan.json
   captions.py preview EDIT [--at T]                 one real frame with a caption and a label -> captions/<stem>.preview.png
   captions.py render  EDIT -o OUT.mp4               the captioned video (temp file, then mv; audio copied)
@@ -334,7 +334,7 @@ def cmd_render(a):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("words"); s.add_argument("edit", type=Path); s.add_argument("--engine", choices=["parakeet", "whisper"], default="parakeet")
+    s = sub.add_parser("words"); s.add_argument("edit", type=Path); s.add_argument("--engine", choices=["auto", "elevenlabs", "parakeet", "whisper"], default="auto")
     s = sub.add_parser("plan"); s.add_argument("edit", type=Path); s.add_argument("--script", required=True); s.add_argument("--labels")
     s = sub.add_parser("preview"); s.add_argument("edit", type=Path); s.add_argument("--at", type=float); s.add_argument("-o", "--output")
     s = sub.add_parser("render"); s.add_argument("edit", type=Path); s.add_argument("-o", "--output", required=True)
