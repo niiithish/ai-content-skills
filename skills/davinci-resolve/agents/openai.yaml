@@ -1,0 +1,4 @@
+interface:
+  display_name: "DaVinci Resolve"
+  short_description: "Edit in free DaVinci Resolve on Linux through the davinci-resolve MCP"
+  default_prompt: "Use $davinci-resolve to convert these clips to ProRes, lay them on a timeline with the music, then export the final MP4."

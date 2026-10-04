@@ -10,7 +10,7 @@ For every tile, check:
 1. **Identity:** faces and outfits match the sheets (moustache, eye colour, stripes, badge).
 2. **Count:** exactly the number of characters and props the shot needs.
 3. **Scale:** relative sizes as in `AGENTS.md`, and the main subject large enough to read.
-4. **Light:** matches the location's hero still. No golden or sunset drift, and not too dark.
+4. **Light:** matches the location's hero still and the project's agreed look (warm and motivated by default for animation); no unmotivated sunset drift, not grey or flat, not too dark.
 5. **Render:** 3D CG like the sheets, not 2D or outlined, not photoreal.
 6. **Layout:** no sheet panels, headless bodies or grey backdrop.
 7. **Text:** in-world text (papers, signs, labels, packaging) is readable and spelled as the prompt quotes it; no captions, UI or watermarks.

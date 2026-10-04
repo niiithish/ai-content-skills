@@ -29,6 +29,7 @@ npx skills add niiithish/ai-content-skills --skill simple-talking-head
 npx skills add niiithish/ai-content-skills --skill video-breakdown
 npx skills add niiithish/ai-content-skills --skill flow
 npx skills add niiithish/ai-content-skills --skill transcribe
+npx skills add niiithish/ai-content-skills --skill davinci-resolve
 ```
 
 List without installing:
@@ -58,6 +59,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON (pattern, hook, one scene per cut, how each builds on the spoken words), then check it against contact sheets of the real frames. |
 | [`flow`](./skills/flow) | Run Google Flow via the local Labflow `flow` CLI: Nano Banana Pro 1K images, Omni Flash video, `flow batch` manifests, seeds, and 1080p upsample. Rotates saved accounts on quota. |
 | [`transcribe`](./skills/transcribe) | Speech to text with word timestamps for any audio or video on CPU: NVIDIA Parakeet by default (faster-whisper as fallback), writing a transcript, words.json and SRT. The captions and video-plan scripts use it. |
+| [`davinci-resolve`](./skills/davinci-resolve) | Edit in free DaVinci Resolve on Linux via the davinci-resolve MCP: clips to ProRes LT, timeline with music and cuts, ProRes render, then a client-sized H.264 MP4. Bundles the Lua bridge that makes the MCP work on the free version. |
 
 ## Pipeline
 
@@ -92,6 +94,7 @@ video-plan → video-production + animated- or photoreal-video-production
 | **video-breakdown** | Gemini 3.1 Pro JSON → form + one rebuildable scene per hard cut (not a props dump). |
 | **flow** | Generate the still/clip on Google Flow (`flow image` / `flow generate`). |
 | **transcribe** | Parakeet transcript and word times for any audio or video. |
+| **davinci-resolve** | Assemble and cut the edit in Resolve, export the client MP4. |
 
 ## Layout
 
@@ -103,7 +106,7 @@ skills/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   ├── references/        load-on-demand blueprints and checklists
-│   ├── scripts/           helper scripts (video-breakdown, video-production, captions, song-ad, transcribe)
+│   ├── scripts/           helper scripts (video-breakdown, video-production, captions, song-ad, transcribe, davinci-resolve)
 │   └── templates/         project files (video-production)
 ```
 

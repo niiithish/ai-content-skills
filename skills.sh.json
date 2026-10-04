@@ -52,6 +52,13 @@
       "skills": [
         "flow"
       ]
+    },
+    {
+      "title": "Editing",
+      "description": "Assemble, cut and export edits in free DaVinci Resolve on Linux through the davinci-resolve MCP: ProRes conversion in, ProRes render out, then a client-sized MP4.",
+      "skills": [
+        "davinci-resolve"
+      ]
     }
   ]
 }
