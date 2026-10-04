@@ -1,0 +1,4 @@
+interface:
+  display_name: "Transcribe"
+  short_description: "Parakeet speech to text with word timestamps for any audio or video"
+  default_prompt: "Use $transcribe to transcribe this file with word timestamps."

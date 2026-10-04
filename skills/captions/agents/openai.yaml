@@ -1,4 +1,4 @@
 interface:
   display_name: "Captions"
   short_description: "Burn locked-style captions and section labels into a finished 9:16 edit"
-  default_prompt: "Use $captions to caption this edit: time the script with whisper, show one preview frame, then render the deliverable."
+  default_prompt: "Use $captions to caption this edit: time the script with Parakeet, show one preview frame, then render the deliverable."

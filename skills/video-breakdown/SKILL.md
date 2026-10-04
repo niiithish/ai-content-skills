@@ -54,7 +54,7 @@ It samples at 2 fps, labels each frame with its time and puts 12 frames (6 s) on
 
 Check the JSON's cuts, settings, characters and `build` against the sheets. Where they disagree, trust the frames for what's visible and Gemini for the sound, motion between frames and the words. Pull a full-size frame (`ffmpeg -ss T -i video -frames:v 1 out.jpg`) only when a sheet cell is unclear: product text, a cut you can't place.
 
-If the user doesn't want to use Gemini, write the breakdown from the sheets plus a local transcript (`ffmpeg -i video -ar 16000 -ac 1 -c:a pcm_s16le /tmp/a.wav && voxtype transcribe /tmp/a.wav`), and say it's weaker on motion and timing.
+If the user doesn't want to use Gemini, write the breakdown from the sheets plus a local transcript with word times (the `transcribe` skill: `transcribe.py video.mp4`), and say it's weaker on motion and timing.
 
 ## 3. Write it up
 

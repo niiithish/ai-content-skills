@@ -28,6 +28,7 @@ npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
 npx skills add niiithish/ai-content-skills --skill simple-talking-head
 npx skills add niiithish/ai-content-skills --skill video-breakdown
 npx skills add niiithish/ai-content-skills --skill flow
+npx skills add niiithish/ai-content-skills --skill transcribe
 ```
 
 List without installing:
@@ -45,17 +46,18 @@ npx skills add niiithish/ai-content-skills --list
 | [`character-generation`](./skills/character-generation) | One 16:9 JSON three-panel sheet: headless front + back bodies, large 3/4 portrait; #504f50 background, panels butted edge to edge with no divider lines. |
 | [`environment-generation`](./skills/environment-generation) | JSON wide 3/4-view location references for image and video. |
 | [`photoreal-still-prompt`](./skills/photoreal-still-prompt) | JSON prompts for one believable real-world image or video start frame, defaulting to 9:16 portrait, with grounded product packaging, camera, and light. |
-| [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or faster-whisper), with suggested visuals marked. |
+| [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or Parakeet), with suggested visuals marked. |
 | [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
 | [`animated-video-production`](./skills/animated-video-production) | The DreamWorks-style 3D animation layer on `video-production`: look, still and clip prompts, product mascots, on-camera speech. |
 | [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
-| [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, whisper timing, a preview frame first. |
+| [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, Parakeet timing, a preview frame first. |
 | [`song-ad`](./skills/song-ad) | AI singing ads: a sung story with a hook, real lyrics (rhyme, refrain, backing answers) and a music direction per section, the song generated first as the timing source, gapless lip-sync slices and animated B-roll. |
 | [`clay-animation-video-prompt`](./skills/clay-animation-video-prompt) | Claymation performance-ad packages with reference prompts, VO timing, and shot continuity. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
 | [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
 | [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON (pattern, hook, one scene per cut, how each builds on the spoken words), then check it against contact sheets of the real frames. |
 | [`flow`](./skills/flow) | Run Google Flow via the local Labflow `flow` CLI: Nano Banana Pro 1K images, Omni Flash video, `flow batch` manifests, seeds, and 1080p upsample. Rotates saved accounts on quota. |
+| [`transcribe`](./skills/transcribe) | Speech to text with word timestamps for any audio or video on CPU: NVIDIA Parakeet by default (faster-whisper as fallback), writing a transcript, words.json and SRT. The captions and video-plan scripts use it. |
 
 ## Pipeline
 
@@ -89,6 +91,7 @@ video-plan → video-production + animated- or photoreal-video-production
 | **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
 | **video-breakdown** | Gemini 3.1 Pro JSON → form + one rebuildable scene per hard cut (not a props dump). |
 | **flow** | Generate the still/clip on Google Flow (`flow image` / `flow generate`). |
+| **transcribe** | Parakeet transcript and word times for any audio or video. |
 
 ## Layout
 
@@ -100,7 +103,7 @@ skills/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   ├── references/        load-on-demand blueprints and checklists
-│   ├── scripts/           helper scripts (video-breakdown, video-production, captions, song-ad)
+│   ├── scripts/           helper scripts (video-breakdown, video-production, captions, song-ad, transcribe)
 │   └── templates/         project files (video-production)
 ```
 

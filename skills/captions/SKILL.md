@@ -1,13 +1,13 @@
 ---
 name: captions
-description: Burn captions and section labels into a finished 9:16 edit in one locked style (TikTok Sans SemiBold, black on a merged white box at the bottom of the Meta/TikTok safe area, red label boxes at the top). The wording comes from the voiceover script and the timing from faster-whisper word timestamps. It shows one preview frame before any render and writes <Brand>_<Concept>_<Variant>_<Ratio>.mp4 deliverables. Use when the user asks for captions, subtitles or supers on their edit, or on any video they've cut. Not for captions inside generated stills or clips (those never carry text).
+description: Burn captions and section labels into a finished 9:16 edit in one locked style (TikTok Sans SemiBold, black on a merged white box at the bottom of the Meta/TikTok safe area, red label boxes at the top). The wording comes from the voiceover script and the timing from Parakeet word timestamps (the transcribe skill). It shows one preview frame before any render and writes <Brand>_<Concept>_<Variant>_<Ratio>.mp4 deliverables. Use when the user asks for captions, subtitles or supers on their edit, or on any video they've cut. Not for captions inside generated stills or clips (those never carry text).
 ---
 
 # Captions
 
 The user edits the video; we burn captions into their finished edit. The style below took seven rounds with the user to lock (Mysa video 3). Use it as is, and change it only when the user asks.
 
-Tool: `scripts/captions.py` (Python 3 with Pillow and faster-whisper, plus ffmpeg), with the font bundled in `fonts/` (TikTok Sans, OFL).
+Tool: `scripts/captions.py` (Python 3 with Pillow and onnx-asr, plus ffmpeg), which gets word times from the `transcribe` skill's helper (Parakeet; faster-whisper only as a fallback). Install `transcribe` alongside it, with the font bundled in `fonts/` (TikTok Sans, OFL).
 
 ## Locked style
 
@@ -20,12 +20,12 @@ Layout on a 1080×1920 canvas, scaled to the edit. The Meta/TikTok caption safe 
   - curly quotes and apostrophes.
 - **The box:** one merged shape around all lines (never a box per line, which leaves a notch), with rounded outer corners (R 18) and rounded fillets where lines of different widths step. Line pitch is 74 px (about 1.95× cap height), and each line is centred on its cap height, so the space above the capitals equals the space below the baseline.
 - **Section labels** (HOURS, DAYS 4–6, WEEK 3…): the same box shape at the top (y 245), white text on `#EA4040`, on screen for 3 s from the start of their line. Never a big centred super or a white box.
-- **Words** come from the voiceover script, not from whisper: whisper only times them. The audio is copied untouched.
+- **Words** come from the voiceover script, not from the transcript: speech-to-text only times them. The audio is copied untouched.
 
 ## Process
 
 1. Find what the brief says about captions and quote it to the user in one line. Get the edit (the user's file, e.g. `video-N/my-edits/hook-1.mp4`) and the script text as voiced in that edit (the hook variant plus the body). Save it as a text file in `video-N/captions/`.
-2. Time the words (a few minutes a file on CPU):
+2. Time the words (under a minute for a 2–3 minute file on CPU):
 
    ```bash
    <skill-dir>/scripts/captions.py words video-N/my-edits/hook-1.mp4
@@ -37,7 +37,7 @@ Layout on a 1080×1920 canvas, scaled to the edit. The Meta/TikTok caption safe 
    <skill-dir>/scripts/captions.py plan video-N/my-edits/hook-1.mp4 --script video-N/captions/hook-1.txt --labels video-N/captions/labels.txt
    ```
 
-   It prints every caption with its times, and how many script words whisper didn't hear. Read it: breaks in the right places, nothing missing. If many words weren't heard, the script doesn't match the edit; ask for the right one.
+   It prints every caption with its times, and how many script words weren't heard. Read it: breaks in the right places, nothing missing. If many words weren't heard, the script doesn't match the edit; ask for the right one.
 4. **Preview first.** `captions.py preview EDIT` composites one real frame with a caption and a label (or `--at 12.5` for a chosen moment) into `captions/<stem>.preview.png`. Show it to the user, and render nothing until they say yes.
 5. Render each edit into `video-N/deliverables/`, named `<Brand>_<Concept>_<Variant>_<Ratio>.mp4`:
 

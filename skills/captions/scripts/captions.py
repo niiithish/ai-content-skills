@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Burn the locked caption style into a finished 9:16 edit.
 
-  captions.py words   EDIT                          whisper word times -> captions/<stem>.words.json
+  captions.py words   EDIT                          Parakeet word times -> captions/<stem>.words.json
   captions.py plan    EDIT --script S [--labels L]  captions and labels with times -> captions/<stem>.plan.json
   captions.py preview EDIT [--at T]                 one real frame with a caption and a label -> captions/<stem>.preview.png
   captions.py render  EDIT -o OUT.mp4               the captioned video (temp file, then mv; audio copied)
 
 The script file is the voiceover text (lines starting with # are skipped); the words on screen come from it,
-not from whisper. The labels file has one "LABEL | first words of the line it starts on" per line.
+not from the transcript. The labels file has one "LABEL | first words of the line it starts on" per line.
 Work files go in <video>/captions/ (the folder holding PLAN.md above EDIT, else EDIT's folder), never a scratchpad.
 
 Style (locked; change it only when the user asks): layout on a 1080x1920 canvas, scaled to the edit.
@@ -63,13 +63,12 @@ def paths(edit):
 # ---------- words ----------
 
 def cmd_words(a):
-    from faster_whisper import WhisperModel
-    try:    # the cached model first: the hub check can hang for minutes on a bad network
-        model = WhisperModel(a.model, device="cpu", compute_type="int8", local_files_only=True)
-    except Exception:
-        model = WhisperModel(a.model, device="cpu", compute_type="int8")
-    segs, _ = model.transcribe(str(a.edit), language="en", word_timestamps=True)
-    words = [[w.word.strip(), round(w.start, 3), round(w.end, 3)] for s in segs for w in s.words]
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "transcribe" / "scripts"))
+    try:
+        from transcribe import words as transcribe_words
+    except ImportError:
+        sys.exit("needs the transcribe skill next to this one (skills/transcribe)")
+    words = [list(w) for w in transcribe_words(a.edit, a.engine)]
     out = paths(a.edit)["words.json"]
     out.write_text(json.dumps(words))
     print(f"{len(words)} words -> {out}")
@@ -133,7 +132,7 @@ def two_lines(ws):
 
 
 def align(words, heard):
-    """Script word -> (start, end) from whisper, by char-level alignment; gaps interpolated."""
+    """Script word -> (start, end) from the heard words, by char-level alignment; gaps interpolated."""
     sc, sidx, tc, tidx = [], [], [], []
     for i, t in enumerate(words):
         for ch in norm(t):
@@ -335,7 +334,7 @@ def cmd_render(a):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("words"); s.add_argument("edit", type=Path); s.add_argument("--model", default="small.en")
+    s = sub.add_parser("words"); s.add_argument("edit", type=Path); s.add_argument("--engine", choices=["parakeet", "whisper"], default="parakeet")
     s = sub.add_parser("plan"); s.add_argument("edit", type=Path); s.add_argument("--script", required=True); s.add_argument("--labels")
     s = sub.add_parser("preview"); s.add_argument("edit", type=Path); s.add_argument("--at", type=float); s.add_argument("-o", "--output")
     s = sub.add_parser("render"); s.add_argument("edit", type=Path); s.add_argument("-o", "--output", required=True)

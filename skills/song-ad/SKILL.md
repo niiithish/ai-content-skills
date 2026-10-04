@@ -45,7 +45,7 @@ Follow "Generating the song" in `song-craft.md`. **Suno (a paid plan) is the def
    python3 <skill-dir>/scripts/song.py lyrics video-N/song/lyrics-v1.md --video video-N
    ```
 
-5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with faster-whisper. A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
+5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with Parakeet (the `transcribe` skill). A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
 
 ## Stage 3: plan
 

@@ -11,7 +11,7 @@ A song ad fails when it's a voiceover with a beat under it (prose, no rhyme, no 
 - **Specifics in every verse:** names, ages, numbers, places, days ("Tuesdays she drove me to chemo, Thursdays she drove to him"). Dialogue in quotes, from other characters.
 - **Spoken lines are allowed** for the pivot ("So here's what happened"), the sharpest dialogue and the offer. Mark them `[Spoken]`. Keep them few; most of it is sung.
 - **The punchline of the climax is sung big**, alone, with space around it. It's the line the whole ad exists for.
-- **Brand names spelled for the singer.** Whisper heard "Resilia" as "Rizzilea". Spell it phonetically in the lyric if the model mispronounces it, and check it in every take.
+- **Brand names spelled for the singer.** Speech-to-text heard "Resilia" as "Rizzilea". Spell it phonetically in the lyric if the model mispronounces it, and check it in every take.
 - **Sheet format** (what `song.py` reads): `[Section — direction]` tags on their own line, `{music cues}`, `(backing answers)`, `[Spoken]` before a spoken line. Lead lines are everything else.
 
 ## Music direction

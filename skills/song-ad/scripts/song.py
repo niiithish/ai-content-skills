@@ -131,7 +131,7 @@ def cmd_slice(args):
     out_dir.mkdir(exist_ok=True)
     groups = []
     if args.all:  # consecutive batches of whole lines, each as long as fits in MAX_SLICE
-        cuts = sorted(b)  # a line whisper didn't find has no cut point: it rides inside its neighbour's slice
+        cuts = sorted(b)  # a line speech-to-text didn't find has no cut point: it rides inside its neighbour's slice
         k = 0
         while k < len(cuts) - 1:
             m = k + 1

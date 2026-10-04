@@ -14,7 +14,8 @@
         "video-production",
         "animated-video-production",
         "photoreal-video-production",
-        "captions"
+        "captions",
+        "transcribe"
       ]
     },
     {
