@@ -7,7 +7,7 @@
 #                                 a standalone video: everything below goes in that one folder
 #                                 (a client whose videos share nothing)
 #
-# --style animated|photoreal names the style skill in a new AGENTS.md (default animated).
+# --style animated|photoreal|clay names the style skill in a new AGENTS.md (default animated).
 #
 # Creates, without overwriting anything that exists:
 #   AGENTS.md                     client rules, look, sheets, decisions (from the template)
@@ -23,13 +23,13 @@ ROOT=""; VIDEO_NAME=""; UPDATE=0; STYLE=animated
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --update-scripts) UPDATE=1 ;;
-    --style) STYLE="${2:?--style needs animated or photoreal}"; shift ;;
+    --style) STYLE="${2:?--style needs animated, photoreal or clay}"; shift ;;
     *) if [[ -z "$ROOT" ]]; then ROOT="$1"; elif [[ -z "$VIDEO_NAME" ]]; then VIDEO_NAME="$1"; fi ;;
   esac
   shift
 done
-[[ -n "$ROOT" ]] || { echo "usage: init-project.sh /abs/client-folder [video-N|.] [--style animated|photoreal] [--update-scripts]" >&2; exit 2; }
-[[ "$STYLE" == animated || "$STYLE" == photoreal ]] || { echo "--style is animated or photoreal" >&2; exit 2; }
+[[ -n "$ROOT" ]] || { echo "usage: init-project.sh /abs/client-folder [video-N|.] [--style animated|photoreal|clay] [--update-scripts]" >&2; exit 2; }
+[[ "$STYLE" == animated || "$STYLE" == photoreal || "$STYLE" == clay ]] || { echo "--style is animated, photoreal or clay" >&2; exit 2; }
 VIDEO_NAME="${VIDEO_NAME:-video-1}"
 
 SKILL=$(cd "$(dirname "$0")/.." && pwd)

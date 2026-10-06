@@ -1,6 +1,6 @@
 ---
 name: video-production
-description: The shared production pipeline for a short-form Google Flow video in any style. It starts from an approved video-plan PLAN.md and covers the project layout, init-project.sh, make.py (every batch, review and hand-off command), reference sheets, stills, 360p draft clips, 1080p finals, reuse of approved clips and the hand-off to the user's edit. It is loaded by a style skill (animated-video-production or photoreal-video-production), which adds the look and the prompt templates. Use it with one of those; use it alone only for project housekeeping (status, layout, sync, reuse).
+description: The shared production pipeline for a short-form Google Flow video in any style. It starts from an approved video-plan PLAN.md and covers the project layout, init-project.sh, make.py (every batch, review and hand-off command), reference sheets, stills, 360p draft clips, 1080p finals, reuse of approved clips and the hand-off to the user's edit. It is loaded by a style skill (animated-video-production, photoreal-video-production or clay-video-production), which adds the look and the prompt templates. Use it with one of those; use it alone only for project housekeeping (status, layout, sync, reuse).
 ---
 
 # Video Production
@@ -12,7 +12,7 @@ Turn an approved plan into a finished set of 1080p 9:16 clips with as few regene
 - reviewing one file at a time;
 - batch files and retries piling up beside the media.
 
-This workflow stops each of them at a gate. It is style-agnostic: the style skill that loaded it (`animated-video-production` or `photoreal-video-production`) holds the look, the still and clip prompt templates and its own failure locks.
+This workflow stops each of them at a gate. It is style-agnostic: the style skill that loaded it (`animated-video-production`, `photoreal-video-production` or `clay-video-production`) holds the look, the still and clip prompt templates and its own failure locks.
 
 Files, loaded only when a phase needs them:
 

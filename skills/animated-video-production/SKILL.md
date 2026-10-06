@@ -1,6 +1,6 @@
 ---
 name: animated-video-production
-description: The stylized 3D animation layer for a short-form Google Flow video (Disney/Pixar-style or DreamWorks-style feature-animation CG; default: warm, jewel-toned Pixar look). It adds the look, the scene-still and clip prompt templates, product mascots, characters speaking on camera and the animated failure locks, on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is 3D feature animation, when continuing a project whose AGENTS.md names this skill, or for a single animated scene still or clip prompt. Not for claymation (clay-animation-video-prompt), photoreal ads (photoreal-video-production) or UGC talking heads.
+description: The stylized 3D animation layer for a short-form Google Flow video (Disney/Pixar-style or DreamWorks-style feature-animation CG; default: warm, jewel-toned Pixar look). It adds the look, the scene-still and clip prompt templates, product mascots, characters speaking on camera and the animated failure locks, on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is 3D feature animation, when continuing a project whose AGENTS.md names this skill, or for a single animated scene still or clip prompt. Not for claymation (clay-video-production), photoreal ads (photoreal-video-production) or UGC talking heads.
 ---
 
 # Animated Video Production

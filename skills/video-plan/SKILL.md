@@ -53,7 +53,7 @@ Once the plan is approved, load the skill for its style. It starts from `PLAN.md
 |---|---|
 | 3D feature animation (DreamWorks, Pixar) | `animated-video-production` (it loads `video-production`) |
 | A sung ad (the song replaces the voiceover) | `song-ad` (song first, before step 4; its stage 4 for lip-sync shots), with `animated-video-production` for the B-roll |
-| Claymation or stop-motion | `clay-animation-video-prompt` |
+| Claymation or stop-motion | `clay-video-production` |
 | Photoreal scenes under a voiceover (ads, b-roll) | `photoreal-video-production` (it loads `video-production`) |
 | UGC: a person talking to camera | `ugc-ad-remake` to remake a winning ad, `simple-talking-head` for a single line |
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clay Video Production"
+  short_description: "Handmade claymation look and prompts for Flow videos, on the shared video-production pipeline"
+  default_prompt: "Use $clay-video-production (with $video-production) to make this claymation video: clay sheets, stills, 360p clips and finals with make.py."
