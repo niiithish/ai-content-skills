@@ -21,6 +21,7 @@ spec.json (times in seconds on the timeline; source in/out in seconds, default t
 Prints one timing line per phase and a mismatch table if Resolve placed anything off by a frame.
 """
 import json
+import math
 import os
 import subprocess
 import sys
@@ -53,6 +54,17 @@ def duration(path):
         die(f"ffprobe can't read {path}")
 
 
+def video_fps(path):
+    """Source frame rate (Resolve takes trim points in the clip's own frames), None if no video."""
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=r_frame_rate",
+                          "-of", "csv=p=0", path], capture_output=True, text=True).stdout.strip()
+    try:
+        n, d = out.split("/")
+        return float(n) / float(d)
+    except ValueError:
+        return None
+
+
 def plan_pieces(spec):
     """Spec -> pieces with frame numbers (timeline-relative record frame, source in/out)."""
     fps = float(spec.get("fps", 24))
@@ -63,11 +75,12 @@ def plan_pieces(spec):
             path = os.path.abspath(e["file"])
             if not os.path.isfile(path):
                 die(f"missing file: {path}")
-            src_len = int(duration(path) * fps)
+            sfps = (video_fps(path) if kind == "video" else None) or fps
+            src_len = int(duration(path) * fps)  # in timeline frames
             sin = f(e.get("in", 0))
             pieces.append({"kind": kind, "mediaType": mtype, "file": path, "track": int(e.get("track", 1)),
                            "rec": f(e.get("at", 0)), "at": float(e.get("at", 0)), "in": sin, "dur": e.get("dur"),
-                           "src_len": src_len})
+                           "src_len": src_len, "sfps": sfps})
     # length = rounded end - rounded start, so neighbours meet exactly (rounding each separately can overlap by a frame)
     slot = lambda p: f(p["at"] + float(p["dur"])) - p["rec"]
     vid_end = max((p["rec"] + (slot(p) if p["dur"] not in (None, "timeline") else p["src_len"] - p["in"])
@@ -159,7 +172,10 @@ def main():
         while int(tl.GetTrackCount(kind) or 0) < want:
             tl.AddTrack(kind, "stereo") if kind == "audio" else tl.AddTrack(kind)
     start = int(tl.GetStartFrame())
-    infos = [{"mediaPoolItem": have[p["file"]], "startFrame": p["in"], "endFrame": p["in"] + p["len"],
+    # start/endFrame are source frames: scale timeline frames by the clip's own rate (30 fps clip on a 24 fps timeline)
+    # (end rounded up, or a half-frame slot comes out one frame short)
+    src = lambda p, n, up=False: int((math.ceil if up else math.floor)(n * p["sfps"] / float(spec.get("fps", 24)) + (-1e-6 if up else 1e-6)))
+    infos = [{"mediaPoolItem": have[p["file"]], "startFrame": src(p, p["in"]), "endFrame": src(p, p["in"] + p["len"], True),
               "recordFrame": start + p["rec"], "trackIndex": p["track"], "mediaType": p["mediaType"]}
              for p in pieces]
     items = mp.AppendToTimeline(infos) or []

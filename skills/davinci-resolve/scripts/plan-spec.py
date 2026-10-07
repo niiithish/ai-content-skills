@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write a build.py spec from a video folder's PLAN.md shot table.
 
-Each shot N goes at its plan time, trimmed to its slot, from the newest clip-N-v*-1080p in
+Each shot N goes at its plan time, trimmed to its slot, from the newest clip-N-v*-1080p (else clip-N-v*) in
 clips/resolve-prores/ (convert first with to-prores.sh). Hard cuts.
 
 Usage:
@@ -35,7 +35,8 @@ if not shots:
 ver = lambda p: int(re.search(r"-v(\d+)", p)[1]) if re.search(r"-v(\d+)", p) else 0
 video, missing = [], []
 for n, t0, t1 in shots:
-    found = sorted(glob.glob(f"{v}/clips/resolve-prores/clip-{n}-v*-1080p.mov"), key=ver)
+    found = sorted(glob.glob(f"{v}/clips/resolve-prores/clip-{n}-v*-1080p.mov"), key=ver) \
+        or sorted(glob.glob(f"{v}/clips/resolve-prores/clip-{n}-v*.mov"), key=ver)
     if not found:
         missing.append(n)
         continue
