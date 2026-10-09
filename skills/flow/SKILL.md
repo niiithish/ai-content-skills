@@ -56,6 +56,7 @@ What the errors mean:
 - `TIMEOUT` means an accepted job may still be resumable.
 - A clip Google drops, or leaves generating for 4 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
 - If accepted media is lost on two accounts, `PROMPT_REJECTED` means rewrite or simplify the prompt.
+- `accX can't open Flow (Google's age check) · skipping it for a day`: flow already skips that account in later commands too. Tell the user once that the account needs its age check cleared (`flow account open accX`); don't remove it or work around it.
 - `verification rejected on accX · trying another account` and `retrying accX in Ns` are flow handling Google's refusals itself. Let the batch run; never add your own wait or sleep before rerunning.
 - `UNSAFE_GENERATION` means Google's safety filter blocked the prompt or a reference. The same prompt is rejected every time, and flow refuses to resend it, so rewrite the flagged wording (or swap the reference) and rerun.
 - `NETWORK` means Google answered slowly or not at all, not that the job failed. Rerun the same command once: accepted jobs are picked up without spending credits, and jobs that never went through are sent again. Stop and report only if the rerun fails with `NETWORK` too.
