@@ -1,6 +1,6 @@
 ---
 name: davinci-resolve
-description: Edit videos in FREE DaVinci Resolve on Linux through the davinci-resolve MCP. Covers converting MP4 clips to ProRes LT so Resolve can read them, building a timeline from clips and music, trimming and cutting, rendering a ProRes .mov, and turning it into a client-sized H.264 MP4 with ffmpeg (or straight into the captions render). Builds a whole edit in one command with scripts/build.py. Use when the user asks to put clips or music in Resolve, assemble, cut or trim an edit, or export or render from Resolve. Also imports anything into the Master bin in one command (clips with or without sound, sped-up audio, YouTube mp3s, webp stills). Not for captions (the captions skill renders them from the Resolve .mov) or for generating clips (use flow).
+description: Edit videos in FREE DaVinci Resolve on Linux through the davinci-resolve MCP. Covers converting MP4 clips to ProRes LT so Resolve can read them, building a timeline from clips and music, trimming and cutting, and turning the user's own Resolve export into a client-sized H.264 MP4 with ffmpeg (or straight into the captions render). The user always exports from Resolve themselves; never render from it. Builds a whole edit in one command with scripts/build.py. Use when the user asks to put clips or music in Resolve, assemble, cut or trim an edit, or turn their export into the client MP4. Also imports anything into the Master bin in one command (clips with or without sound, sped-up audio, YouTube mp3s, webp stills). Not for captions (the captions skill renders them from the Resolve .mov) or for generating clips (use flow).
 ---
 
 # DaVinci Resolve (free, Linux)
@@ -10,7 +10,7 @@ The agent drives Resolve through the `davinci-resolve` MCP (samuelgursky/davinci
 ## Free-on-Linux limits (why the pipeline looks like this)
 
 - **No H.264/H.265/AAC decode.** An MP4 imports as *Audio only*, with no picture. Convert every clip to ProRes LT first with `scripts/to-prores.sh`. MP3 and WAV import fine as they are.
-- **No H.264 encode.** Render ProRes `.mov`, then make the MP4 with `scripts/to-mp4.sh`.
+- **No H.264 encode.** The user exports a ProRes/DNxHR `.mov`; we make the MP4 with `scripts/to-mp4.sh` or the captions render.
 - **No webp.** Images must be png/jpg/tiff (`add-media.py` converts).
 - ProRes LT is about 10 MB/s at 1080×1920 (about 2.5 GB for 4 minutes). It is a working format only. The client gets the MP4 (about 150–250 MB for 4 minutes at crf 20). Never send the ProRes.
 
@@ -21,7 +21,7 @@ The agent drives Resolve through the `davinci-resolve` MCP (samuelgursky/davinci
 
 ## Process (fast path: one command per stage, no per-step tool calls)
 
-Do the edit with `scripts/build.py`, not step by step through the MCP. One MCP call costs a model turn, and the MCP's append looks each clip up by scanning the media pool one bridge call at a time (about 2,000 round trips for 64 clips). `build.py` imports once, appends every piece in one call, checks placement once, saves, and renders while polling locally. It prints a timing line per phase.
+Do the edit with `scripts/build.py`, not step by step through the MCP. One MCP call costs a model turn, and the MCP's append looks each clip up by scanning the media pool one bridge call at a time (about 2,000 round trips for 64 clips). `build.py` imports once, appends every piece in one call, checks placement once and saves. (It also has `--render`, but rendering is the user's job: never pass it.) It prints a timing line per phase.
 
 1. **Convert** the clips (parallel, skips ones already done). Add `--no-audio` when the clips' own sound isn't wanted (it usually isn't for AI clips under a voiceover or music):
 
@@ -45,14 +45,8 @@ Do the edit with `scripts/build.py`, not step by step through the MCP. One MCP c
    ```
 
    Rebuilding an existing timeline needs `--replace` (it deletes that timeline first; ask the user if they may have hand-edited it). The frame rate can't change once the project has a timeline. If the bridge isn't running, ask the user to click claude_bridge (see above).
-4. **Show the user** and let them check it in Resolve. Render only when they say the edit is done:
-
-   ```bash
-   <skill-dir>/scripts/build.py video-N/edit/hook-1.spec.json --replace --render   # ProRes LT .mov into deliverables/raw/
-   ```
-
-   Run it in the background for long edits; it waits for the render and reports progress itself.
-5. **One encode to the client file.** Free Resolve on Linux can't write H.264, so exactly one ffmpeg pass follows the render:
+4. **Hand it to the user.** Tell them the timeline is built and saved, and stop. **Never render or export from Resolve yourself** (no `--render`, no MCP `render` calls): the user opens the timeline, fixes it by hand and exports in the format they want, usually into `video-N/deliverables/raw*/`.
+5. **After the user's export: one encode to the client file.** Free Resolve on Linux can't write H.264, so exactly one ffmpeg pass follows their export:
    - **Captions wanted** (most briefs): do NOT make a plain MP4 first. Hand the `.mov` straight to the `captions` skill; its render burns the captions and writes the final MP4 in that one pass.
    - **No captions:** `<skill-dir>/scripts/to-mp4.sh video-N/deliverables/raw/<name>.mov video-N/deliverables/<Brand>_<Concept>_<Variant>_9x16.mp4` (quality 20 by default; 18 near-lossless, 23 smaller; `-d DIR a.mov b.mov` for several). It encodes on the Intel GPU (Quick Sync) with an x264 fallback, one file at a time: x264 already uses every core, so parallel encodes only slow each other down. Report the size.
 
@@ -75,7 +69,7 @@ Converted files go to `video-N/resolve-media/`. It skips anything already in the
 
 - Never call `timeline_frame` `capture`: it opens a popup in Resolve and switches the render format to JPEG. Grab frames from the exported file with ffmpeg instead.
 - Deleting media pool clips returns a `confirm_token`; call again with it, and only after the user asked for the removal.
-- Before the user renders, the Deliver page must show Format **QuickTime** (ProRes or DNxHR). If a render comes out as a JPEG sequence, that's the cause.
+- If the user asks about their render settings: the Deliver page must show Format **QuickTime** (ProRes or DNxHR). If a render comes out as a JPEG sequence, that's the cause.
 - The user's timeline is theirs: once they edit by hand, import only, and never `--replace` it.
 
 Use the MCP tools for inspection and one-off fixes on an existing timeline (`timeline` `get_items`, color, Fusion, markers, Fairlight), not for building.
