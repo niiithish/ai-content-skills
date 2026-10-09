@@ -2,7 +2,7 @@
 name: flow
 description: >
   Generate Google Flow images and videos with the local Labflow `flow` CLI. Use for
-  Flow, Labflow, Nano Banana Pro, Omni Flash, `flow image`, `flow images`,
+  Flow, Labflow, Nano Banana Pro, Nano Banana 2.1, Omni Flash, `flow image`, `flow images`,
   `flow generate`, `flow batch`, or `flow upsample`. Do not use for prompt-only requests
   targeting other engines.
 ---
@@ -34,24 +34,27 @@ Run the requested generation command directly. Labflow owns:
 
 What not to do:
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits` or `flow doctor` unless the user explicitly asks for account diagnostics.
-- Let flow pick the account: it sends stills and 360p drafts only to free accounts and upsample jobs only to paid ones. A 360p draft never falls back to a paid account: with no free credits left it fails with `QUOTA`. Only when the user says to spend paid credits on drafts, rerun with `FLOW_ALLOW_PAID_DRAFTS=1`. When a draft batch fails with `RECAPTCHA_FAILED` (Google refusing every free account), tell the user right away and ask whether to use that override; premium is rarely refused. Do not run `flow account use`, `flow rotate` or `flow sync`, and never run `flow logout`, `flow account clear` or `flow account rm`: they remove saved logins. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
+- Let flow pick the account, and don't set any env var to steer it. Stills and 360p drafts go to free accounts and fall back to premium only when no free account can take them (out of credits, refused). Native 720p goes to premium first, because only premium clips can be upscaled to 1080p. `--upsample` is premium-only. Do not run `flow account use`, `flow rotate` or `flow sync`, and never run `flow logout`, `flow account clear` or `flow account rm`: they remove saved logins. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
 - Do not pass `--no-rotate` unless the user explicitly asks to lock one account. Normal generation leaves rotation on so depleted or unhealthy accounts are replaced automatically.
 - Never expose or request session tokens, cookies, passwords, recovery data or vault credentials.
 
-Treat queue and resume progress as informational, and let the command finish. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
+Only when the user names one account for a batch, add `--account NAME` to `flow batch` (or set `FLOW_ACCOUNT=NAME`; the flag wins). Every job then runs on that account alone, paid or free, with no rotation.
+
+Treat queue and resume progress as informational, and let the command finish. Separate commands queue only for the submit itself: once Google accepts a job the next command starts, so a few `flow` commands from different agent sessions are fine. Two of them submit at the same time on different accounts; they never share an account's browser, so `another flow command is using this account; waiting…` is normal. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
 
 ## Batches
 
 For independent bulk jobs, use `flow batch` with one manifest entry per output. Do not launch many separate CLI processes.
-- **Pacing:** the default is three accepted jobs in flight and at most six new submissions per minute, with per-account video-credit accounting.
-- **Stills** render `--concurrency` at a time in the one browser, so `--rpm` is what caps a large still batch: at `--rpm 6`, 20 stills take about 3.5 minutes.
+- **Pacing:** the default is ten accepted jobs in flight (`--concurrency`, up to 20) and at most twelve new submissions per minute (`--rpm`, one every 5s), with per-account video-credit accounting. Within one batch, submits go one at a time; the clips then render in parallel.
+- **Stills** render `--concurrency` at a time in the one browser, so `--rpm` is what caps a large still batch: at the default `--rpm 12`, 20 stills take under 2 minutes.
 - **Sequencing:** keep review-dependent or sequential shots in separate batches.
-- **Resume:** rerun the same batch after an interruption; completed outputs are skipped and accepted jobs resume. Do not wrap Flow commands in an external retry loop.
+- **Resume:** rerun the same batch after an interruption; completed outputs are skipped and accepted jobs resume. Rerunning approved 360p drafts at `720p` into the same output paths makes the 720p clips: a 360p file never counts as the finished 720p clip.
+- **Uploads:** an account reuses its upload of the same reference image for 24 hours, so reusing reference files across commands is cheap. Do not wrap Flow commands in an external retry loop.
 
 What the errors mean:
 - A final `QUOTA` means the live account pool lacks enough credits.
 - `TIMEOUT` means an accepted job may still be resumable.
-- A clip Google drops, or leaves generating for 5 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
+- A clip Google drops, or leaves generating for 4 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
 - If accepted media is lost on two accounts, `PROMPT_REJECTED` means rewrite or simplify the prompt.
 - `verification rejected on accX · trying another account` and `retrying accX in Ns` are flow handling Google's refusals itself. Let the batch run; never add your own wait or sleep before rerunning.
 - `UNSAFE_GENERATION` means Google's safety filter blocked the prompt or a reference. The same prompt is rejected every time, and flow refuses to resend it, so rewrite the flagged wording (or swap the reference) and rerun.
@@ -84,10 +87,12 @@ Paths in a manifest may be absolute or relative to that manifest. An `upsample` 
 flow image --prompt-file /ABS/scene.md --aspect 9:16 --ingredient /ABS/ref.png --name /ABS/scene.jpg
 
 # A folder containing scene1.md, scene2.md, ...
-flow images /ABS/scripts --out /ABS/images --aspect portrait --rpm 6
+flow images /ABS/scripts --out /ABS/images --aspect portrait
 
 # Independent images/videos with different references and output paths
-flow batch /ABS/jobs.json --concurrency 5 --rpm 6 --continue-on-error
+flow batch /ABS/jobs.json --continue-on-error
+# ...all on one named account (only when the user asks for it)
+flow batch /ABS/jobs.json --account acc8
 
 # One video, optionally using existing stills as references
 flow generate --prompt-file /ABS/clip.md --aspect portrait --duration 8 \
