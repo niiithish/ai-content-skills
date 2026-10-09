@@ -50,6 +50,31 @@ Do the edit with `scripts/build.py`, not step by step through the MCP. One MCP c
    - **Captions wanted** (most briefs): do NOT make a plain MP4 first. Hand the `.mov` straight to the `captions` skill; its render burns the captions and writes the final MP4 in that one pass.
    - **No captions:** `<skill-dir>/scripts/to-mp4.sh video-N/deliverables/raw/<name>.mov video-N/deliverables/<Brand>_<Concept>_<Variant>_9x16.mp4` (quality 20 by default; 18 near-lossless, 23 smaller; `-d DIR a.mov b.mov` for several). It encodes on the Intel GPU (Quick Sync) with an x264 fallback, one file at a time: x264 already uses every core, so parallel encodes only slow each other down. Report the size.
 
+## Edits that follow a reference (lessons from Mysa video-10: 96 shots over a 4:40 talking track)
+
+1. **Talking track first, yap style.** A presenter speaking the whole VO in many short clips: cut each to its speech and butt them together, no gaps (0.04 s before the first word, 0.12 s after the last):
+
+   ```bash
+   <skill-dir>/scripts/talking-cut.py resolve-media/clip-*.mov --timeline "Hook 1 (talking cut)" > edit/talking.spec.json
+   ```
+
+   Then `build.py` it. The user trims it by hand and exports it; that export (its audio and timing) is the spine for everything else.
+2. **Where each reference shot lands.** Transcribe the user's spine export, then map the reference cuts (`cuts.txt` from video-breakdown `prep.sh`) onto it. Cuts snap to just before a word:
+
+   ```bash
+   <skill-dir>/scripts/ref-cuts.py reference-video/ref.words.json reference-video/cuts.txt deliverables/raw/spine.words.json \
+     --syn "competitorbrand=mysa,gummy=softgel" -o edit/map.json
+   ```
+
+   Read the rows where our script departs from the reference's: the match is loose there.
+3. **Render each cutaway to its exact slot** with `fit-slot.py`, so `build.py` just places frame-exact files:
+   - a clip shorter than its slot is slowed (0.5x at most), then holds its last frame;
+   - a longer clip keeps its first frames, which are often a static lead-in, so the action got lost twice on video-10. Look at the clip and pass `--from`;
+   - `--split TOP BOTTOM` makes a split-screen from two separate clips (centre half of each);
+   - `--inset green.mp4 --inset-at T` keys a green-screen presenter into the bottom-left, taken from the same moment of her track so her lips stay in sync.
+4. **Spine on V1 with its audio, cutaways on V2**, in a **new** timeline next to the user's. Inserted segments (testimonials) shift every later cutaway by their length.
+5. **Also import the full, untrimmed clip** of any shot whose slot is much shorter than the clip, to the Master bin, so the user can drag in a different part.
+
 ## Adding media while the user edits
 
 Most requests mid-edit are "import this" (a clip with or without its sound, a sped-up VO, a YouTube sound effect, a webp sticker). Do each in **one** command, straight into the Master bin, never onto a timeline, and don't run extra probes first:
@@ -66,6 +91,9 @@ Most requests mid-edit are "import this" (a clip with or without its sound, a sp
 Converted files go to `video-N/resolve-media/`. It skips anything already in the pool and saves the project. YouTube needs the `mweb` player client (the default one returns 403; video then tops out at 360p, fine for sound effects). When the user says "just the mp3", don't import the video too. To scale a still on the timeline, tell them: Inspector → Transform → Zoom.
 
 ## MCP gotchas
+
+- Any MCP call starts Resolve if it isn't running, even a read-only one. Check first (`pgrep -f resolve/bin/resolve`), and don't call the MCP while the user hasn't opened Resolve.
+- Untagged colour (`trc reserved`) in a converted .mov breaks some decoders: `fit-slot.py` tags bt709.
 
 - Never call `timeline_frame` `capture`: it opens a popup in Resolve and switches the render format to JPEG. Grab frames from the exported file with ffmpeg instead.
 - Deleting media pool clips returns a `confirm_token`; call again with it, and only after the user asked for the removal.
