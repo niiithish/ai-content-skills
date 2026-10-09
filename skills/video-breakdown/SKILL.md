@@ -18,6 +18,16 @@ description: >
 
 Most agent models can't take video as input; they only see still frames. Gemini 3.1 Pro watches the whole video with its sound, so it writes the breakdown, and you check it against real frames. `<skill-dir>` is the folder holding this file.
 
+## 0. Prep (always, before or while Gemini runs)
+
+Gemini's JSON alone is too coarse: on one 80 s ad it gave 8 "scenes" for ~40 real cuts, the wrong resolution and `[cite]` junk. So always build the ground truth first, in one command (about 15 s for 80 s of video):
+
+```bash
+bash "<skill-dir>/scripts/prep.sh" /abs/path/to/reference.mp4
+```
+
+It writes next to the video: the word-timed transcript (`.txt`, `.words.json`, `.srt`, via the `transcribe` skill), `cuts.txt` (hard cuts, scene score > 0.3), 2 fps contact sheets in `sheets/`, and `specs.txt` (size, fps, length, words, wpm, shot count). Keep the files with the project, not in a scratchpad.
+
 ## 1. Get the JSON
 
 If there is no v3 JSON yet, get one from Gemini. Don't invent a breakdown in the meantime.
@@ -52,18 +62,26 @@ bash "<skill-dir>/scripts/contact-sheets.sh" "/abs/path/to/video.mp4" /tmp/video
 
 It samples at 2 fps, labels each frame with its time and puts 12 frames (6 s) on each sheet. Stdout gives `OUT=`, `MANIFEST=` and one row per sheet: `sheet_path  start_sec  end_sec  count  label`. Read every sheet in time order: never open the frames one by one, and don't spawn a subagent to look.
 
-Check the JSON's cuts, settings, characters and `build` against the sheets. Where they disagree, trust the frames for what's visible and Gemini for the sound, motion between frames and the words. Pull a full-size frame (`ffmpeg -ss T -i video -frames:v 1 out.jpg`) only when a sheet cell is unclear: product text, a cut you can't place.
+(`prep.sh` already made them in `sheets/`.) Check the JSON's cuts, settings, characters and `build` against the sheets and `cuts.txt`: the shot list needs one row per real cut, not per Gemini scene. Where they disagree, trust the frames for what's visible and Gemini for the sound, motion between frames and the words. Pull a full-size frame (`ffmpeg -ss T -i video -frames:v 1 out.jpg`) only when a sheet cell is unclear: product text, a cut you can't place.
 
-If the user doesn't want to use Gemini, write the breakdown from the sheets plus a local transcript with word times (the `transcribe` skill: `transcribe.py video.mp4`), and say it's weaker on motion and timing.
+If the user doesn't want to use Gemini, write the breakdown from the prep files alone, and say it's weaker on motion between frames.
 
 ## 3. Write it up
 
-Lead with what a remake needs first:
+Save it as `<video name>.breakdown.md` next to the video, in this order (the user approved this layout on Mysa video-9):
 
-- **Pattern:** the repeating formula, the hook, why it works, each character's world. This is what planning copies.
-- **Form, length, size and premise.**
-- **Transcript**, phrase by phrase.
-- **Each scene in time order**, as written in the JSON (don't paraphrase or pad): shot, times, purpose; camera (framing, angle, move); set; characters; elements; build; timeline with its words; still; overlay captions (or none).
-- **Checked against the frames:** what you confirmed, what you corrected, and anything neither source settles.
+1. **Specs** table: size, fps, length, words and wpm, shot count and average shot, look, audio (VO, music, SFX), captions in one line. From `specs.txt`, corrected by eye.
+2. **Pattern:** the formula, the timeline engine (what moves the story forward), mirrored beats, the visual euphemism system (how it shows what it can't show), the hook, why it works. This is what planning copies.
+3. **Style bible + recurring cast:** medium/look, light, palette, each character's look and world.
+4. **Captions:** font family and weight, case, colour, outline/shadow/box, words per page, position (y as % of height), word highlight, titles or labels. Then name the **nearest captions template** (`captions` skill: 1 boxed two-line, 2 bold caps one-liner, 3 karaoke one-liner with a hook title, 4 sentence-case one-liner) and what differs, so the edit can say "template-3" instead of describing it.
+5. **Transcript**, word-timed (from the `.srt`).
+6. **Shot list, one row per cut** from `cuts.txt` and the sheets: `# | time | shot | camera | build | VO words`. Whip pans and dissolves get their own rows.
+7. **Checked against the frames:** what you confirmed, what you corrected in Gemini's JSON, and anything neither source settles.
 
-Save the write-up as `<video name>.breakdown.md` next to the JSON when the video belongs to a project, so planning reads it instead of redoing it.
+## 4. When the user wants a remake
+
+- Write our voiceover to the same formula and length: word count within ~5% of the reference.
+- Map every reference beat to ours in a table (reference time and words → our line → our shot).
+- Cite where each product claim comes from (brief, product page); never invent numbers.
+- Split-screen shots are never generated as one split frame: plan each side as its own still and clip (subject centred, action inside the middle half of the width) and build the split, seam and labels in the edit.
+- A known toy or brand look is fine to match, but describe it generically in prompts ("glossy plastic toy-brick minifigure") and use original characters and invented competitor brands.

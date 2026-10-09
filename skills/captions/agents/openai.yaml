@@ -1,4 +1,4 @@
 interface:
   display_name: "Captions"
-  short_description: "Burn locked-style captions and section labels into a finished 9:16 edit"
-  default_prompt: "Use $captions to caption this edit: time the script with ElevenLabs Scribe, show one preview frame, then render the deliverable."
+  short_description: "Burn captions into a finished 9:16 edit in a named template (1-4), GPU render"
+  default_prompt: "Use $captions with template-3 to caption these edits: time the words, show preview frames, then render the deliverables one at a time."

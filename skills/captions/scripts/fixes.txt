@@ -1,0 +1,20 @@
+# Spoken form | caption form. Applied to transcript words only (plan without --script), longest match first.
+# Add brand spellings per project with --fixes (e.g. "maesa | Mysa"). ElevenLabs Scribe spells numbers out.
+a hundred and sixteen | 116
+one hundred percent | 100%
+nineteen ninety-nine | $19.99
+eighty-nine dollars | $89
+four to six | 4 to 6
+one percent | 1%
+ninety-day | 90-day
+fortys | 40s
+forties | 40s
+fiftys | 50s
+fifties | 50s
+sixtys | 60s
+sixties | 60s
+fifty-six | 56
+twelve | 12
+ten | 10
+three | 3
+two | 2

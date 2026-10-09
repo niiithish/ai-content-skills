@@ -1,55 +1,62 @@
 ---
 name: captions
-description: Burn captions and section labels into a finished 9:16 edit in one locked style (TikTok Sans SemiBold, black on a merged white box at the bottom of the Meta/TikTok safe area, red label boxes at the top). The wording comes from the voiceover script and the timing from ElevenLabs Scribe word timestamps (the transcribe skill). It shows one preview frame before any render and writes <Brand>_<Concept>_<Variant>_<Ratio>.mp4 deliverables. Use when the user asks for captions, subtitles or supers on their edit, or on any video they've cut. Not for captions inside generated stills or clips (those never carry text).
+description: "Burn captions into finished 9:16 edits in a named template the user picks by number (\"use template-3\"): 1 boxed two-line (TikTok Sans on a white box), 2 bold ALL CAPS one-liner, 3 karaoke one-liner with the spoken word in lime plus an optional red hook title, 4 sentence-case Montserrat one-liner. All stay inside the Meta/TikTok safe box. Words come from the voiceover script (or the transcript with number/brand fixes), timing from ElevenLabs Scribe word timestamps (the transcribe skill). Shows preview frames before any render, renders one edit at a time on the Intel GPU (Quick Sync / VA-API, x264 fallback) and writes <Brand>_<Concept>_<Variant>_<Ratio>.mp4 deliverables. Use when the user asks for captions, subtitles, supers or a hook title on their edit. Not for captions inside generated stills or clips (those never carry text)."
 ---
 
 # Captions
 
-The user edits the video; we burn captions into their finished edit. The style below took seven rounds with the user to lock (Mysa video 3). Use it as is, and change it only when the user asks.
+The user edits the video; we burn captions into their finished edit (usually Resolve exports in `video-N/deliverables/raw*/`). Tool: `scripts/captions.py` (Python 3 with Pillow, plus ffmpeg). Word times come from the `transcribe` skill's helper, so install it alongside. Fonts are bundled in `fonts/` (TikTok Sans and Montserrat, both OFL).
 
-Tool: `scripts/captions.py` (Python 3 with Pillow, plus ffmpeg), which gets word times from the `transcribe` skill's helper (ElevenLabs Scribe; Parakeet and faster-whisper as offline fallbacks). Install `transcribe` alongside it, with the font bundled in `fonts/` (TikTok Sans, OFL).
+## Templates
 
-## Locked style
+The user names one ("template-3"); don't ask them to describe the style again. If they name none, ask which, showing `templates/all.png`. Each was locked with the user on a real Mysa ad.
 
-Layout on a 1080×1920 canvas, scaled to the edit. The Meta/TikTok caption safe box is x 40–1050, y 220–1500.
+| # | From | Look | Words per caption |
+|---|---|---|---|
+| 1 | video-3 | `#111` TikTok Sans SemiBold 54 on one merged white box with rounded corners and filleted steps; block bottom y 1480. Red `#EA4040` section labels at y 245 for 3 s. | 2 lines, ~36 chars (50 max), breaks at commas |
+| 2 | video-6 | ALL CAPS white TikTok Sans ExtraBold 68, 3 px black outline, soft shadow (blur 7, dy 4); baseline y 1420; punctuation kept. | 1 line, ≤3 words, ~13 chars |
+| 3 | video-10 | ALL CAPS white Montserrat ExtraBold, 6 px black outline, hard 50% shadow; **the word being spoken turns lime `#C8FF00`**; centre y 1440; no punctuation. Usually with a hook title (below). | 1 line, ≤3 words, ≤18 chars |
+| 4 | video-7 | Sentence-case white Montserrat ExtraBold 68, 3 px outline, soft shadow; baseline y 1420; punctuation kept. | 1 line, ≤3 words, ~13 chars |
 
-- **Captions:**
-  - `#111` text, TikTok Sans SemiBold 54 px, on white;
-  - the block's bottom edge at y 1480, the bottom of the safe box (never the centre of the frame);
-  - at most 2 lines, and nearly every caption is 2 full lines (about 36 characters, 50 at most, breaking at commas where possible, with no short orphans);
-  - curly quotes and apostrophes.
-- **The box:** one merged shape around all lines (never a box per line, which leaves a notch), with rounded outer corners (R 18) and rounded fillets where lines of different widths step. Line pitch is 74 px (about 1.95× cap height), and each line is centred on its cap height, so the space above the capitals equals the space below the baseline.
-- **Section labels** (HOURS, DAYS 4–6, WEEK 3…): the same box shape at the top (y 245), white text on `#EA4040`, on screen for 3 s from the start of their line. Never a big centred super or a white box.
-- **Words** come from the voiceover script, not from the transcript: speech-to-text only times them. The audio is copied untouched.
+Samples: `templates/template-N.png` (the red frame is the safe box). `captions.py templates` prints the list.
+
+Every template keeps text inside the **Meta/TikTok caption safe box, x 40–1050, y 220–1500** on 1080×1920: lines are capped at 900 px, and a single word wider than that is shrunk, never allowed past the edge.
+
+**Options on any template:**
+- `--title "How lube ruined my marriage!!"`: a hook title, white Montserrat ExtraBold 50 on a red `#E81C24` rounded box, centred on y 960 (the seam of a split-screen hook; `--title-y` to move it), from 0 s until the first sentence is said (+0.3 s; `--title-until` to set it). Use the same title on every hook unless told otherwise.
+- `--labels labels.txt`: section labels (template 1's red boxes), one `LABEL | first words of its line` per line.
+- A project-only variant: a JSON file `{"base": "2", "size": 60, "highlight": [255, 220, 0]}` passed as `-t file.json`. Keys: `font`, `size`, `caps`, `punct`, `stroke`, `shadow` `[dx, dy, blur, alpha]`, `y`, `anchor` (`ms` baseline, `mm` centre), `maxwords`, `target`, `maxchars`, `highlight` `[r, g, b]` or null. Record it in the project's `AGENTS.md`; add it here as template 5+ only when the user says so.
 
 ## Process
 
-1. Find what the brief says about captions and quote it to the user in one line. Get the edit (the user's file, e.g. `video-N/my-edits/hook-1.mp4`) and the script text as voiced in that edit (the hook variant plus the body). Save it as a text file in `video-N/captions/`.
-2. Time the words (seconds with ElevenLabs; under a minute for a 2–3 minute file with Parakeet):
+1. Quote what the brief or the user says about captions in one line, and the template number. Get the edits.
+2. Word times, one per edit (seconds with ElevenLabs):
 
    ```bash
-   <skill-dir>/scripts/captions.py words video-N/my-edits/hook-1.mp4
+   <skill-dir>/scripts/captions.py words video-N/deliverables/raw/hook-1.mov
    ```
 
-3. Plan the captions. `labels.txt` holds one `LABEL | first words of its line` per line:
+3. Plan. Words on screen come from the voiceover script when you have the one voiced in this edit (`--script`, one line per row); otherwise from the transcript, with spoken forms fixed by `scripts/fixes.txt` (numbers: "fifty-six" → 56, "nineteen ninety-nine" → $19.99) plus a project file for brand spellings (Scribe hears "Mysa" as "Maesa"/"Maisa"):
 
    ```bash
-   <skill-dir>/scripts/captions.py plan video-N/my-edits/hook-1.mp4 --script video-N/captions/hook-1.txt --labels video-N/captions/labels.txt
+   printf 'maesa | Mysa\nmaisa | Mysa\n' > video-N/captions/fixes.txt
+   <skill-dir>/scripts/captions.py plan EDIT -t 3 --fixes video-N/captions/fixes.txt --title "How lube ruined my marriage!!"
    ```
 
-   It prints every caption with its times, and how many script words weren't heard. Read it: breaks in the right places, nothing missing. If many words weren't heard, the script doesn't match the edit; ask for the right one.
-4. **Preview first.** `captions.py preview EDIT` composites one real frame with a caption and a label (or `--at 12.5` for a chosen moment) into `captions/<stem>.preview.png`. Show it to the user, and render nothing until they say yes.
-5. Render each edit into `video-N/deliverables/`, named `<Brand>_<Concept>_<Variant>_<Ratio>.mp4`:
+   It prints every caption with its times. Read it: brand and numbers right, breaks in sensible places, and with `--script`, few words "not heard" (many means the script doesn't match the edit).
+4. **Preview first.** `captions.py preview EDIT` writes `captions/<stem>.preview.png`: real frames side by side, one with the title or a label and one mid-video (`--at 1.2 40.5` to choose). Send it to the user and render nothing until they say yes.
+5. Render all edits in **one** command; they go one at a time (each encode already fills the GPU, so parallel runs only slow every one down):
 
    ```bash
-   <skill-dir>/scripts/captions.py render video-N/my-edits/hook-1.mp4 -o video-N/deliverables/Mysa_Dose-to-Done_Hook1-Control_9x16.mp4
+   <skill-dir>/scripts/captions.py render raw/hook-1.mov raw/hook-2.mov raw/hook-3.mov \
+     -o deliverables/Mysa_Lube-Myth_Hook1_9x16.mp4 deliverables/Mysa_Lube-Myth_Hook2_9x16.mp4 deliverables/Mysa_Lube-Myth_Hook3_9x16.mp4
    ```
 
-   It writes `<name>.tmp.mp4` and renames it only when ffmpeg finishes, so a stopped render never leaves a broken deliverable. Run several edits in the background, one render each.
-6. Check one frame of each deliverable at a caption with a label, then report the files in a line each.
+   Run it in the background and report each file as it lands. Encoder order: Intel Quick Sync (`h264_qsv -global_quality 20`), then VA-API, then x264 veryfast; on the user's Iris Xe a 4-minute 1080×1920 hook takes about 1.5 min. Video length is the source's video stream, audio is copied if AAC, else encoded to AAC 192k (Resolve's PCM can't go in an mp4). Each file is written as `<name>.tmp.mp4` and renamed when done, so a stopped render never leaves a broken deliverable.
+6. Check one frame of each deliverable and that video and audio durations match, then report the files in a line each.
 
 ## Rules
 
-- All work files (`<stem>.words.json`, `<stem>.plan.json`, frames, preview) go in `video-N/captions/`, which the tool finds from the `PLAN.md` above the edit. Never keep them in a session scratchpad: it is wiped between sessions.
-- If the user wants a style change, change it in the plan or with the tool's constants for that project only. Add it to the project's `AGENTS.md` Decisions, and here only if the user says it's the new default.
+- All work files (`<stem>.words.json`, `<stem>.plan.json`, overlay frames, previews) go in `video-N/captions/` (found from the nearest `PLAN.md`, `AGENTS.md` or `project.conf` above the edit). Never keep them in a session scratchpad: it is wiped between sessions.
+- A style change for one project goes in a template JSON there and its `AGENTS.md` Decisions, not in this skill, unless the user says it's the new default.
 - Never write new caption copy or full subtitles the brief didn't ask for.
