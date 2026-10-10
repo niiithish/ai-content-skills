@@ -40,7 +40,7 @@ What not to do:
 
 Only when the user names one account for a batch, add `--account NAME` to `flow batch` (or set `FLOW_ACCOUNT=NAME`; the flag wins). Every job then runs on that account alone, paid or free, with no rotation.
 
-Treat queue and resume progress as informational, and let the command finish. Separate commands queue only for the submit itself: once Google accepts a job the next command starts, so a few `flow` commands from different agent sessions are fine. Two of them submit at the same time on different accounts; they never share an account's browser, so `another flow command is using this account; waiting…` is normal. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
+Treat queue and resume progress as informational, and let the command finish. Separate commands queue only for the submit itself: once Google accepts a job the next command starts, so a few `flow` commands from different agent sessions are fine. They submit one at a time through a single Labflow browser, so a short queue wait is normal. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
 
 ## Batches
 
