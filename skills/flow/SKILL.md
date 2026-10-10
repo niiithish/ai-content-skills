@@ -14,7 +14,7 @@ Run `flow` and deliver the requested media. Do not stop after writing a prompt u
 ## When a job is stuck or flow is broken
 
 - There is no cancel command. Don't kill and relaunch in a loop.
-- `NOT_FOUND` in the final summary: flow has already spent its one regeneration on another account, so rerunning unchanged won't help. Put a new `"seed"` on that job and rerun. If the same jobs keep vanishing (`NOT_FOUND` or `PROMPT_REJECTED`) while the rest of the batch succeeds, it's the content filter removing finished media: stop rerunning and soften the prompt and start image instead.
+- `NOT_FOUND` in the final summary: flow has already spent its one regeneration on another account, so rerunning unchanged won't help. Put a new `"seed"` on that job and rerun. Clips Flow's content filter fails after accepting them are no longer reported as lost: they come back as `UNSAFE_GENERATION` with Google's reason (see below).
 - `BATCH_WORKER_FAILED`: rerun the same command.
 - **No progress for about 10 minutes, or the same failure twice after following the hint: stop.** Tell the user at once, in a few lines they can hand to whoever fixes flow: the exact command, the last lines of output, the error code, and what looks wrong (a stuck profile lock, an expired login, a Google error). Don't keep waiting, work around it or offer a menu of options.
 
@@ -59,6 +59,12 @@ What the errors mean:
 - `accX can't open Flow (Google's age check) · skipping it for a day`: flow already skips that account in later commands too. Tell the user once that the account needs its age check cleared (`flow account open accX`); don't remove it or work around it.
 - `verification rejected on accX · trying another account` and `retrying accX in Ns` are flow handling Google's refusals itself. Let the batch run; never add your own wait or sleep before rerunning.
 - `UNSAFE_GENERATION` means Google's safety filter blocked the prompt or a reference. The same prompt is rejected every time, and flow refuses to resend it, so rewrite the flagged wording (or swap the reference) and rerun.
+  - Blocks found during rendering carry the reason in the error (`failed · UNSAFE_GENERATION (PUBLIC_ERROR_…)`) and the hint says what to change:
+    - `IP_INPUT_IMAGE`/`IP_PROHIBITED` (Flow says "interests of third-party content providers… edit your prompt"): it's the start or reference image, not the prompt. Edit out whatever looks copyrighted or branded (or regenerate the still) and rerun; rewording alone won't help.
+    - `IDENTIFIABLE_PERSON_SAFETY`: the prompt or reference reads as a real person.
+    - `MINOR`/`CHILD_SAFETY`: a character reads as a child, so make the ages explicitly adult.
+    - `AUDIO_FILTERED`: reword the dialogue.
+    - `DANGER_FILTER`: tone down the action.
 - `NETWORK` means Google answered slowly or not at all, not that the job failed. Rerun the same command once: accepted jobs are picked up without spending credits, and jobs that never went through are sent again. Stop and report only if the rerun fails with `NETWORK` too.
 - A failed batch lists each job's `error` and `hint` under `failedJobs`; follow the hint.
 
