@@ -49,7 +49,7 @@ For independent bulk jobs, use `flow batch` with one manifest entry per output. 
 - **Stills** render `--concurrency` at a time in the one browser, so `--rpm` is what caps a large still batch: at the default `--rpm 12`, 20 stills take under 2 minutes.
 - **Sequencing:** keep review-dependent or sequential shots in separate batches.
 - **Resume:** rerun the same batch after an interruption; completed outputs are skipped and accepted jobs resume. Rerunning approved 360p drafts at `720p` into the same output paths makes the 720p clips: a 360p file never counts as the finished 720p clip.
-- **Uploads:** an account reuses its upload of the same reference image for 24 hours, so reusing reference files across commands is cheap. Do not wrap Flow commands in an external retry loop.
+- **Uploads:** an account reuses its upload of the same reference image for 24 hours, so reusing reference files across commands is cheap. `flow batch` also sends the next jobs' references to the current account ahead of their turn ("sent ahead to accN" lines are expected, not an error). Do not wrap Flow commands in an external retry loop.
 
 What the errors mean:
 - A final `QUOTA` means the live account pool lacks enough credits.
