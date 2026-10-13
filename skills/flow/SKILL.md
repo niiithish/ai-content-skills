@@ -34,7 +34,7 @@ Run the requested generation command directly. Labflow owns:
 
 What not to do:
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits` or `flow doctor` unless the user explicitly asks for account diagnostics.
-- Let flow pick the account, and don't set any env var to steer it. Stills and 360p drafts go to free accounts and fall back to premium only when no free account can take them (out of credits, refused). Native 720p goes to premium first, because only premium clips can be upscaled to 1080p. `--upsample` is premium-only. Do not run `flow account use`, `flow rotate` or `flow sync`, and never run `flow logout`, `flow account clear` or `flow account rm`: they remove saved logins. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
+- Let flow pick the account, and don't set any env var to steer it. Stills cost no credits, so they use free and premium accounts alike. 360p drafts go to free accounts and fall back to premium only when no free account can take them (out of credits, refused). Native 720p goes to premium first, because only premium clips can be upscaled to 1080p. `--upsample` is premium-only. Do not run `flow account use`, `flow rotate` or `flow sync`, and never run `flow logout`, `flow account clear` or `flow account rm`: they remove saved logins. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
 - Do not pass `--no-rotate` unless the user explicitly asks to lock one account. Normal generation leaves rotation on so depleted or unhealthy accounts are replaced automatically.
 - Never expose or request session tokens, cookies, passwords, recovery data or vault credentials.
 
@@ -45,7 +45,7 @@ Treat queue and resume progress as informational, and let the command finish. Se
 ## Batches
 
 For independent bulk jobs, use `flow batch` with one manifest entry per output. Do not launch many separate CLI processes.
-- **Pacing:** the default is ten accepted jobs in flight (`--concurrency`, up to 20) and at most twelve new submissions per minute (`--rpm`, one every 5s), with per-account video-credit accounting. Within one batch, submits go one at a time; the clips then render in parallel.
+- **Pacing:** the default is ten accepted jobs in flight (`--concurrency`, up to 20) and at most twelve new submissions per minute (`--rpm`, one every 5s), with per-account video-credit accounting. These are the defaults, so don't pass them. Within one batch, submits go one at a time; the clips then render in parallel.
 - **Stills** render `--concurrency` at a time in the one browser, so `--rpm` is what caps a large still batch: at the default `--rpm 12`, 20 stills take under 2 minutes.
 - **Sequencing:** keep review-dependent or sequential shots in separate batches.
 - **Resume:** rerun the same batch after an interruption; completed outputs are skipped and accepted jobs resume. Rerunning approved 360p drafts at `720p` into the same output paths makes the 720p clips: a 360p file never counts as the finished 720p clip.
