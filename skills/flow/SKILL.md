@@ -52,7 +52,7 @@ For independent bulk jobs, use `flow batch` with one manifest entry per output. 
 - **Uploads:** an account reuses its upload of the same reference image for 24 hours, so reusing reference files across commands is cheap. `flow batch` also sends the next jobs' references to the current account ahead of their turn ("sent ahead to accN" lines are expected, not an error). Do not wrap Flow commands in an external retry loop.
 
 What the errors mean:
-- A final `QUOTA` means the live account pool lacks enough credits.
+- A final `QUOTA` means the live account pool lacks enough credits. When every account is out (`details.allOut`, or `"outOfCredits": true` in a batch summary), stop and tell the user: Google refills free accounts daily, so ask them to run `flow account refresh` and then rerun the same command. Do not run the refresh yourself or retry in a loop.
 - `TIMEOUT` means an accepted job may still be resumable.
 - A clip Google drops, or leaves generating for 4 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
 - If accepted media is lost on two accounts, `PROMPT_REJECTED` means rewrite or simplify the prompt.
