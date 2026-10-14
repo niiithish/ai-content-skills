@@ -450,13 +450,17 @@ def state(plan, t):
         k = max(i for i, s in enumerate(cap[3]) if s <= t or i == 0)
     lab = active(plan["labels"], t)
     ti = plan.get("title")
-    return (tuple(cap[2]) if cap else None, k, lab, ti[2] if ti and ti[0] <= t < ti[1] else None)
+    ov = next((i for i, o in enumerate(plan.get("styles", [])) if o[0] <= t < o[1]), None)   # a section in its own style
+    card = next((i for i, o in enumerate(plan.get("cards", [])) if o[0] <= t < o[1]), None)   # an end-card PNG under the captions
+    return (tuple(cap[2]) if cap else None, k, lab, ti[2] if ti and ti[0] <= t < ti[1] else None, ov, card)
 
 
 def overlay(plan, s):
-    cap, k, lab, title = s
-    st = plan["style"]
+    cap, k, lab, title, ov, card = s
+    st = plan["style"] if ov is None else dict(plan["style"], **plan["styles"][ov][2])
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    if card is not None:
+        im = Image.alpha_composite(im, Image.open(plan["cards"][card][2]).convert("RGBA").resize((W, H)))
     if title:
         im = draw_title(im, title, plan["title"][3])
     if cap:
@@ -523,14 +527,16 @@ def cmd_sample(a):
 
 # ---------- render ----------
 
-def encode(inputs, fc, tail):
-    """Intel Quick Sync, then VA-API, then x264 veryfast. QSV is ~8x faster than x264 slow here at SSIM 0.99."""
+def encode(inputs, fc, tail, br):
+    """Intel Quick Sync, then VA-API, then x264, all at the source's own bitrate (a fixed QSV quality 20 halved a
+    10 Mbps export and lost detail, SSIM 0.98)."""
+    rate = ["-b:v", str(br), "-maxrate", str(int(br * 1.5)), "-bufsize", str(br * 2)]
     tries = [["-init_hw_device", "qsv=hw", "-filter_hw_device", "hw", *inputs, "-filter_complex",
-              fc + ",format=nv12,hwupload=extra_hw_frames=64[v]", "-c:v", "h264_qsv", "-global_quality", "20", "-preset", "slow"]]
+              fc + ",format=nv12,hwupload=extra_hw_frames=64[v]", "-c:v", "h264_qsv", *rate, "-preset", "veryslow"]]
     if os.path.exists("/dev/dri/renderD128"):
         tries.append(["-vaapi_device", "/dev/dri/renderD128", *inputs, "-filter_complex", fc + ",format=nv12,hwupload[v]",
-                      "-c:v", "h264_vaapi", "-qp", "20"])
-    tries.append([*inputs, "-filter_complex", fc + "[v]", "-c:v", "libx264", "-crf", "18", "-preset", "veryfast", "-pix_fmt", "yuv420p"])
+                      "-c:v", "h264_vaapi", *rate])
+    tries.append([*inputs, "-filter_complex", fc + "[v]", "-c:v", "libx264", *rate, "-preset", "medium", "-pix_fmt", "yuv420p"])
     for i, t in enumerate(tries):
         r = subprocess.run(["ffmpeg", "-v", "error", "-y", *t, *tail], capture_output=True, text=True)
         if r.returncode == 0:
@@ -551,6 +557,7 @@ def render_one(edit, out):
     fr = lambda t: round(t * fps)
     times = [x for c in plan["captions"] for x in c[:2] + (c[3] if len(c) > 3 and plan["style"].get("highlight") else [])]
     times += [x for l in plan["labels"] for x in l[:2]] + (plan["title"][:2] if plan["title"] else [])
+    times += [x for o in plan.get("styles", []) + plan.get("cards", []) for x in o[:2]]
     end = fr(dur)
     cuts = sorted({0, end} | {min(end, max(0, fr(x))) for x in times})
     lst, cache, key = [], {}, None
@@ -572,7 +579,9 @@ def render_one(edit, out):
     ac = audio_codec(edit)   # a Resolve .mov carries PCM, which an mp4 can't hold
     aud = ["-c:a", "copy"] if ac in ("aac", "mp3") else ["-c:a", "aac", "-b:a", "192k"]
     tail = ["-map", "[v]", "-map", "0:a?", "-t", f"{dur:.3f}", *aud, "-movflags", "+faststart", str(tmp)]
-    enc = encode(inputs, fc, tail)
+    br = sh("ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=bit_rate", "-of", "csv=p=0", str(edit)).strip()
+    br = max(int(br) if br.isdigit() else 0, 8_000_000)   # never below 8 Mbps for 1080x1920
+    enc = encode(inputs, fc, tail, br)
     tmp.replace(out)
     print(f"-> {out}  ({enc})", flush=True)
 
