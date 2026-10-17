@@ -38,6 +38,9 @@ TEMPLATES = {
     "4": dict(name="Sentence case (Mysa video-7)", kind="line", font="Montserrat-ExtraBold.ttf", size=68, caps=False, punct=True,
               stroke=3, shadow=(0, 4, 7, 190), y=1420, anchor="ms", maxwords=3, target=13, maxchars=24, highlight=None,
               about="Sentence-case white Montserrat ExtraBold 68, 3 px black outline, soft shadow, one line of <=3 words, baseline y 1420"),
+    "5": dict(name="Lowercase Century Gothic", kind="line", font="CenturyGothicPro-Bold.otf|Outfit-Bold.ttf", size=67, caps="lower", punct=True,
+              stroke=0, shadow=(4, 4, 0, 255), extrude=True, y=1210, anchor="mm", maxwords=4, target=20, maxchars=26, highlight=None,
+              about="lowercase white Century Gothic Pro Bold 67 (Outfit Bold if not installed), no outline, a hard black 3D edge extruded 4 px down-right, one line of <=4 words, centre y 1210"),
 }
 MAXPX = 900                                          # widest line; the safe box is 1010 wide
 GAP = 0.45                                           # a pause this long always ends a caption
@@ -56,7 +59,9 @@ _fonts = {}
 
 def font(name, size):
     if (name, size) not in _fonts:
-        _fonts[name, size] = ImageFont.truetype(str(FONTS / name), size)
+        # "A.otf|B.ttf": the first that exists; ~/.local/share/fonts holds licensed fonts this public repo can't bundle
+        f = next((d / n for n in name.split("|") for d in (FONTS, Path.home() / ".local/share/fonts") if (d / n).exists()), FONTS / name)
+        _fonts[name, size] = ImageFont.truetype(str(f), size)
     return _fonts[name, size]
 
 
@@ -277,7 +282,7 @@ def show(w, st):
     if not st.get("punct", True):
         w = re.sub(r"[.,;:!?\"“”]", "", w)
     w = curly(w)
-    return w.upper() if st.get("caps") else w
+    return w.lower() if st.get("caps") == "lower" else w.upper() if st.get("caps") else w
 
 
 def cmd_plan(a):
@@ -418,7 +423,9 @@ def draw_line(im, text, st, active=None):
     pos = dict(xy=(x0, st["y"]), anchor="l" + st["anchor"][1])
     dx, dy, blur, alpha = st["shadow"]
     sh_ = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(sh_).text((x0 + dx, st["y"] + dy), text, font=f, fill=alpha, anchor=pos["anchor"], stroke_width=sw, stroke_fill=alpha)
+    steps = [(dx * i / dx, dy * i / dx) for i in range(1, dx + 1)] if st.get("extrude") else [(dx, dy)]
+    for ox, oy in steps:                      # extrude: the text stacked 1 px at a time down-right, a 3D edge
+        ImageDraw.Draw(sh_).text((x0 + ox, st["y"] + oy), text, font=f, fill=alpha, anchor=pos["anchor"], stroke_width=sw, stroke_fill=alpha)
     if blur:
         sh_ = sh_.filter(ImageFilter.GaussianBlur(blur))
     im.paste(Image.new("RGBA", (W, H), (0, 0, 0, 255)), (0, 0), sh_)

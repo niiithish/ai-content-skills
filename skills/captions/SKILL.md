@@ -5,11 +5,11 @@ description: "Burn captions into finished 9:16 edits in a named template the use
 
 # Captions
 
-The user edits the video; we burn captions into their finished edit (usually Resolve exports in `video-N/deliverables/raw*/`). Tool: `scripts/captions.py` (Python 3 with Pillow, plus ffmpeg). Word times come from the `transcribe` skill's helper, so install it alongside. Fonts are bundled in `fonts/` (TikTok Sans and Montserrat, both OFL).
+The user edits the video; we burn captions into their finished edit (usually Resolve exports in `video-N/deliverables/raw*/`). Tool: `scripts/captions.py` (Python 3 with Pillow, plus ffmpeg). Word times come from the `transcribe` skill's helper, so install it alongside. Fonts are bundled in `fonts/` (TikTok Sans, Montserrat and Outfit, all OFL). Never bundle a licensed, personal-use or demo font: this repo is public. Those live in `~/.local/share/fonts/` (Century Gothic Pro Bold, Monotype, for template 5), which `captions.py` also searches; a template font `A.otf|B.ttf` falls back to the bundled B where A isn't installed. Demo fonts often lack punctuation (Polymath Demo has no `' ? ! $`): render a test line with `' ? $` before choosing one.
 
 ## Templates
 
-The user names one ("template-3"); don't ask them to describe the style again. If they name none, ask which, showing `templates/all.png`. Each was locked with the user on a real Mysa ad.
+The user names one ("template-3"); don't ask them to describe the style again. If they name none, ask which, showing `templates/all.png`. Templates 1–4 were locked with the user on real Mysa ads; template 5 copies a client reference.
 
 | # | From | Look | Words per caption |
 |---|---|---|---|
@@ -17,6 +17,7 @@ The user names one ("template-3"); don't ask them to describe the style again. I
 | 2 | video-6 | ALL CAPS white TikTok Sans ExtraBold 68, 3 px black outline, soft shadow (blur 7, dy 4); baseline y 1420; punctuation kept. | 1 line, ≤3 words, ~13 chars |
 | 3 | video-10 | ALL CAPS white Montserrat ExtraBold, 6 px black outline, hard 50% shadow; **the word being spoken turns lime `#C8FF00`**; centre y 1440; no punctuation. Usually with a hook title (below). | 1 line, ≤3 words, ≤18 chars |
 | 4 | video-7 | Sentence-case white Montserrat ExtraBold 68, 3 px outline, soft shadow; baseline y 1420; punctuation kept. | 1 line, ≤3 words, ~13 chars |
+| 5 | client reference (3D "gut health" ad) | **all lowercase** white Century Gothic Pro Bold 67 (Outfit Bold where it isn't installed), **no outline**, a hard black 3D edge extruded 4 px down-right (no blur); centre y 1210; punctuation kept. | 1 line, ≤4 words, ~20 chars (26 max) |
 
 Samples: `templates/template-N.png` (the red frame is the safe box). `captions.py templates` prints the list.
 
@@ -25,7 +26,7 @@ Every template keeps text inside the **Meta/TikTok caption safe box, x 40–1050
 **Options on any template:**
 - `--title "How lube ruined my marriage!!"`: a hook title, white Montserrat ExtraBold 50 on a red `#E81C24` rounded box, centred on y 960 (the seam of a split-screen hook; `--title-y` to move it), from 0 s until the first sentence is said (+0.3 s; `--title-until` to set it). Use the same title on every hook unless told otherwise.
 - `--labels labels.txt`: section labels (template 1's red boxes), one `LABEL | first words of its line` per line.
-- A project-only variant: a JSON file `{"base": "2", "size": 60, "highlight": [255, 220, 0]}` passed as `-t file.json`. Keys: `font`, `size`, `caps`, `punct`, `stroke`, `shadow` `[dx, dy, blur, alpha]`, `y`, `anchor` (`ms` baseline, `mm` centre), `maxwords`, `target`, `maxchars`, `highlight` `[r, g, b]` or null. Record it in the project's `AGENTS.md`; add it here as template 5+ only when the user says so.
+- A project-only variant: a JSON file `{"base": "2", "size": 60, "highlight": [255, 220, 0]}` passed as `-t file.json`. Keys: `font`, `size`, `caps`, `punct`, `stroke`, `shadow` `[dx, dy, blur, alpha]`, `extrude` (true: the shadow is the text stacked 1 px at a time to dx,dy, a 3D edge), `y`, `anchor` (`ms` baseline, `mm` centre), `maxwords`, `target`, `maxchars`, `highlight` `[r, g, b]` or null. Record it in the project's `AGENTS.md`; add it here as template 5+ only when the user says so.
 
 ## Process
 
