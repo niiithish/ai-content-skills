@@ -22,6 +22,7 @@ npx skills add niiithish/ai-content-skills --skill video-production
 npx skills add niiithish/ai-content-skills --skill animated-video-production
 npx skills add niiithish/ai-content-skills --skill photoreal-video-production
 npx skills add niiithish/ai-content-skills --skill captions
+npx skills add niiithish/ai-content-skills --skill captions-filmcraft
 npx skills add niiithish/ai-content-skills --skill song-ad
 npx skills add niiithish/ai-content-skills --skill clay-video-production
 npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
@@ -52,6 +53,7 @@ npx skills add niiithish/ai-content-skills --list
 | [`animated-video-production`](./skills/animated-video-production) | The DreamWorks-style 3D animation layer on `video-production`: look, still and clip prompts, product mascots, on-camera speech. |
 | [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
 | [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, ElevenLabs Scribe timing, a preview frame first. |
+| [`captions-filmcraft`](./skills/captions-filmcraft) | Captions as editable text clips in a FilmCraft project: phrase blocks of at most 4 words, each starting on the frame its words are heard and on every cut (Parakeet + faster-whisper timing checked against the voiceover waveform), then export from FilmCraft. |
 | [`song-ad`](./skills/song-ad) | AI singing ads: a sung story with a hook, real lyrics (rhyme, refrain, backing answers) and a music direction per section, the song generated first as the timing source, gapless lip-sync slices and animated B-roll. |
 | [`clay-video-production`](./skills/clay-video-production) | Claymation / stop-motion layer for Flow videos: the handmade plasticine look, clay sheets (including a clay version of the real product), still and clip prompts, failure locks, on the shared video-production pipeline. |
 | [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
@@ -89,6 +91,7 @@ video-plan → video-production + animated- or photoreal-video-production
 | **photoreal-still-prompt** | One photoreal lifestyle, product-in-context, or scene image prompt. |
 | **animated-video-production** / **photoreal-video-production** | A whole animated or photoreal project on `video-production`: sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
 | **captions** | Captions and section labels burned into the user's finished edit. |
+| **captions-filmcraft** | Frame-exact captions as text clips in the user's FilmCraft project, exported from FilmCraft. |
 | **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
 | **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
 | **video-breakdown** | Gemini 3.1 Pro JSON → form + one rebuildable scene per hard cut (not a props dump). |

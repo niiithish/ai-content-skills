@@ -1,0 +1,4 @@
+interface:
+  display_name: "Captions (FilmCraft)"
+  short_description: "Frame-exact phrase captions as text clips in a FilmCraft project, then export"
+  default_prompt: "Use $captions-filmcraft with template-4 to caption these FilmCraft projects: time the voiceover, review the phrase blocks, build the text clips, show the check sheet, and export only when I say."
