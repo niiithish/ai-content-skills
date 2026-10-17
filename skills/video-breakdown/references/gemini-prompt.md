@@ -35,6 +35,11 @@ Schema (these keys exactly, schema_version 3):
       "end": 0.0,
       "form": "what THIS cut is, not the whole video: talking-head A-roll / live-action B-roll insert / claymation insert / product hero / diagram / cafe wide / ECU of hands",
       "purpose": "one clause: why this cut exists in the ad",
+      "transition_in": {
+        "type": "how this shot begins after the previous one: hard cut / match cut (say what matches: shape, motion, framing) / whip pan / zoom-through / dissolve / fade from black / wipe / push-through an object / flash / jump cut. Shot 1: 'opening frame'.",
+        "duration_sec": 0.0,
+        "how": "what the viewer sees during the change: which way the motion goes, what the outgoing shot ends on and what the incoming shot starts on. Hard cut: 'instant'."
+      },
       "camera": {
         "framing": "ECU / tight torso / waist-up / full-body / wide set / overhead",
         "angle": "HEIGHT + ORBIT + which way the body/object faces, in one phrase. Height: eye-level / high / low / top-down. Orbit: front / three-quarter / profile (true side, 90°) / back / over-shoulder. Facing: into lens / frame-left / frame-right / away. NEVER write only 'eye-level'.",
@@ -92,7 +97,7 @@ Schema (these keys exactly, schema_version 3):
 
 HARD RULES
 
-1. ONE scene object per HARD CUT / continuous take. Shot 1 starts at 0.0. Cover 0.0 through duration_sec with no gaps and no overlaps. Count shots, not cut events: N hard cuts after the opening frame = N+1 scenes. Number shots 1, 2, 3… in time order. Do not omit scenes to stay short.
+1. ONE scene object per shot change / continuous take: a hard cut, and also every soft transition (dissolve, whip pan, match cut, zoom-through, wipe, fade). Write how each shot begins in transition_in; a transition never merges two shots into one scene, and a camera move inside one take is never a transition. Shot 1 starts at 0.0. Cover 0.0 through duration_sec with no gaps and no overlaps. Count shots, not cut events: N hard cuts after the opening frame = N+1 scenes. Number shots 1, 2, 3… in time order. Do not omit scenes to stay short.
 
 2. NO top-level props, talent, or on_screen_text arrays. Every object, character, and graphic lives inside the scene where it is visible.
 
@@ -143,6 +148,8 @@ HARD RULES
 14. Tie picture to speech. When someone speaks during a cut, each timeline row says which words are heard at that moment, so a remake can time every effect and gesture to the same words.
 
 15. Camera moves are as important as framing. A slow push-in, drift, arc or tilt that runs the whole cut is a move, not "locked". Write its direction, speed and when it starts and ends.
+
+16. Transitions are as important as cuts. Look at every shot change frame by frame: if both shots are visible at once (a dissolve), motion blur carries over (a whip pan), the outgoing motion or shape continues into the next shot (a match cut), or the camera pushes through an object into the next scene, say so in transition_in with its duration. Do not call everything a hard cut. Put the moment the transition starts in the previous scene's last timeline row.
 
 DENSITY EXAMPLE (calendar insert — match this level, do not copy the content)
 
