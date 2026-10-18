@@ -1,0 +1,4 @@
+interface:
+  display_name: "FilmCraft"
+  short_description: "Build, live-edit, swap clips and export Meta-ready MP4s in FilmCraft with the user"
+  default_prompt: "Use $filmcraft to build this video's hook timelines in FilmCraft from the approved clips, ready to export but not exported; I'll tweak them in the open app, then export when I say."
