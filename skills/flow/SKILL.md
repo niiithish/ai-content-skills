@@ -23,6 +23,9 @@ Run `flow` and deliver the requested media. Do not stop after writing a prompt u
 - Run the `flow` (or `make.py`) command itself as the background task; the harness tells you when it exits. That is the only wait you need.
 - Never poll with `pgrep -f`/`pkill -f` on a pattern: the waiting shell's own command line contains the pattern, so the loop never ends (video-3: two loops ran 2.5 hours, looking like a flow hang) and `pkill -f` kills the shell that started it. To wait on or stop a process, use its PID (`tail --pid=<PID> -f /dev/null`, `kill <PID>`).
 - Before reporting done, check your background tasks and stop any of yours still running.
+- For a quick look at what flow is doing (batch saved/total, jobs in flight, last error, free and premium credits as last seen), run `flow summary`. It reads local files only and never spends credits.
+- Write each scene's stills or clips into a folder named for it (`-o scene-3/scene-3-v2.jpg`). The user's status bar groups jobs by folder, showing what is done and what is generating, so a folder per scene keeps that readable.
+- `flow stop` stops every running flow command (not only yours) and closes Labflow's browser. Use it only when the user asks to stop everything; to stop your own run, `kill <PID>`. Accepted jobs resume on rerun.
 
 ## Let the CLI manage itself
 
