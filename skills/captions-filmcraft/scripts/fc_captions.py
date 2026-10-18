@@ -25,6 +25,7 @@ HERE = Path(__file__).resolve().parent
 TPS = 254016000000                                   # FilmCraft ticks per second
 SAFE_Y = 1500                                        # Meta/TikTok caption safe box bottom on 1080x1920
 MAXWORDS = 4
+MAX_W = 860  # px: widest caption line on 1080, so 110 px stays clear each side (Max video-2: wide lines ran off the frame)
 
 # One-line templates from the captions skill, as FilmCraft text. Fonts must be installed for fontconfig.
 SHADOW = {"shadow": True, "shadow_angle": 90, "shadow_distance": 4, "shadow_blur": 7, "shadow_opacity": 75,
@@ -39,9 +40,9 @@ STYLES = {
               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 3,
                      "stroke_color": "#000000", **SHADOW, "position": [540, 1420]}),
 }
-EXPORT = {"bitrateKbps": 40000, "maxBitrateKbps": 60000, "bitrateMode": "vbr2Pass", "hardwareEncoding": "auto",
-          "gpuRendering": "auto", "maxRenderQuality": True, "renderAtMaxDepth": True, "quality": 100,
-          "h264Profile": "high", "audio": {"bitrate_kbps": 320, "bits": 16, "channels": 2, "codec": "aac",
+# Meta-ready, same as the filmcraft skill's fc.py export: 2 min ~ 90 MB, ~2.4x faster than 40 Mb/s 2-pass max quality
+EXPORT = {"bitrateKbps": 6000, "maxBitrateKbps": 9000, "bitrateMode": "vbr1Pass", "gpuRendering": "auto",
+          "h264Profile": "high", "audio": {"bitrate_kbps": 192, "bits": 16, "channels": 2, "codec": "aac",
                                            "flac_level": 5, "float": False, "sample_rate": 48000}}
 
 # Phrase splitting: never end a block on these, and prefer to start one on the second set.
@@ -362,6 +363,16 @@ def tc(fr, fps):
 
 # ---------- build ----------
 
+def fit_size(st, text):
+    """The template size, or smaller so the line (outline included) fits MAX_W."""
+    path = subprocess.run(["fc-match", "-f", "%{file}", f"{st['font']}:style={st['fontStyle']}"],
+                          capture_output=True, text=True).stdout.strip()
+    w = int(subprocess.run(["magick", "-font", path, "-pointsize", str(st["size"]), f"label:{text}",
+                            "-format", "%w", "info:"], capture_output=True, text=True).stdout or 0)
+    w += 2 * st["props"].get("stroke_width", 0)
+    return st["size"] if w <= MAX_W else int(st["size"] * MAX_W / w)
+
+
 def ensure_font(st):
     if subprocess.run(["fc-list", f"{st['font']}:style={st['fontStyle']}"], capture_output=True, text=True).stdout.strip():
         return
@@ -411,7 +422,7 @@ def cmd_build(a):
     for b in plan["blocks"]:
         text = b["text"].upper() if st["caps"] else b["text"]
         cmds.append({"id": "graphics.newText", "params": {
-            "text": text, "position": st["props"]["position"], "size": st["size"], "font": st["font"],
+            "text": text, "position": st["props"]["position"], "size": fit_size(st, text), "font": st["font"],
             "fontStyle": st["fontStyle"], "seconds": (b["end"] - b["start"]) / plan["fps"], "track": v,
             "time": b["start"] * T}})
         cmds.append({"id": "graphics.set", "params": {"props": st["props"]}})
@@ -486,8 +497,11 @@ def cmd_export(a):
         die("FilmCraft is open: close it first so the export reads the saved project")
     out = Path(a.out).resolve()
     tmp = out.with_name(out.stem + ".tmp" + out.suffix)
+    settings = dict(EXPORT)
+    if a.kbps:  # video at this average rate, peaks at 1.5x
+        settings.update(bitrateKbps=a.kbps, maxBitrateKbps=int(a.kbps * 1.5))
     r = cli(a.project, [{"id": "file.exportMedia", "params": {"path": str(tmp), "format": "h264",
-                                                               "settings": EXPORT, "wait": True}}])
+                                                               "settings": settings, "wait": True}}])
     tmp.replace(out)
     print(f"-> {out}")
 
@@ -501,6 +515,7 @@ def main():
     b.add_argument("--track")
     c = sub.add_parser("check"); c.add_argument("project"); c.add_argument("--n", type=int, default=8)
     e = sub.add_parser("export"); e.add_argument("project"); e.add_argument("-o", "--out", required=True)
+    e.add_argument("--kbps", type=int, help="video bitrate (default 6000, ~45 MB a minute at 1080x1920; 4000 ~32 MB)")
     a = ap.parse_args()
     {"words": cmd_words, "plan": cmd_plan, "build": cmd_build, "check": cmd_check, "export": cmd_export}[a.cmd](a)
 

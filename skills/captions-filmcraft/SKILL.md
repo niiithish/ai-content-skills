@@ -45,7 +45,7 @@ ElevenLabs Scribe alone was 0.16 s (4 frames) late on part of a voiceover, and t
 
    It writes the text clips to the top video track when that track holds only text (replacing the old captions), or to a new track on top. It saves to a temp file and checks that no other track changed and that every caption sits on its planned frames. Only then does it copy the original to `edit/backup-<date>-captions/` and write the new project, with the project's name kept (FilmCraft renames a project to the file it was saved as). Use `--track V3` to choose the track. End cards and other overlays stay on their own tracks, untouched.
 5. Check: `fc_captions.py check PROJECT` renders the frame before and the first frame of about 8 captions (mid-sentence ones and two cuts) into `captions/<stem>.check.png`. Look at it: each pair must flip caption, and at a cut flip picture, between its two frames. Send it to the user, and tell them to look in FilmCraft before exporting.
-6. Export only when the user says so: `fc_captions.py export PROJECT -o video-N/deliverables/<Brand>_<Concept>_<Variant>_<Ratio>.mp4` (H.264 high, 40 Mb/s VBR 2-pass, AAC 320k, written to `.tmp.mp4` and renamed when done). Don't also burn captions with the `captions` skill: they are already in the picture.
+6. Export only when the user says so: `fc_captions.py export PROJECT -o video-N/deliverables/<Brand>_<Concept>_<Variant>_<Ratio>.mp4` (the `filmcraft` skill's Meta settings: H.264 high, 6 Mb/s VBR 1-pass, AAC 192k, about 45 MB a minute; written to `.tmp.mp4` and renamed when done). Don't also burn captions with the `captions` skill: they are already in the picture.
 
 ## Templates
 
