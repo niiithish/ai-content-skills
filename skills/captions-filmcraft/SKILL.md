@@ -1,6 +1,6 @@
 ---
 name: captions-filmcraft
-description: "Put captions into a FilmCraft project as editable text clips, each one starting on the exact frame its phrase is spoken and on the frame of every picture cut, then export the deliverable from FilmCraft. Caption blocks are whole script phrases of at most 4 words, back to back with no gaps, in the captions skill's one-line templates (4 sentence-case Montserrat, 2 ALL CAPS TikTok Sans). Timing comes from the project's own voiceover track: Parakeet and faster-whisper word times calibrated against the waveform, never one engine alone. Use when the user edits in FilmCraft and wants captions, subtitles or supers on a .fcproj, wants caption timing fixed in one, or a client complains captions are late or don't change with the picture. For burning captions into an exported video file instead, use captions."
+description: "Put captions into a FilmCraft project as editable text clips, each one starting on the exact frame its phrase is spoken and on the frame of every picture cut, then export the deliverable from FilmCraft. Caption blocks are whole script phrases of at most 4 words, back to back while the voice runs and cleared in real pauses, in the captions skill's one-line templates (4 sentence-case Montserrat, 2 ALL CAPS TikTok Sans). Timing comes from the project's own voiceover track: Parakeet and faster-whisper word times calibrated against the waveform (`--fast` for Parakeet alone). Use when the user edits in FilmCraft and wants captions, subtitles or supers on a .fcproj, wants caption timing fixed in one, or a client complains captions are late or don't change with the picture. For burning captions into an exported video file instead, use captions."
 ---
 
 # Captions in FilmCraft
@@ -11,18 +11,19 @@ The user edits and exports in FilmCraft, so captions go into the project as text
 
 1. **Picture, caption and voice change on the same frame.** Every cut on V1 starts a caption, and every caption starts on the frame its first word is heard: never a few frames late, never before the cut.
 2. **Blocks are whole script phrases, at most 4 words.** Three words when that reads well, four only where the phrase needs it ("dimples that barely show," / "even in bathroom light.", not "dimples that barely" / "show, even"). Never split a name, a number and its unit, or "65% off".
-3. **Back to back.** Each caption stays up until the next starts; the last runs to the end of the sequence. No blank frames in pauses.
+3. **Back to back while the voice runs, gone in silence.** Each caption stays up until the next starts, unless the voice pauses for 0.4 s or more first: then it ends 2 frames after the voice stops. The last ends 2 frames after the last word. A caption is never shorter than half a second. `--hide 0` puts them back to back everywhere.
 
 ## Why the timing works this way
 
 ElevenLabs Scribe alone was 0.16 s (4 frames) late on part of a voiceover, and the client saw it. Engines disagree by a few frames, and each one drifts. So `plan`:
-- After a pause (at least 0.1 s of silence), starts the caption on the frame where the voice comes back (ffmpeg silencedetect). This is exact.
-- Mid-sentence, takes Parakeet's word start plus Parakeet's measured lead on this recording (about 0.08 s), averages it with faster-whisper when the two agree within 0.3 s, and moves it to the end of a real pause just before it. A silent frame is below -40 dB and 25 dB under the speech around it, so a quiet read isn't mistaken for silence. Expect about ±1 frame.
+- After a pause, starts the caption on the frame where the voice comes back. Pauses come from the `transcribe` skill's `pauses.py`, with a threshold set from the recording (between its noise floor and its speech level). A fixed -40 dB found none of the pauses in Max video-2, whose AI clips carry room tone.
+- Mid-sentence, takes Parakeet's word start plus Parakeet's measured lead on this recording (about 0.08 s), averages it with faster-whisper when the two agree within 0.3 s, and moves it to the end of a real pause just before it, or to the dip just before the voice rises 6 dB (source `dip`). Expect about ±1 frame.
+- **Whisper stays on by default.** Tested on Max video-2 hook 1: Parakeet plus the dip matched the waveform on 71 of 74 onsets, but was still 2–5 frames late on about 14 mid-phrase captions, and late captions are what the client complained about. `words --fast` (Parakeet only, about 25 s instead of 80 s) is for drafts.
 - Snaps the nearest caption onto every cut within 6 frames, and reports a cut that is more than 2 frames off its voice (the cut is wrong then, not the caption) or has no phrase starting near it.
 
 ## Process
 
-1. Quote what the brief or the user says about captions in one line, and the template (default 4, the house look on Max's Aleo videos). Make sure FilmCraft is closed: the app keeps its own copy of the project and would overwrite the change (or ask the user to save and close it).
+1. Quote what the brief or the user says about captions in one line, and the template (default 4, the house look on Max's Aleo videos). FilmCraft may stay open: `words` and `build` save the user's open copy first (through the `filmcraft` skill's bridge), and `build` makes the app reload the project after writing it. If the app is open without its bridge, they stop: ask the user to save and quit, then reopen it from the launcher.
 2. Voiceover and word times, per project (about 40 s for a 45 s ad):
 
    ```bash
@@ -59,6 +60,6 @@ They match the `captions` skill's templates of the same number, inside the Meta/
 ## Rules
 
 - Work files (`<stem>.vo.wav`, `.pk.json`, `.fw.json`, `.blocks.txt`, `.captions.json`, `.check.png`) go in `video-N/captions/`, never a session scratchpad.
-- Never `build` while FilmCraft has the project open, and never save a project from the FilmCraft MCP without reloading it from disk first: its copy goes stale the moment the user edits.
-- When the user moves cuts or changes the voiceover, run `words` (voice changed) or `plan` (cuts changed) and then `build` again; `build` refuses a plan made before the edit changed.
+- Never save a project from a headless FilmCraft engine while the app has it open; `build` goes through the bridge for that.
+- After `filmcraft-pacing` tighten, run `words`, `plan` and `build` again: the cuts moved every word. When the user moves cuts or changes the voiceover, run `words` (voice changed) or `plan` (cuts changed) and then `build` again; `build` refuses a plan made before the edit changed.
 - Never write caption copy the script doesn't have.

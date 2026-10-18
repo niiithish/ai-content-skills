@@ -1,27 +1,34 @@
 #!/usr/bin/env python3
 """Captions as text clips inside a FilmCraft project, each one starting on the frame its phrase is spoken.
 
-  fc_captions.py words  PROJECT [--vo A1]            the voiceover track as WAV, then word times from Parakeet and
-                                                    faster-whisper -> captions/<stem>.vo.wav, .pk.json, .fw.json
-  fc_captions.py plan   PROJECT [--script S] [--fixes F]
-                                                    caption blocks with start frames -> captions/<stem>.captions.json
+  fc_captions.py words  PROJECT [--vo A1] [--fast]    the voiceover track as WAV, then word times from Parakeet and
+                                                    faster-whisper (Parakeet only with --fast) -> captions/<stem>.vo.wav, .pk.json, .fw.json
+  fc_captions.py plan   PROJECT [--script S] [--fixes F] [--hide 0.4]
+                                                    caption blocks with start and end frames -> captions/<stem>.captions.json
   fc_captions.py build  PROJECT [-t 4] [--track V3] text clips into the project (backup, temp save, verify, copy in)
   fc_captions.py check  PROJECT [--n 8]             frames just before and on caption starts -> captions/<stem>.check.png
   fc_captions.py export PROJECT -o OUT.mp4          H.264 at the delivery settings, from FilmCraft itself
 
 Blocks are one caption per line in captions/<stem>.blocks.txt. `plan --script` writes a first split there (whole
 phrases, at most 4 words); read and fix it, then run plan again. Timing never comes from one engine alone:
-  - after a pause, a caption starts on the frame where the voice rises out of silence (ffmpeg silencedetect);
-  - mid-sentence, at Parakeet's word start plus its measured lead on this recording, averaged with faster-whisper,
-    and moved to the end of a real pause (< -40 dB) just before it;
+  - after a pause, a caption starts on the frame where the voice rises out of silence (the transcribe skill's
+    pauses.py: a threshold set from this recording's own noise floor and speech level, since AI clips carry room
+    tone above a fixed -40 dB);
+  - mid-sentence, at Parakeet's word start plus its measured lead on this recording, averaged with faster-whisper
+    (unless words ran with --fast), and moved to the end of a real pause or to the loudness dip just before it;
   - every picture cut (V1) starts a caption on that exact frame; a cut more than 2 frames off its voice is reported.
-Captions run back to back, no gaps. Work files go in <video>/captions/ (the nearest folder above the project with
-PLAN.md, AGENTS.md or project.conf).
+Captions run back to back through short pauses. Where the voice stops for --hide seconds or more (default 0.4),
+the caption ends 2 frames after the last word and the screen is clear until the voice comes back.
+Work files go in <video>/captions/ (the nearest folder above the project with PLAN.md, AGENTS.md or project.conf).
 """
-import argparse, datetime, difflib, json, os, re, shutil, statistics, subprocess, sys, tempfile
+import argparse, datetime, difflib, json, math, os, re, shutil, statistics, subprocess, sys, tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+for _d in (HERE.parent.parent / "transcribe" / "scripts", HERE.parent.parent / "filmcraft" / "scripts",
+           Path.home() / ".claude/skills/transcribe/scripts", Path.home() / ".claude/skills/filmcraft/scripts"):
+    sys.path.insert(0, str(_d))
+TAIL = 2  # frames a caption stays up after the last word before a pause
 TPS = 254016000000                                   # FilmCraft ticks per second
 SAFE_Y = 1500                                        # Meta/TikTok caption safe box bottom on 1080x1920
 MAXWORDS = 4
@@ -94,6 +101,20 @@ def is_text(item):
     return any(e["effect"] == "graphic_text" for e in item.get("effects", []))
 
 
+def caption_track(s, plan):
+    """Index of the text-only track (above V1) holding most of the plan's caption texts, or None."""
+    want = {b["text"].strip().lower() for b in plan["blocks"]}
+    best, score = None, 0
+    for v, tr in enumerate(s["video"][1:], 1):
+        items = tr["items"]
+        if not items or not all(is_text(i) for i in items):
+            continue
+        hit = sum(i.get("name", "").strip().lower() in want for i in items)
+        if hit >= max(3, len(items) // 2) and hit > score:
+            best, score = v, hit
+    return best
+
+
 def cuts_of(s):
     return sorted({i["startFrame"] for i in s["video"][0]["items"]} - {0})
 
@@ -126,6 +147,8 @@ def paths(project):
 
 def cmd_words(a):
     P = paths(a.project)
+    import fc
+    fc.save_live(a.project)  # the export below reads the saved file
     s = seq(a.project)
     n = len(s["audio"])
     keep = int(a.vo.lstrip("Aa"))
@@ -141,6 +164,9 @@ def cmd_words(a):
     pk = T.parakeet_words(audio)
     json.dump(pk, open(P["pk.json"], "w"))
     print(f"Parakeet: {len(pk)} words -> {P['pk.json']}")
+    if a.fast:
+        P["fw.json"].unlink(missing_ok=True)  # a stale one from an older voiceover must not be averaged in
+        return
     from faster_whisper import WhisperModel
     for name in ("medium.en", "small.en"):
         try:
@@ -235,18 +261,45 @@ def frame_db(x, fr, fps):
     return float(20 * np.log10(np.sqrt((seg ** 2).mean()) + 1e-9)) if len(seg) else -120.0
 
 
+_QUIET = {}
+
+
 def silent(x, fr, fps):
-    """Below -40 dB and 25 dB under the loudest speech within half a second (quiet reads stay speech)."""
+    """Below this recording's quiet level (between its noise floor and its speech) and 20 dB under the loudest
+    speech within half a second, so a quiet read stays speech."""
+    from pauses import loudness, threshold
+    if id(x) not in _QUIET:
+        _QUIET[id(x)] = threshold(loudness(x))[0]
     peak = max(frame_db(x, k, fps) for k in range(fr - round(fps / 2), fr + round(fps / 2) + 1))
-    return frame_db(x, fr, fps) < min(-40, peak - 25)
+    return frame_db(x, fr, fps) < min(_QUIET[id(x)], peak - 20)
+
+
+def dip(x, fr, fps):
+    """The frame after the quietest moment in the 5 frames before `fr` (and 1 after), when the voice rises at least
+    6 dB out of it: where a word starts between two others. Checked on Max video-2 against waveform onsets: exact on
+    6 of 8, 1 frame early on the rest, where Parakeet's start alone ran 2-3 frames late."""
+    v, k = min((frame_db(x, j, fps), j) for j in range(fr - 5, fr + 2))
+    rise = max(frame_db(x, j, fps) for j in range(k + 1, fr + 3))
+    return k + 1 if rise - v >= 6 else None
+
+
+def voice_pauses(path, least=0.1):
+    """(speech end, onset) of every pause of at least `least` s (shorter gaps are stop consonants)."""
+    from pauses import load, find_pauses
+    return find_pauses(load(path), least)
 
 
 def silence_ends(path, least=0.1):
-    """Where the voice comes back after a pause of at least `least` s (shorter gaps are stop consonants)."""
-    err = subprocess.run(["ffmpeg", "-i", str(path), "-af", "silencedetect=n=-40dB:d=0.06", "-f", "null", "-"],
-                         capture_output=True, text=True).stderr
-    return [float(e) for e, d in re.findall(r"silence_end: ([0-9.]+) \| silence_duration: ([0-9.]+)", err)
-            if float(d) >= least]
+    """Where the voice comes back after a pause of at least `least` s."""
+    return [e for _, e in voice_pauses(path, least)]
+
+
+def voice_end(x):
+    """Seconds where the last word ends (the last loud moment)."""
+    from pauses import loudness, threshold, HOP
+    db = loudness(x)
+    loud = [i for i, v in enumerate(db) if v >= threshold(db)[0]]
+    return (loud[-1] + 1) * HOP if loud else len(x) / 16000
 
 
 def align(block_toks, asr):
@@ -285,7 +338,7 @@ def starts(blocks, asr, fx):
 
 def cmd_plan(a):
     P = paths(a.project)
-    for k in ("vo.wav", "pk.json", "fw.json"):
+    for k in ("vo.wav", "pk.json"):
         if not P[k].exists():
             die(f"{P[k]} missing: run `fc_captions.py words {a.project}` first")
     if not P["blocks.txt"].exists():
@@ -299,9 +352,11 @@ def cmd_plan(a):
     s = seq(a.project)
     fps, end, cuts = fps_of(s), s["durationFrames"], cuts_of(s)
     pk = asr_tokens(json.load(open(P["pk.json"])), fx)
-    fw = asr_tokens(json.load(open(P["fw.json"])), fx)
     ps, miss, total = starts(blocks, pk, fx)
-    fs, _, _ = starts(blocks, fw, fx)
+    if P["fw.json"].exists():
+        fs, _, _ = starts(blocks, asr_tokens(json.load(open(P["fw.json"])), fx), fx)
+    else:
+        fs = [None] * len(blocks)
     ons = silence_ends(P["vo.wav"])
     x = pcm16k(P["vo.wav"])
     # Parakeet's lead on this recording: where a word follows silence, how far before the voice it marks it
@@ -328,6 +383,10 @@ def cmd_plan(a):
                 src = "pause"
             elif deep:          # just after a short pause before the word
                 fr, src = max(deep) + 1, "pause"
+            else:               # mid-phrase: the word starts where the voice rises out of the dip before it
+                d = dip(x, fr, fps)
+                if d is not None:
+                    fr, src = d, "dip"
         rows.append([b, fr, src])
     notes = []
     for c in cuts:
@@ -344,14 +403,25 @@ def cmd_plan(a):
     for r0, r1 in zip(rows, rows[1:]):
         if r1[1] <= r0[1]:
             die(f"{r1[0]!r} starts at or before {r0[0]!r} ({r1[1]} <= {r0[1]}): check blocks.txt order")
-    out = [{"text": t, "start": f, "end": rows[k + 1][1] if k + 1 < len(rows) else end, "src": src}
-           for k, (t, f, src) in enumerate(rows)]
+    # a caption leaves the screen in a real pause: 2 frames after the voice stops, back when it starts again
+    gaps = [(s0, e0) for s0, e0 in voice_pauses(P["vo.wav"], a.hide)] if a.hide else []
+    out = []
+    for k, (t, f, src) in enumerate(rows):
+        nxt = rows[k + 1][1] if k + 1 < len(rows) else end
+        stop = [math.ceil(s0 * fps) + TAIL for s0, e0 in gaps if f < s0 * fps and e0 * fps <= nxt + 1]
+        if k + 1 == len(rows):  # after the last word: the end card speaks for itself
+            stop += [math.ceil(s0 * fps) + TAIL for s0, e0 in gaps if s0 * fps > f] + \
+                    [math.ceil(voice_end(x) * fps) + TAIL]
+        e = min([nxt] + [s for s in stop if f + round(fps / 2) <= s < nxt])
+        out.append({"text": t, "start": f, "end": e, "src": src})
     long = [r["text"] for r in out if len(r["text"].split()) > MAXWORDS]
     json.dump({"project": str(Path(a.project).resolve()), "fps": fps, "cuts": cuts, "end": end, "lead": off,
                "blocks": out}, open(P["captions.json"], "w"), ensure_ascii=False, indent=1)
     for r in out:
         print(f"  {tc(r['start'], fps)}  {r['end'] - r['start']:4d}f  {r['text']:30s} {r['src']}")
-    print(f"{len(out)} captions, Parakeet lead {off:.3f} s, {miss}/{total} script words not heard -> {P['captions.json']}")
+    clear = sum(1 for k, r in enumerate(out) if r["end"] < (out[k + 1]["start"] if k + 1 < len(out) else end))
+    print(f"{len(out)} captions, {clear} end before a pause, Parakeet lead {off:.3f} s, {miss}/{total} script words "
+          f"not heard -> {P['captions.json']}")
     for n in notes + [f"over {MAXWORDS} words: {t!r}" for t in long]:
         print("NOTE", n)
 
@@ -395,8 +465,8 @@ def signature(s, skip_v):
 def cmd_build(a):
     P = paths(a.project)
     project = Path(a.project).resolve()
-    if app_running():
-        die("FilmCraft is open: save and close it first (the app would keep its own copy and overwrite this)")
+    import fc
+    live = fc.save_live(project)  # the user's open copy is saved first; the app reloads the result at the end
     plan = json.load(open(P["captions.json"]))
     s = seq(project)
     if cuts_of(s) != plan["cuts"] or s["durationFrames"] != plan["end"]:
@@ -408,9 +478,10 @@ def cmd_build(a):
     if a.track:
         v = int(a.track.lstrip("Vv")) - 1
         add = v >= nv
-    else:  # the top video track when it holds only text clips (or nothing), else a new one on top
-        top = s["video"][-1]["items"]
-        v, add = (nv - 1, False) if nv > 1 and all(is_text(i) for i in top) else (nv, True)
+    else:  # the track whose text clips are these captions (an older build), else a new one on top. Never just the
+        # top text track: on Max video-2 that held the "X" / "LINK BELOW" overlays, and a build replaced them.
+        v = caption_track(s, plan)
+        v, add = (nv, True) if v is None else (v, False)
     if not add and any(not is_text(i) for i in s["video"][v]["items"]):
         die(f"V{v + 1} holds clips that aren't text: pass --track for an empty or captions-only track")
     old = [] if add else [i["clip"] for i in s["video"][v]["items"]]
@@ -452,7 +523,10 @@ def cmd_build(a):
     shutil.copy2(project, dst)
     project.write_text(json.dumps(new, separators=(",", ":"), ensure_ascii=False))
     tmp.unlink()
-    print(f"V{v + 1}: {len(want)} captions (template {a.template}), {len(old)} old ones replaced; backup {dst}")
+    if live:
+        fc.reload_live(project)
+    print(f"V{v + 1}: {len(want)} captions (template {a.template}), {len(old)} old ones replaced; backup {dst}"
+          + ("; the open app reloaded it" if live else ""))
 
 
 # ---------- check, export ----------
@@ -493,6 +567,12 @@ def cmd_check(a):
 
 
 def cmd_export(a):
+    """The filmcraft skill's export: saves the open copy first, burns caption tracks, checks the file."""
+    fcpy = next((d / "fc.py" for d in (HERE.parent.parent / "filmcraft" / "scripts",
+                                        Path.home() / ".claude/skills/filmcraft/scripts") if (d / "fc.py").exists()), None)
+    if fcpy:
+        sys.exit(subprocess.run([sys.executable, str(fcpy), "export", a.project, "-o", a.out]
+                                + (["--kbps", str(a.kbps)] if a.kbps else [])).returncode)
     if app_running():
         die("FilmCraft is open: close it first so the export reads the saved project")
     out = Path(a.out).resolve()
@@ -510,7 +590,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     w = sub.add_parser("words"); w.add_argument("project"); w.add_argument("--vo", default="A1")
+    w.add_argument("--fast", action="store_true",
+                   help="Parakeet only (about 25 s instead of 80 s for 95 s of voice; mid-phrase starts can run 2-3 frames late)")
     p = sub.add_parser("plan"); p.add_argument("project"); p.add_argument("--script"); p.add_argument("--fixes")
+    p.add_argument("--hide", type=float, default=0.4,
+                   help="clear the screen in voice pauses at least this long, s (0: captions back to back)")
     b = sub.add_parser("build"); b.add_argument("project"); b.add_argument("-t", "--template", default="4", choices=STYLES)
     b.add_argument("--track")
     c = sub.add_parser("check"); c.add_argument("project"); c.add_argument("--n", type=int, default=8)

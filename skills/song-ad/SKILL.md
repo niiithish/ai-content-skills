@@ -71,7 +71,7 @@ Plan with `video-plan`, with the song in place of the voiceover. Its Music row r
 
 ## Edit and captions
 
-The user edits: the full song on the bottom track, uncut, every clip muted above it. Never use the audio a video model outputs. After the edit, burn captions with `captions` when asked. For a song, the wording is the lyric sheet's lead lines. The references show one lyric line per caption; ask whether to keep the locked two-line style or switch to one line.
+The user edits: the full song on the bottom track, uncut, every clip muted above it. Never use the audio a video model outputs. After the edit, add captions with `captions-filmcraft` when asked (`captions` only for a rendered file that isn't a FilmCraft project). Never run `filmcraft-pacing` tighten on a song ad: the song is the timing. For a song, the wording is the lyric sheet's lead lines. The references show one lyric line per caption; ask whether to keep the locked two-line style or switch to one line.
 
 ## Rules
 

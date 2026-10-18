@@ -42,7 +42,7 @@ Generation runs through the `flow` skill's CLI. Flow chooses the account for eve
   - Never ask the user to list what they flagged. Reviews are saved in `<project>/review.json`; don't edit it.
 - **Stop at every gate** and wait for approval.
 - **Terse replies.** At most a short table (shot, result, your call) and one line on what's next, ending on your recommendation or the command. No write-ups, no menus of options, no detail the user didn't ask for.
-- **The user edits.** They stitch and time the clips to the voiceover themselves. Never offer to cut, stitch or time the edit. After the edit, what we do is burn in captions (the `captions` skill) when asked.
+- **The edit is in FilmCraft, with the user.** Build the timeline from the approved clips with the `filmcraft` skill, ready to export but not exported. The user tweaks it in the open app. Then `filmcraft-pacing` (dead air, motion) and `captions-filmcraft` (captions as text clips) when asked, and `filmcraft` exports when the user says so.
 - **Nothing is overwritten.** A new attempt is the next version (`v2`, `v3`), with its own prompt file and a manifest job that replaces the old one. An approved still or clip is listed in `APPROVED.md` in `scenes/all/` or `clips/all/`. From then on it's locked unless the user asks to redo it.
 - **`make.py` owns batching (hard rule).**
   - Every still and clip is a job in the one manifest (`scenes/stills-batch.json`, `clips/clips-batch.json`), run by `make.py stills|clips|finals [shots]`.
@@ -61,7 +61,7 @@ Generation runs through the `flow` skill's CLI. Flow chooses the account for eve
 
   Don't wait longer or work around it.
 - **Standing defaults, in every project, overridden only when the user says so:**
-  - Generated stills and clips never contain captions, subtitles, text overlays or music. The user's edit carries those, and we burn captions in afterwards.
+  - Generated stills and clips never contain captions, subtitles, text overlays or music. The user's edit carries those, and captions go into the FilmCraft edit afterwards.
   - Clip audio is what you would hear standing in that scene: ambience, footsteps, objects, and wordless sounds tied to a visible action.
   - No music, narration or spoken words, unless the plan has people speaking their lines on camera.
 
@@ -166,7 +166,7 @@ Don't start phase 2 until the user has approved the plan.
 
 1. Run `make.py handoff`. `edit/clips/` gets the final clips numbered in story order, plus `ORDER.txt`.
 2. The user edits: music, voiceover, timing.
-3. Captions go on the user's finished edit, with the `captions` skill: its locked style, and a preview frame before any render. Before any caption or other edit-stage deliverable, reread that section of the brief and quote it to the user.
+3. Captions go into the FilmCraft edit with `captions-filmcraft` (its templates match the `captions` skill's; use `captions` only for a rendered file that isn't a FilmCraft project), after `filmcraft-pacing` when the edit is tightened, since cuts move the timing. Before any caption or other edit-stage deliverable, reread that section of the brief and quote it to the user.
 4. Deliverables are named `<Brand>_<Concept>_<Variant>_<Ratio>.mp4` (`Mysa_Dose-to-Done_Hook1-Control_9x16.mp4`) and go in `video-N/deliverables/`.
 5. Update the Videos table in `AGENTS.md`.
 

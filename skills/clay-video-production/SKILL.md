@@ -55,7 +55,7 @@ See [references/sheets.md](references/sheets.md). In short:
 - Clips: **one approved still per clip**, silent, 4 or 6 s timed from the shot's span in the voiceover. Make 360p drafts of all clips, then finals after approval.
 - The still shows the state **before** the action; the clip only adds the action (see `clip-prompt.md`).
 - Keep scenes simple: few, separate props held still. Busy tables and paper piles drift in video.
-- Edit in Resolve (`davinci-resolve` skill), captions in the edit; never in stills or clips.
+- Edit in FilmCraft (`filmcraft`, then `filmcraft-pacing` and `captions-filmcraft`), captions in the edit; never in stills or clips. Resolve only when the user asks for it.
 
 ## Review additions
 

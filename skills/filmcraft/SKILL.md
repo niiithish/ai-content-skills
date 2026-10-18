@@ -1,6 +1,6 @@
 ---
 name: filmcraft
-description: "Edit and export videos in FilmCraft (the open-source Premiere-style editor, `filmcraft-cli`) together with the user: build a ready-to-export timeline from approved clips, let the user tweak it by hand in the open app, apply their change requests live through the bridge (the same project, no stale copies), swap a regenerated clip in without a Link Media popup, and export Meta-ready H.264 deliverables (about 45 MB a minute at 1080x1920, AAC audio) from FilmCraft itself, one hook after another in the background. Use when the user edits in FilmCraft or names a .fcproj: set up or rebuild a timeline, change an edit, replace or relink a clip, fix missing media, or export one or several hooks. Not for captions (captions-filmcraft adds them as text clips) or for generating clips (flow, video-production)."
+description: "Edit and export videos in FilmCraft (the open-source Premiere-style editor, `filmcraft-cli`) together with the user: build a ready-to-export timeline from approved clips, let the user tweak it by hand in the open app, apply their change requests live through the bridge (the same project, no stale copies), swap a regenerated clip in without a Link Media popup, and export Meta-ready H.264 deliverables (about 45 MB a minute at 1080x1920, AAC audio) from FilmCraft itself, one hook after another in the background. Use when the user edits in FilmCraft or names a .fcproj: set up or rebuild a timeline, change an edit, replace or relink a clip, fix missing media, or export one or several hooks. Not for captions (captions-filmcraft adds them as text clips), pacing, dead air or zooms (filmcraft-pacing) or generating clips (flow, video-production)."
 ---
 
 # FilmCraft
@@ -13,7 +13,8 @@ The user edits in FilmCraft and so does the agent: one project file, open in the
 2. **The user tweaks it** in FilmCraft (gaps, trims) and saves.
 3. **Change requests.** The user asks for changes with the project still open. Edit it live (see "Editing").
 4. **Regenerated clip.** When a shot is redone in Flow, swap the new version in (see "Swapping a clip").
-5. **Export** when the user says it's ready (see "Export").
+5. **Pacing and captions** when asked: `filmcraft-pacing` (dead air out, punch-ins, B-roll motion), then `captions-filmcraft`.
+6. **Export** when the user says it's ready (see "Export").
 
 ## Setup (once per machine)
 
@@ -34,6 +35,7 @@ Then the user restarts Claude Code and reopens FilmCraft from the launcher.
 - Look up command ids and params with `filmcraft-cli commands <filter>` and `describe <id>`. Timeline clips use `clip` ids from `inspect sequence`. Project items use `item` ids from `inspect project`.
 - **Never save from a headless engine** (`filmcraft-cli --project X --save`, the old MCP's `file.save`) while the app has X open.
 - After the user's own tweaks, read `inspect sequence` before changing anything. Their edit is the base now.
+- From another skill's script: `fc.save_live(PROJECT)` saves the user's open copy before reading the file (True when the app has it open), and `fc.reload_live(PROJECT)` makes the app reload it after the script rewrote the file.
 - Build scripts in `video-N/edit/` assemble the timeline through `fc.py run`, or through `filmcraft-cli --project … --save` while the app is closed.
 
 ## Clip paths: no Link Media popups

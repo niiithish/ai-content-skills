@@ -46,6 +46,6 @@ For every tile, check:
 |---|---|
 | Full subtitles delivered when the client wanted a few captions | Reread the brief's caption section before any edit deliverable; use the client's exact wording at the moments they name; quote the brief back to the user. |
 | Time spent building an edit tool, or cutting the edit, when the user edits | The user stitches and times the edit themselves (our cut got about 90% there, not good enough). Deliver ordered clips; never offer to edit. |
-| Captions took seven rounds to land (video-3) | The `captions` skill: its locked style, one preview frame before any render. |
+| Captions took seven rounds to land (video-3) | The `captions-filmcraft` skill on FilmCraft edits (`captions` for rendered files only): its locked templates, and `check` frames before the user exports. |
 | Clips shorter than their voiceover line, regenerated longer | Time the voiceover with `video-plan` before the shot list; each line's clips cover its slot plus 1 s. Longer is only trimmed. |
 | Shots added after the finals (a third of Milo video 1) | Story lock with the approved `PLAN.md`; check voiceover coverage with the animatic before any clips. |

@@ -38,7 +38,7 @@ Files, loaded only when a phase needs them:
 
 ## Clips
 
-- A clip is never fully static: it makes one subtle, slow camera move (a gentle push-in, a slight drift) or holds a locked frame that gets a slow zoom in post. The template in `clip-prompt.md` writes the move in.
+- A clip is never fully static: it makes one subtle, slow camera move (a gentle push-in, a slight drift) or holds a locked frame that gets a slow zoom in post (`filmcraft-pacing` motion). The template in `clip-prompt.md` writes the move in.
 - Short, plain prompts work best: what happens, timed, then the fixed lines (motion, sound, no text, one shot). Long lists of prohibitions invite what they forbid.
 - Hard beats (taking a pill and swallowing it with water, pouring, handing something over) get 6 s with each step timed to the second, and a count of every object that matters. Review them by counting.
 

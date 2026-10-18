@@ -83,6 +83,30 @@ def run_cmds(project, cmds, save=True):
     return lines
 
 
+def save_live(project):
+    """Saves the user's open copy when it has PROJECT with unsaved changes. True when the app has it open."""
+    b = bridge_project()
+    if b and b[0] and Path(b[0]).resolve() == Path(project).resolve():
+        if b[1]:
+            subprocess.run([CLI, "--bridge", BRIDGE, "--compact", "exec", "file.save"], check=True, capture_output=True)
+        return True
+    if app_running() and not b:
+        die("FilmCraft is open without its control port: ask the user to save and quit, then reopen it from the launcher")
+    return False
+
+
+def reload_live(project):
+    """After a tool rewrote PROJECT on disk, the open app reloads it (file.revert), so neither copy is stale."""
+    b = bridge_project()
+    if b and b[0] and Path(b[0]).resolve() == Path(project).resolve():
+        r = subprocess.run([CLI, "--bridge", BRIDGE, "--compact", "exec", "file.revert"], capture_output=True, text=True)
+        if r.returncode:
+            die(f"wrote {project}, but the app didn't reload it: ask the user to close it without saving and reopen. "
+                f"{r.stderr[-200:]}")
+        return True
+    return False
+
+
 def inspect(project, what):
     m = mode(project)
     args = [CLI, "--bridge", BRIDGE] if m == "live" else [CLI, "--project", str(project)]

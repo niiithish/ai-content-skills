@@ -50,3 +50,18 @@ words("voiceover/recording.wav")   # [(word, start, end), ...]
 ```
 
 `captions.py words`, `plan.py voiceover` and `song-ad` (through `plan.py`) get their heard words this way, then align the script to them, so the wording on screen still comes from the script.
+
+## Pauses: where the voice actually stops
+
+ASR can't say where a word ends: Parakeet gives word starts only, and Whisper's ends drift. For cuts and caption ends, use the waveform:
+
+```bash
+<skill-dir>/scripts/pauses.py voice.wav [--least 0.15]      # speech end, onset and length of every pause
+```
+
+```python
+from pauses import load, find_pauses
+find_pauses(load("vo.wav"))        # [(speech_end, onset), ...] in seconds
+```
+
+The quiet threshold comes from each recording: 40% of the way from its noise floor (8th percentile) to its speech level (90th). A fixed -40 dB (ffmpeg silencedetect) found none of the pauses in Max video-2, whose AI clips carry room tone above it. Silero VAD holds on too long to see 0.2–0.5 s pauses. Pauses under 0.15 s are stop consonants, not pauses. `filmcraft-pacing` and `captions-filmcraft` use it.

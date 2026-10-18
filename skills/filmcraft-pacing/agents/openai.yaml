@@ -1,0 +1,4 @@
+interface:
+  display_name: "FilmCraft Pacing"
+  short_description: "Cut dead air, add punch-ins and B-roll motion in a FilmCraft edit, with before/after numbers"
+  default_prompt: "Use $filmcraft-pacing to report on this FilmCraft edit's pacing, then tighten the pauses and add motion in the calm style, and redo the captions afterwards."
