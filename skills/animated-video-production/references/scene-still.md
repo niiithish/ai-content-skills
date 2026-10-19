@@ -19,6 +19,8 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 
 Never pass a rejected attempt as a reference, because its flaws get copied. Name each ingredient by its role ("the look still", "the orange tabby cat sheet"), list them in `reference_images_in_order`, and give each one a `use_for`.
 
+**Only the references this frame needs.** Before adding an image, name its one job (the product's label, its angle, its size in a hand, a face, this place's look) and check no other reference already does it. If it has no job of its own, leave it out, however relevant it looks or wherever you found it. An image from another scene brings its pose, outfit, room and light into this one (Aleo 127a v29: the product, its angle and its size in a hand were enough; a fourth still of a woman in a yellow robe from another shot was added only because it was in the folder). Fewer references, each with a clear job, beat more.
+
 ## Required sentences
 
 - **Three-panel character sheets:** "The left and middle panels are the body, the right panel is the head; show one complete character with a full head, not the sheet layout and not a headless body."

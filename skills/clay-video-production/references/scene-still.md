@@ -17,6 +17,8 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 
 The first still in a place has no look still: write the set, palette and light in full. Never pass a rejected attempt as a reference.
 
+**Only the references this frame needs.** Before adding an image, name its one job (the product's label, its angle, its size in a hand, a face, this place's look) and check no other reference already does it. If it has no job of its own, leave it out, however relevant it looks or wherever you found it. An image from another scene brings its pose, outfit, room and light into this one (Aleo 127a v29: the product, its angle and its size in a hand were enough; a fourth still of a woman in a yellow robe from another shot was added only because it was in the folder). Fewer references, each with a clear job, beat more.
+
 ## Required content
 
 - **Viewpoint and layers** in `scene`: Viewpoint, then FOREGROUND (sharp: a hand, a prop, a mug), MIDGROUND (the subject, pose, expression), BACKGROUND (named set dressing: teal wallpaper with gold leaves, ruby curtains, a rose-shaded brass lamp). Every frame has depth.

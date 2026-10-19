@@ -18,6 +18,7 @@ Use [references/json-blueprint.md](references/json-blueprint.md) for the JSON st
 
 ## Reference control
 
+- Pass only references with a job no other reference covers. Before adding an image, name its one job and check nothing else already does it; an image found in a folder but with no job of its own stays out, because a still from another scene brings its pose, outfit, room and light (Aleo 127a v29: product, angle and size-in-hand were enough; a fourth still of a woman in a yellow robe from another shot only added noise).
 - Give each supplied reference one explicit job: person identity, product/packaging identity, location, pose/crop, or lighting/camera. State what to preserve and what **not** to copy from it. Keep requested changes scoped.
 - If exact product branding matters, use the supplied product image or exact text as authority. Preserve package silhouette, cap, palette, wordmark, label hierarchy, and readable supplied copy. Do not replace it with a blank package, a category-only label such as `Hair Serum`, invented claims, or random lettering.
 - If no brand or package reference is supplied and a product must be prominent, design a plausible **fictional** retail identity: an intentional container, material, cap, proper-name wordmark, product-line name, short category descriptor, size, and restrained label hierarchy. Specify the short text exactly; leave fine print indistinct rather than requesting gibberish. If the user needs an exact existing brand and has not provided it, ask for the product reference or exact label copy.

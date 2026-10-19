@@ -49,3 +49,4 @@ For every tile, check:
 | Captions took seven rounds to land (video-3) | The `captions-filmcraft` skill on FilmCraft edits (`captions` for rendered files only): its locked templates, and `check` frames before the user exports. |
 | Clips shorter than their voiceover line, regenerated longer | Time the voiceover with `video-plan` before the shot list; each line's clips cover its slot plus 1 s. Longer is only trimmed. |
 | Shots added after the finals (a third of Milo video 1) | Story lock with the approved `PLAN.md`; check voiceover coverage with the animatic before any clips. |
+| A still picks up a pose, outfit, room or light from nowhere | An extra reference passed only because it was in the folder (Aleo 127a v29: a still of a woman in a yellow robe from another shot) | Each reference needs one job no other reference covers; name it before adding the image, and leave out anything without one. |
