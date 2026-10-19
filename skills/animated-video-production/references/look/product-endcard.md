@@ -45,7 +45,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or other brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: the real white Mysa bottle (label \"Mysa\", \"Feminine Moisture Support\") upright in the lower centre on a glossy surface, a swirl of glowing orange-red softgels arcing around it with golden sparkles, a warm plum-to-peach-gold gradient behind with blurred sea buckthorn berries, the upper third clean for a headline."
 }

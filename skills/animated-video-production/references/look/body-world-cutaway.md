@@ -51,7 +51,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: a cosy underground cross-section workshop below a cracked surface, warm rose-gold glow and little lanterns: tiny peach-coral builder creatures in amber hard hats carry and press soft cushiony coral tiles into place in neat stacked layers."
 }

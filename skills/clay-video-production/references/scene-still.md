@@ -42,6 +42,11 @@ Two or more characters sharing a place across stills keep their sides only when 
 
 Anything that carries print in real life (a cream tube, a jar, a calendar, a book, a phone screen, a sign) gets short, readable text quoted in the prompt ("RAW MATERIAL" on a jar, "DAY 4" on a wall calendar), painted or pressed into the clay. Never a blank white product. Never captions, subtitles, watermarks or app UI. Check spelling in the render.
 
+**Other brands' products** (a rival bottle, shelf stock, a jar on her vanity, the "old" product that failed her) get a made-up brand name and their own colour, painted or pressed into the clay, written into the prompt for each one in focus: "a frosted sage-green glass jar labelled 'Verdelle' in cream serif", "an amber pump bottle, black cap, 'HONEY OAT' label". Left unsaid, the model whitewashes them: plain white bottles with blank labels, the same white as the client's product. The rules:
+- **A colour for every product, from a small set.** Pick 2–4 package colours that sit in the scene's palette (sage, terracotta, amber glass, navy, blush, cream, matte black) and spread them over the products; a shelf can repeat them. Not a rainbow, not neon, not all white.
+- **Never the client's colours or shape** on a rival: it must not read as our product. With a white client bottle, rivals are any colour but white.
+- **Short readable names** where in focus (one invented brand word plus 1–2 words of product line), soft where out of focus. Real brands only when the user supplies them.
+
 ## "Inside the body" stills
 
 A cosy miniature clay world: a warm terracotta cave, hanging little lights, a tall stack of rose-pink clay layers, a candle in an alcove, little builder creatures with clay tools, labelled jars. Negatives: "human anatomy, organs, cells, blood", "medical diagram", "scary, slimy or gross". See `look/inside-world-cave.md` and `look/inside-world-workshop.md`.
@@ -51,7 +56,7 @@ A cosy miniature clay world: a warm terracotta cave, hanging little lights, a ta
 Append these to every still's own negatives (swap the penguin lines for the project's characters):
 
 ```json
-"three-panel sheet layout", "headless body", "grey studio background", "smooth glossy 3D CGI render", "plastic toy sheen, vinyl figure", "Pingu-style simple flat penguins with tiny dot eyes", "real feathers, realistic birds", "2D cartoon, outlines", "photoreal humans", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat even lighting", "black bars, borders, letterbox", "captions, subtitles, watermark", "phone interface, app buttons or on-screen UI", "garbled or misspelled lettering", "real brand names"
+"three-panel sheet layout", "headless body", "grey studio background", "smooth glossy 3D CGI render", "plastic toy sheen, vinyl figure", "Pingu-style simple flat penguins with tiny dot eyes", "real feathers, realistic birds", "2D cartoon, outlines", "photoreal humans", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat even lighting", "black bars, borders, letterbox", "captions, subtitles, watermark", "phone interface, app buttons or on-screen UI", "garbled or misspelled lettering", "logos of real companies", "blank unlabelled packaging", "every product plain white"
 ```
 
 Add the shot's own failure modes first (wrong counts, a character who shouldn't be there, the wrong prop state). Don't list objects the frame has no reason to contain.

@@ -60,7 +60,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: sunny cobalt-tiled kitchen, smiling Penny tips exactly two orange-red softgels from a clay Mysa bottle into her flipper, a glass of water beside her."
 }

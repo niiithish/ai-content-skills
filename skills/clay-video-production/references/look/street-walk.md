@@ -46,7 +46,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: a golden-lit cobbled shopping street, Penny striding towards camera in tight blue clay jeans and her dusty-rose cardigan, swinging a shopping bag, grinning."
 }

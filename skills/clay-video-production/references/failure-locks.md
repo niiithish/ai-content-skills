@@ -21,6 +21,7 @@ Known ways Flow (Nano Banana) stills and Flow Omni clips go wrong in claymation,
 | Hand-held product far too big (video-7 6: a tube) | Size never stated | Real size against the character ("a tube about the length of her face, held in one flipper"); fix with an edit of the still. |
 | An older character comes back young | Age unstated in close-ups | "Clearly in her late 50s, not young: heavy lids, laugh-line creases at the eye corners, exactly like the sheet portrait." |
 | A white unlabelled product, or blank papers | No text quoted | Quote short real-looking text for every surface that carries print in real life. |
+| Other brands' products come out plain white with blank labels | "store logos or real brand names" in the negatives read as "no brand names", and no colour given, so the model falls back to clean white (and copies a white client bottle) | Give each product in focus a made-up name and its own colour from 2–4 scene colours, never the client's; negatives say "logos of real companies", "blank unlabelled packaging", "every product plain white". See "Other brands' products" in `scene-still.md`. |
 
 ## Clips
 

@@ -56,7 +56,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: Penny (dusty-rose cardigan, late 50s) sits bolt upright in bed at night, holding up one big brass stopwatch with its cream dial reading \"90 SECONDS\" to the camera, flipper on the button, eyes narrowed and determined, looking at the viewer; rose lamp, teal wallpaper, ruby curtains behind."
 }

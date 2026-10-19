@@ -57,7 +57,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: a cosy trattoria table side-on: three friends laugh over red wine while Carol (before look, exactly as in the approved still: big blue-grey eyes, pale ash-blonde LOW ponytail, navy cardigan) sits uncomfortably with her legs crossed, not feeling well, a strained polite smile; candles and string lights."
 }

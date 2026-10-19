@@ -47,7 +47,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: one clay Mysa bottle with its burgundy \"Mysa\" label facing camera on a warm wooden shelf, a glowing orange-red softgel in front and a sprig of orange sea-buckthorn berries beside, golden bokeh."
 }

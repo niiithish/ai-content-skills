@@ -57,7 +57,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: a lamplit bedroom at night, Penny (dusty-rose cardigan, late 50s) lies wide awake under a jewel-tone patchwork quilt, staring at the ceiling with pinched brows, while round Walt snores happily beside her, beak in the air; rose-shaded brass lamp on the left, teal wallpaper, deep blue night window."
 }

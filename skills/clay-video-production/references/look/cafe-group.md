@@ -48,7 +48,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: a cosy café, three penguin friends in teal, saffron and lavender cardigans lean in and push tubes labelled \"SILKY GLIDE\", \"AQUA SMOOTH\" and \"COMFORT GEL\" across a round table at Penny, who looks unconvinced."
 }

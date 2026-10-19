@@ -37,7 +37,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: macro of a clay sea-buckthorn twig with silvery-green leaves packed with glossy orange berries, brass tweezers pinching one so a glowing golden oil drop swells out, warm golden bokeh."
 }

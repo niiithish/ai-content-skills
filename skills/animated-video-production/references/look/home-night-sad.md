@@ -50,7 +50,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: a warm lamplit living room on a rainy night: Carol (before look: flat frizzy blonde ponytail, navy cardigan) sits alone on a mustard velvet sofa wrapped in a magenta throw, hugging a cushion, gazing sadly at the rain on the window; tissues \"Soft Touch\", tea and ice cream on the coffee table."
 }

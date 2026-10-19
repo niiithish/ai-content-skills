@@ -57,7 +57,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: low angle at a warm floury workbench where exactly two tiny rose-pink Layer Makers roll out a fresh glossy pink clay sheet with tiny rolling pins, a little paper wall calendar reading \"DAY 4\" beside them, the tall layer stack rising soft above."
 }

@@ -44,7 +44,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: Joanne (61, silver pixie, emerald blouse, glasses on a gold chain) in her sunny lemon-yellow kitchen, two glowing amber softgels sharp in her open palm in the foreground, a glass of water in her other hand, winking with a knowing smile."
 }

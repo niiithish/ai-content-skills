@@ -48,7 +48,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: a warm ochre living room in afternoon sun, Penny (dusty-rose cardigan, late 50s) in an emerald velvet wingback armchair, red-cheeked and sweating in a hot flush, fanning herself hard with a folded magazine titled \"Garden Weekly\"."
 }

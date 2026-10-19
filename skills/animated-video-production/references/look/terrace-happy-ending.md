@@ -52,7 +52,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: a sunny café terrace under a vine pergola with string lights and magenta bougainvillea: Carol (63, big blonde curls, burgundy wrap dress) at a mosaic table turns to the lens laughing, radiant, while Joanne (silver pixie, emerald blouse) and two friends laugh beside her."
 }

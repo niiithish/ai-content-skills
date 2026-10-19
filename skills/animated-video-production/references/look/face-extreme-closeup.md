@@ -50,7 +50,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: an extreme close-up filling the frame with Richard's face (about 65, silver hair, lined forehead): eyes wide with the whites showing, brows shot up, mouth fallen a little open, warm store bokeh at the edges."
 }

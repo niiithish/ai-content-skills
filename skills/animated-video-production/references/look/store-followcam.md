@@ -64,7 +64,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: a low follow-cam behind Carol (big blonde curls with silver streaks, burgundy wrap dress, gold bangles) as she pushes a red cart away from us down a long, bright, warm store aisle signed \"Bath & Body\", stocked with real labelled products, dropping a \"Vanilla Glow\" candle into the cart; at the very far end of the aisle, tiny (one tenth of the frame height) and soft, Richard and Brooke stand in profile against the right-hand shelf, reading labels, not looking at her."
 }

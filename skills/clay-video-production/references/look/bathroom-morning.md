@@ -49,7 +49,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: a warm teal-tiled bathroom in morning sun, Penny (dusty-rose cardigan, late 50s) sits on the rim of a cream clawfoot bath pressing a folded pale-blue flannel to her lap, wincing; behind her a shelf crowded with half-used tubes labelled \"SILKY GLIDE\", \"AQUA SMOOTH\", \"COMFORT GEL\"."
 }

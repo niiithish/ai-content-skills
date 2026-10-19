@@ -55,7 +55,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "store logos or real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 fully 3D animated frame: Carol, clearly 63 (crow's feet, laugh lines; big blonde curls with silver streaks, burgundy wrap dress, gold bangles), waist-up right in front of a single wall of labelled products that fills the whole background flat and square to camera, holding a peach \"Silk Lotion\" bottle and staring at its label without reading, brows knitted, biting her lip, shoulders tight."
 }

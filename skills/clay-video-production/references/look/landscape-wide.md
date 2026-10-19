@@ -38,7 +38,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: a craggy clay mountain slope under snowy peaks and deep blue sky, colourful cloth flags fluttering, wild sea-buckthorn bushes heavy with glossy orange berries in the foreground."
 }

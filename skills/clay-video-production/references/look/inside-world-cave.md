@@ -39,7 +39,7 @@
     "captions, subtitles, watermark",
     "phone interface, app buttons or on-screen UI",
     "garbled or misspelled lettering",
-    "real brand names"
+    "logos of real companies"
   ],
   "final_generation_instruction": "Create one 9:16 claymation frame: low angle up a towering stack of soft rose-pink plasticine layers like a layered cake inside a warm terracotta clay cave, a faint flickering golden glow from a tiny workshop alcove at its base, tiny bead lanterns in the distance."
 }

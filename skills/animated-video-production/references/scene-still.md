@@ -67,12 +67,17 @@ Don't list an object the positive text never mentions and that the frame has no 
 Append these to every still's own negatives:
 
 ```json
-"three-panel sheet layout", "headless body", "grey studio background", "2D cartoon, outlines", "photoreal humans", "plastic toy look", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat lighting", "captions, subtitles, watermark", "phone interface, app buttons or on-screen UI", "garbled or misspelled lettering", "store logos or real brand names"
+"three-panel sheet layout", "headless body", "grey studio background", "2D cartoon, outlines", "photoreal humans", "plastic toy look", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat lighting", "captions, subtitles, watermark", "phone interface, app buttons or on-screen UI", "garbled or misspelled lettering", "logos of real companies", "blank unlabelled packaging", "every product plain white"
 ```
 
 ## Text in the frame
 
 In-world text is welcome; overlays are not. Anything that carries print in real life (a newspaper, a sign, a book cover, packaging, a label, a shop front) gets short, readable, plausible text written into the prompt in quotes: a headline, a brand name, a product line. Invent fictional brands; use a real one only when the user supplies it. Keep each surface to a few words and leave fine print soft. Stores are stocked like a real store: each product has its own shape and a readable fictional label ("Silk Lotion", "Honey Oat", "Vanilla Glow", a "Bath & Body" aisle sign, price tags on the shelf edges), never plain colour blocks or blank jars. Story props carry their words ("DIVORCE AGREEMENT" on the papers). A phone screen shows the client's real web page from a screenshot, typed by touch, never a mouse pointer. Never captions, subtitles, watermarks, app UI or on-screen graphics. Say which surface each text is on, and check the spelling in the render before approving.
+
+**Other brands' products** (a rival bottle, shelf stock, a jar on her vanity, the "old" product that failed her) get a made-up brand name and their own colour, written into the prompt for each one in focus: "a frosted sage-green glass jar labelled 'Verdelle' in cream serif", "an amber pump bottle, black cap, 'HONEY OAT' label". Left unsaid, the model whitewashes them: plain white bottles with blank labels, the same white as the client's product. The rules:
+- **A colour for every product, from a small set.** Pick 2–4 package colours that sit in the scene's palette (sage, terracotta, amber glass, navy, blush, cream, matte black) and spread them over the products; a shelf can repeat them. Not a rainbow, not neon, not all white.
+- **Never the client's colours or shape** on a rival: it must not read as our product. With a white client bottle, rivals are any colour but white.
+- **Short readable names** where in focus (one invented brand word plus 1–2 words of product line), soft where out of focus. Real brands only when the user supplies them.
 
 ## Blueprint
 
