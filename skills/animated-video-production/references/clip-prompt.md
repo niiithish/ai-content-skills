@@ -6,7 +6,7 @@ One clip is one continuous shot, 4, 6, 8 or 10 s, from one approved still. Save 
 
 Use this for B-roll that plays muted under a song or a voiceover (song ads, story ads). It made the clips the user approved in the Mysa song ad (video-6), and it replaces the locked-frame and sheets defaults below for those projects:
 
-- **One approved still per clip, and nothing else.** The still is the exact first frame and the source of truth; no character sheets as ingredients (the still already holds the faces). Never pack several stills into one clip: the second still's angle drifts and every shot ends up too short. Cut between clips in the edit.
+- **One approved still per clip, and nothing else.** The still is the exact first frame and the source of truth; no sheets unless the still can't hold a face or a label by itself (see Ingredients). Never pack several stills into one clip: the second still's angle drifts and every shot ends up too short. Cut between clips in the edit.
 - **Add nothing.** No person, object or prop that isn't in the still; props in the still stay put unless the action needs them, and never disappear.
 - **Characters act, the camera moves.** A clear, expressive performance with body and face, an expression that changes within the shot, and one gentle camera move (slow push-in, tilt up, slide, rack focus). A held, locked frame only when the user asks for one.
 - **Silent unless the user asks for talking.** When a character does talk (muted later, so it only drives the mouth), quote only their own words, never a narrator's tag ("he said") and never a web address.
@@ -42,7 +42,7 @@ These apply when the clip isn't muted B-roll under a song or voiceover. Only the
 
 ## Ingredients
 
-`@image1` is the approved still: the opening frame and the reference for the set, framing and light. `@image2…` are the sheets of every character in the shot. Without the sheets, faces drift as characters move (Daniel lost his moustache). If a starting pose differs from the still, say "@image1 is the reference for the set and light, not an exact first frame".
+`@image1` is the approved still: the opening frame and the reference for the set, framing and light. Add a sheet only where the still can't hold the look: a sheet character whose face the still hides (back to camera, profile, far, blurred, covered), someone who enters, or the product with printed text. The rule and the wording are in `video-production` phase 4 ("Which sheets go with the still"). Without the sheet, a face the still hides is invented when the character turns, and a label garbles as it moves; with sheets passed for faces the still already shows clearly, nothing is gained. If a starting pose differs from the still, say "@image1 is the reference for the set and light, not an exact first frame".
 
 ## Template
 

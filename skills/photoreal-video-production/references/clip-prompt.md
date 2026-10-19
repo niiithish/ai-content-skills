@@ -6,7 +6,7 @@ Keep it short and plain. The prompts that worked in the Mysa video were a few li
 
 ## Ingredients
 
-`@image1` is the approved still: the opening frame. Then the sheet of every person in the shot, then the product sheet when the product is on screen, then any small prop whose look must hold (a softgel). Say what each one is for and what to ignore ("ignore that image's backdrop").
+`@image1` is the approved still: the opening frame. Then a sheet only where the still can't hold the look by itself: a person whose face it hides (back to camera, profile, far, covered), someone who enters, the product with printed text, or a small prop whose shape must hold (a softgel). See `video-production` phase 4, "Which sheets go with the still". Say what each one is for and what to ignore ("ignore that image's backdrop").
 
 ## Template
 

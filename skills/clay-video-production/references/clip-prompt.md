@@ -1,6 +1,6 @@
 # Clip prompts (claymation, Flow Omni image to video)
 
-One clip is one continuous shot, 4 or 6 s (8 when a beat needs it), from **one approved still and nothing else**: no sheets as ingredients, the still already holds the faces. Save the prompt to `clips/clip-N/prompts/clip-N-vK.md`: a one-line `#` heading naming the source still, then the prompt in a `text` code block. Flow reads only the code block.
+One clip is one continuous shot, 4 or 6 s (8 when a beat needs it), from **one approved still**, plus a sheet only where the still can't hold the look by itself: a face it hides (back to camera, profile, far), someone who enters, or the product with printed text (`video-production` phase 4, "Which sheets go with the still"). Save the prompt to `clips/clip-N/prompts/clip-N-vK.md`: a one-line `#` heading naming the source still, then the prompt in a `text` code block. Flow reads only the code block.
 
 Clips play silent under the voiceover, so length comes from the shot's span in the voiceover, rounded to 4 or 6 s. Make 360p drafts of every clip first, then finals after the user approves them. The user reviews clips themselves.
 

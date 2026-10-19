@@ -132,8 +132,13 @@ Don't start phase 2 until the user has approved the plan.
 2. Add jobs to `clips/clips-batch.json`:
    - `"resolution": "360p"` and `"timeout": 900`;
    - duration: the shortest Flow length (4, 6, 8 or 10 s) that holds the shot's Time in the plan;
-   - ingredients: the approved still first, then the sheet of every character in the shot;
+   - ingredients: the approved still first, then a sheet only where the still can't hold the look by itself (below);
    - one variant.
+   **Which sheets go with the still.** The still alone is the default: it already holds every face, outfit and label the clip needs. Add a sheet when the clip has to show something the still doesn't:
+   - **A face the still hides.** A sheet character seen from behind, in profile or three-quarter, small in the distance, out of focus, cropped, or with the face covered by hair, hands or a cup. Pass that character's sheet for the outfit they wear in the shot (`hero-sleep`, not the base), even if the prompt doesn't ask them to turn: when they turn, or the camera moves round them, the model invents the face. Not for extras.
+   - **Someone who enters** or comes into view during the clip: their sheet (but the still should normally show everyone; see the style skill).
+   - **The product with printed text** in frame (a supplement bottle, a box, a label): the product sheet, so the label stays readable and spelled right as it moves or turns. Not for a softgel or anything else without print, unless its shape must hold.
+   In the prompt, tag each one and say what it is for: "@image2 is Anna's sheet, a reference for her face, hair and lilac nightgown when she turns; @image3 is the Mysa bottle sheet, its label text stays exactly as printed. The sheets are references only: their panels and grey backgrounds never appear in the clip." Up to 7 ingredients.
 3. Run `make.py clips` in the background. Every clip starts from its own approved still, so every clip can run in the first batch. Chaining is only for when the user asks for it, or when the plan splits one spoken line across clips.
    - **Chained clips** wait until the clip before them is approved and has its final. After `8a`'s final exists, `make.py lastframe 8a 8b` saves a frame 0.5 s before its end as `8b`'s opening still. Never take the frame from a 360p draft, and never redraw it with an image model.
    - List chained clips as "waiting on 8a" in every report.
