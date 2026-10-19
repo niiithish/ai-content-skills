@@ -9,9 +9,9 @@
 
 **Camera.** How shots move (push-ins, tilt-ups, pull-outs, arcs, pans) and which stay locked; the cuts, naming the shots that get a special transition (whip pan, wipe, fade).
 
-**Cast.** **Name** (role, age): hair, eyes, face; clothes, and night clothes if they change. One per character. Say if they are, or are not, an earlier video's characters.
+**Cast.** **Name** (role, age): hair, eyes, face, jewelry; then each outfit with the shots it's worn in: "nightgown (1–3, 24–27), everyday: sage cardigan, cream tee, jeans (4–23)". Only characters in two or more shots or speaking on camera. Say if they are, or are not, an earlier video's characters.
 
-**Sheets.** Characters first, then the environments that return many times (with what is in them), then props. Say which places and props get one hero still instead of a sheet.
+**Sheets.** Characters first, with the count and outfits ("Characters, 7 sheets: mom ×3 (everyday, pajamas, clinic), husband ×2 (work, sleep), son, daughter"), then the environments that return many times (with what is in them), then props. Say which places and props get one hero still instead of a sheet, and end with "Extras, no sheet:" and the shots each is in.
 
 **On camera.** Who speaks or sings on camera (lip-sync) and in which shots; everything else is B-roll under the voiceover.
 

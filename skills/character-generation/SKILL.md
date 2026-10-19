@@ -31,6 +31,12 @@ Use this mode when the project is stylized 3D animation (the `animated-video-pro
 - **Product mascots** (a real product given a face and limbs): don't write the product from a description, because logos and labels get redrawn wrong. Pass the client's real product photo as the reference and ask for an edit that adds only the face, arms and legs, keeping the label, logo, colours and shape exactly; quote the label text. When the user already likes a take, edit that exact file, one take at a time.
 - **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
+## Outfit sheets
+
+When a character wears more than one outfit in a video (night clothes, everyday, going out), each outfit gets its own sheet, and every outfit after the first is an **edit of the approved base sheet**, never a fresh prompt, so the face and body can't drift. Write it as plain edit text, not JSON: "Edit the reference character sheet: change only her outfit to …", then every garment, colour, fabric, fit and footwear, which accessories stay and which come off, and the hair if it changes. End with "Keep everything else exactly as in the reference sheet": the same three-panel layout, character, face, body, backdrop, light and render. Save it as `<name>-<outfit>-vN.md` next to the base (`hero-sleep-v1.md`) and generate it with the base sheet as the reference.
+
+Extras (a waiter, other diners, passers-by) get no sheet at all: they are described in the shot that shows them.
+
 ## Composition (always)
 
 Exactly **one output image**: a single 16:9 landscape sheet containing three panels left → right, butted edge to edge like separate photos placed side by side. No drawn divider, separator line, gap, gutter or border between panels: the only boundary is where one shot ends and the next begins (framing and scale change there). Never render or request three separate images, files, canvases, or sequential outputs for the three views. No portrait-orientation canvas. Never two-panel. Never put a face on a full-body panel.
