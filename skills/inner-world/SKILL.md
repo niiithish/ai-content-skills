@@ -1,6 +1,6 @@
 ---
 name: inner-world
-description: "An action-packed inside-the-body sequence for a 3D or clay supplement ad: the product enters the body as a little hero (a softgel ship, a golden spray), fixes a visible problem (dry layers, a biofilm wall, a blockage) and the world turns from dull to glowing, with a moving camera and built transitions in and out of the room. Use ONLY when the user explicitly asks for an inner-world or inside-the-body sequence in this style, or types /inner-world. Never for IRL or photoreal videos. Never on your own initiative, and never when the client's reference video shows its own inside-the-body look: copy that instead."
+description: "An action-packed inside-the-body sequence for a 3D or clay supplement ad: the product enters the body as a little hero (a softgel ship, a golden spray), fixes a visible problem (dry layers, a biofilm wall, a blockage) and the world turns from dull to glowing, with a moving camera and transitions generated inside the clips. Use ONLY when the user explicitly asks for an inner-world or inside-the-body sequence in this style, or types /inner-world. Never for IRL or photoreal videos. Never on your own initiative, and never when the client's reference video shows its own inside-the-body look: copy that instead."
 disable-model-invocation: true
 ---
 
@@ -22,7 +22,7 @@ It sits inside the normal pipeline: plan the shots with `video-plan`, make still
 2. **Problem → fix you can see.** The "sick" world is dull and dark (grey-beige dry layers, maroon blobs, tar); the fix turns it warm, plump and glowing. Pick the product's own mechanism from its page (Mysa: "thin dry layers rebuild thick and moist with omega-7").
 3. **The camera never rests.** Fly-throughs, chase cams, barrel rolls, lunges into a target, pull-backs. Speed ramps: slow drift, then a sudden lunge.
 4. **Jumps in scale.** Room → into the softgel or the eye → millimetre-tall world → back to the room.
-5. **Built transitions,** never plain cuts in and out of the body (below).
+5. **Generated transitions,** never plain cuts in and out of the body (below).
 
 ## The look (3D)
 
@@ -43,13 +43,12 @@ A typical sequence (the Mysa test, `references/look/`, prompts beside each still
 
 | Clip | Shows | Ends on |
 |---|---|---|
-| Into the body | her face behind the softgel held up close; the camera lunges into the softgel | golden oil filling the frame |
-| The problem | fly-through over the dull problem world, flakes and cracks; the product appears far away | the product glowing in the centre |
+| Into the body → the problem (one 10 s transition clip) | her face behind the softgel held up close; the camera lunges into the softgel, through a golden tunnel, out over the dull problem world, flakes and cracks; the product appears far away | the product glowing in the centre |
 | The mission | chase cam behind the product; it heals what it touches, then bursts | a white-gold burst |
 | The fix | the healed world, plump and glowing, still changing; camera pulls back | a warm white-gold glow |
 | Back out | (room clip) her, transformed, in sunlight with golden sparkles | — |
 
-Every clip prompt times the action in seconds. Clips 6 s; the edit uses 1–2 s of each.
+Every clip prompt times the action in seconds. Clips 6 s, transition clips 8–10 s; the edit uses 1–2 s of each scene.
 
 ## Transitions: generate them, don't build them in the edit
 
