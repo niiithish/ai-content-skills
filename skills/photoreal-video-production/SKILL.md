@@ -1,6 +1,6 @@
 ---
 name: photoreal-video-production
-description: The photoreal layer for a short-form Google Flow video (real-world ad scenes, lifestyle and product b-roll under a voiceover). It adds the look, still prompts through photoreal-still-prompt, the photoreal clip template with a subtle camera move, and the photoreal failure locks (real-life logic, eyelines, tone, object counts, content-filter-safe intimacy), on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is photoreal scenes, when continuing a project whose AGENTS.md names this skill, or for a single photoreal clip prompt. Not for UGC talking heads (ugc-ad-remake, simple-talking-head) or 3D animation (animated-video-production).
+description: The photoreal layer for a short-form Google Flow video (real-world ad scenes, lifestyle and product b-roll under a voiceover). It adds the look, the character and product sheets, the still prompt, the photoreal clip template with a subtle camera move, and the photoreal failure locks (real-life logic, eyelines, tone, object counts, content-filter-safe intimacy), on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is photoreal scenes, when continuing a project whose AGENTS.md names this skill, or for a single photoreal sheet, still or clip prompt (lifestyle scenes, UGC frames, product-in-context photos, video start frames). Not for UGC talking heads (ugc-ad-remake, simple-talking-head) or 3D animation (animated-video-production).
 ---
 
 # Photoreal Video Production
@@ -17,14 +17,16 @@ Files, loaded only when a phase needs them:
 
 | File | Load it for |
 |---|---|
+| [references/characters.md](references/characters.md) | Character sheets (phase 2) |
+| [references/product.md](references/product.md) | The product sheet (phase 2) |
+| [references/scene-still.md](references/scene-still.md) and [still-blueprint.md](references/still-blueprint.md) | Writing any still prompt (phase 3) |
 | [references/clip-prompt.md](references/clip-prompt.md) | Writing any clip prompt (phase 4) |
 | [references/failure-locks.md](references/failure-locks.md) | Before writing prompts, and whenever a result is rejected, with `video-production/references/failure-locks.md` |
 
 ## Sheets and stills
 
-- Sheets follow `character-generation` and `prop-generation` in their default photoreal mode. **No environment sheets** unless the user asks: each location's first approved still is its look reference, which later stills in that place pass as an ingredient. The product sheet is made from the client's real product photo (`make.py sheet ... --ref`), never generated from a description, and every prompt that shows it quotes the label text exactly.
-- Each still prompt is a `photoreal-still-prompt` JSON object, saved in `scenes/scene-N/scene-Nx/prompts/scene-Nx-vK.md`: a one-line `#` heading, then the JSON in a `text` code block (flow reads only a `text`, `prompt` or bare code block, never a `json` one). Its `reference_fidelity` names what each ingredient gives (product label, a person's face, a softgel's look) and what to ignore (the sheet's grey backdrop, its layout).
-- **Casting.** Before the sheets, check each person's age and look against what the scene asks of them (a couple in a romantic beat reads wrong if they look too old for it). Put the age in the character sheet and every still.
+- Sheets use the shared layouts (`video-production/references/sheets/`), which are photoreal by default; `characters.md` and `product.md` add the photoreal rules. **No place sheets** unless the user asks: each location's first approved still is its look reference, which later stills in that place pass as an ingredient.
+- Each still prompt follows `scene-still.md`. Its `reference_fidelity` names what each ingredient gives (product label, a person's face, a softgel's look) and what to ignore (the sheet's grey backdrop, its layout).
 - **Reuse first.** When an earlier video for the client has an approved clip of the same beat (`video-1/clips/all/`, `video-1/final/`), bring it in with `make.py reuse` rather than regenerate it.
 
 ## Look

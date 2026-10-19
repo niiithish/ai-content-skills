@@ -1,6 +1,7 @@
 ---
 name: ugc-ad-remake
 description: Run a still-first talking-head remake of a winning TikTok/Reels UGC ad with a new product and talent. Use when the user wants to clone, copy, remake, or recreate a winning ad, start a new UGC project from a reference video, swap a different model/product into an existing talking-head structure, or continue a product-swap still + locked-frame clip workflow. Trigger on clone this ad, remake this TikTok, copy this UGC, different model different product, product swap, same frame, zip-hold, or name the clips. Do not use for a simple talking video of someone saying a line (that is simple-talking-head), silent cinematic b-roll, claymation, three-panel character sheets, multi-view prop sheets, environment plates, or writing a brand-new silent voiceover script from scratch.
+disable-model-invocation: true
 ---
 
 # UGC Ad Remake
@@ -52,9 +53,9 @@ If they give a winning ad (video, screenshots, or transcript):
 | They ask | Do |
 |---|---|
 | Simple talking video / she says a line / no winning ad | **simple-talking-head** |
-| Character / smile sheet | **character-generation** |
-| Product turnaround | **prop-generation** |
-| Room plate | **environment-generation** |
+| Character / smile sheet | `video-production/references/sheets/character-sheet.md` (photoreal, as written) |
+| Product turnaround | `video-production/references/sheets/product-sheet.md` |
+| Room plate | `video-production/references/sheets/place-sheet.md` |
 | Listing images | Download chosen variant only |
 | New still / product swap | Load [references/still-prompts.md](references/still-prompts.md) |
 | "she says" / Omni clip | Still first, then [references/clip-prompts.md](references/clip-prompts.md) |

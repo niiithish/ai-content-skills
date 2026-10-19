@@ -1,0 +1,8 @@
+# Animated place sheets
+
+Layout, the 3/4 view, what goes on the sheet and the final check: `video-production/references/sheets/place-sheet.md`. It is written for photoreal; this is what changes in 3D feature animation. One 16:9 landscape establishing plate, as there.
+
+- **Render** the place as feature-animation CG: believable real-world architecture and proportions (doors a person can walk through, straight walls, level sills, real materials such as painted clapboard, brick, grass, wood), rendered with simplified textures, rich but controlled colour, layered set dressing and soft 3D shading. Replace the photoreal and `photograph` wording with this. Think of the sets in Over the Hedge or Toy Story's houses: the stylization is in the render and the colour, not in bent geometry.
+- **Not a toy or clay set.** Never ask for rounded, bulging, curved, wobbly or "exaggerated" walls, windows or doors, and never for clay, plasticine or miniature: the model turns those into a melted toy-town with doll-sized doors and lumpy grass. If a first sheet looks too photographic, fix the render words (simplified textures, soft 3D shading, cleaner saturated colour, no photographic grain), not the geometry.
+- **Light** warm and motivated, as in the skill's Visual direction (window sun, lamps, practicals); no unmotivated sunset haze.
+- **Hero still.** Once the sheet is approved, the first approved still in the place is its hero still: later stills there take it for light and render only, never its framing or poses (`scene-still.md`).

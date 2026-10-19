@@ -1,27 +1,17 @@
----
-name: environment-generation
-description: "Write detailed JSON image prompts for spatially clear wide 3/4-view environment references used in AI image generation, photo remixing, and AI video. Outputs prompt text only and never generates the image itself. Use when a real place must stay consistent across several shots from different angles, as in a film — a location, set, room, or venue for an AI image, product ad, or video clip, including a bedroom, bathroom, kitchen, living room, office, shop, gym, cafe, warehouse, stadium, street, poolside, courtyard, garden, landscape, or fantasy and sci-fi environment. Also use to establish or remix a location from a concept or reference photo, or to keep one place consistent across several shots. Trigger on \"where should this be shot\", \"background for this clip\", or a cut list naming places that need references. Not for CGI, macro, cutaway, diagram or abstract visuals, product close-ups or a place seen in one shot: those are described in the still prompt instead. Has an animated mode for stylized 3D projects."
----
+# Place sheet
 
-# Environment Generation
+The layout every style uses for an environment reference sheet: depth, boundaries, openings, landmarks and object placement clear enough for every still and clip there. It is written for photoreal; the style skill's `references/places.md` says what changes. Which places get one: `video-plan` step 7 (animated and clay videos, places with characters in two or more shots; photoreal videos use a hero still per place instead, unless the user asks). CGI, macro, cutaway, diagram and abstract visuals, product close-ups and places seen in one shot get no sheet: the still prompt describes them.
 
-Write one image-generation prompt for a coherent environment reference: depth, boundaries, openings, landmarks, and object placement clear enough for a downstream video model.
+Write one JSON object in the structure of [place-blueprint.md](place-blueprint.md) (interior or exterior). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
 
-**Output is a JSON image prompt only.** Return one valid JSON object in a `json` code block and stop. Do not generate, render, preview, or offer to generate the image.
+**Where the prompt goes.** In a project, save it to the asset's `prompts/` folder and make the sheet with `make.py sheet` (`video-production`). For a one-off request outside a project, return the JSON in a `json` code block and stop; don't generate it unless asked.
 
-Use the structured JSON style in [references/prompt-blueprints.md](references/prompt-blueprints.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
+## What goes on the sheet (every style)
 
-## Animated mode
-
-Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The defaults below still apply: one 16:9 landscape establishing plate. What changes:
-
-- **Render** the place as feature-animation CG: believable real-world architecture and proportions (doors a person can walk through, straight walls, level sills, real materials such as painted clapboard, brick, grass, wood), rendered with simplified textures, rich but controlled colour, layered set dressing and soft 3D shading. Replace the photoreal and `photograph` wording with this. Think of the sets in Over the Hedge or Toy Story's houses: the stylization is in the render and the colour, not in bent geometry.
-- **Not a toy or clay set.** Never ask for rounded, bulging, curved, wobbly or "exaggerated" walls, windows or doors, and never for clay, plasticine or miniature: the model turns those into a melted toy-town with doll-sized doors and lumpy grass. If a first sheet looks too photographic, fix the render words (simplified textures, soft 3D shading, cleaner saturated colour, no photographic grain), not the geometry.
-- **Every landmark the shots use is on the sheet.** Go through the plan's Shots table and list each place a shot happens at, at its story size: the porch *with the dog's bed on it*, the sill low enough for the ladder gag, the cat flap wide enough for the small one and too tight for the big one. A step instead of the porch, or a missing hedge, means every still there invents its own. (In video projects, environment sheets are made for animated and claymation videos; photoreal videos use a hero still per location instead, unless the user asks for a sheet.) Put the room's story items on it too, at their places (the old flat pillow on the bed, the bedside clock, the coffee maker): they get no prop sheet, so this sheet is what keeps them the same. Leave out props that move or vanish during the story (the pie on the sill) and the client's product (it has its own sheet); the stills place them.
-- **Light** with the location's real source at the time of day the story needs, and state its brightness. Warm and motivated by default (window sun, lamps, practicals), as in `animated-video-production` Visual direction; no unmotivated sunset haze. This light becomes the reference for every still shot there.
+- **Every landmark the shots use is on the sheet.** Go through the plan's Shots table and list each place a shot happens at, at its story size: the porch *with the dog's bed on it*, the sill low enough for the ladder gag, the cat flap wide enough for the small one and too tight for the big one. A step instead of the porch, or a missing hedge, means every still there invents its own. Put the room's story items on it too, at their places (the old flat pillow on the bed, the bedside clock, the coffee maker): they get no prop sheet, so this sheet is what keeps them the same. Leave out props that move or vanish during the story (the pie on the sill) and the client's product (it has its own sheet); the stills place them.
+- **Light** with the location's real source at the time of day the story needs, and state its brightness. This light becomes the reference for every still shot there.
 - **View:** 3/4 stays the default. When the shot list frames the place head-on (a building facade seen straight on), make the sheet head-on too, so stills and sheet agree.
 - **Empty of characters,** but include the fixed props the story uses (a bench, the bins, a dog bed) at their story positions.
-- **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
 
 ## Defaults
 
@@ -37,7 +27,7 @@ Use this mode when the project is stylized 3D animation (the `animated-video-pro
 1. Environment type, mood/function, era, style, required details.
 2. Spatial plan first: footprint, boundaries, zones, openings, circulation, fixed landmarks, and at least one **staging anchor**.
 3. Diagonal 3/4 camera that reveals the most useful geometry (not head-on).
-4. Load [references/prompt-blueprints.md](references/prompt-blueprints.md) (interior or exterior) and fill its JSON structure.
+4. Load [place-blueprint.md](place-blueprint.md) (interior or exterior) and fill its JSON structure.
 5. Furnishings and atmosphere without hiding the plan; lock one light direction.
 6. Final check. Return only the prompt unless the user asks for explanation.
 

@@ -1,13 +1,8 @@
----
-name: photoreal-still-prompt
-description: Write JSON prompts for one photorealistic real-world still, defaulting to 9:16 portrait unless the user requests another aspect ratio. Use for lifestyle scenes, UGC frames, product-in-context photos, ad images, video start frames, reference reconstructions, and scoped edits when the user wants an image prompt. Outputs prompt text only. Do not use for multi-panel character, prop, or environment reference sheets, or for anime, Pixar, illustration, CGI, or other stylized imagery.
----
+# Photoreal still prompt
 
-# Photoreal Still Prompt
+A **valid JSON image prompt** for one believable real-world photograph: lifestyle scenes, product-in-context, video start frames, reference reconstructions and scoped edits. Use [still-blueprint.md](still-blueprint.md) for the JSON structure and the product-packaging example. Adapt its fields to the actual shot; omit people, wardrobe, product, or reference fields when irrelevant. Keep the nested detail relevant to this shot; do not inherit a sample face, pose, beauty treatment, or aspect ratio. No markdown or comments inside the object, unresolved placeholders, or fields filled with `n/a`.
 
-Write a **valid JSON image prompt** for one believable real-world photograph. This skill produces the prompt, not the image; image rendering uses a separately requested tool or workflow. Return the completed JSON object in one `json` code block unless the user asks for another format. No markdown or comments inside the object, unresolved placeholders, or fields filled with `n/a`.
-
-Use [references/json-blueprint.md](references/json-blueprint.md) for the JSON structure and the product-packaging example. Adapt its fields to the actual shot; omit people, wardrobe, product, or reference fields when irrelevant. Keep the nested detail relevant to this shot; do not inherit a sample face, pose, beauty treatment, or aspect ratio.
+**Where it goes.** In a project, save it as `scenes/scene-N/scene-Nx/prompts/scene-Nx-vK.md`: a one-line `#` heading, then the JSON in a `text` code block (flow reads only a `text`, `prompt` or bare code block, never a `json` one). For a one-off request, return the JSON in a `json` code block and stop; don't generate it unless asked.
 
 ## Scope and framing
 

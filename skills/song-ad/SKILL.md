@@ -1,6 +1,7 @@
 ---
 name: song-ad
 description: Make an AI singing ad, a video sales letter that is sung like a song over 3D feature-animation. It covers the sub-avatar and hook, the song script (real lyrics with rhyme, meter, a refrain that returns and flips, backing answers and a section-by-section music direction, never plain voiceover), the song generated first in Suno (ElevenLabs Music only when asked) as the timing source, a plan timed to the sung lyrics, lip-sync shots cut from gapless song slices, and silent B-roll on the animated pipeline. Use when the user wants a song ad, singing ad, sung VSL, music-video ad, musical ad or jingle, lyrics for an ad, or to remake a winning song ad (Resilia, Rise style) for a new product. Not for spoken voiceover ads (script-generation, video-plan).
+disable-model-invocation: true
 ---
 
 # Song Ad
@@ -54,7 +55,7 @@ Plan with `video-plan`, with the song in place of the voiceover. Its Music row r
 - **Every second of the song has picture,** instrumental breaks and the tail included. There is no dead air to remove.
 - **Mark the sung shots** in the Voiceover column as **SUNG**. The hero lip-syncs on camera for about 30–40% of the runtime: the hook, each refrain, the climax line and the tag. The rest is silent B-roll that shows what the line says at that moment, with something new every 2–4 s. An ad of only singing faces is dead by verse 2.
 - **Lines in the story are scenes in the picture.** The overheard door, the cake photo, the chemo chair, the bottle slid across the table, week by week, the terrace. Name each place, and keep the cast small enough to lock: the hero (a before and an after look), the betrayer, the mentor, the partner, plus the product sheet.
-- **Sheets:** `character-generation`, `environment-generation` and `prop-generation` in animated mode. A product mascot with a face is optional.
+- **Sheets:** the shared layouts in `video-production/references/sheets/` with `animated-video-production`'s `characters.md`, `places.md` and `product.md`. A product mascot with a face is optional.
 - **End card:** the last 2–5 s of instrumental tail get a hypermotion product shot. The user adds the headline in the edit.
 
 ## Stage 4: make

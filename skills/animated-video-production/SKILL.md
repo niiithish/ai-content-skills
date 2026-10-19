@@ -1,6 +1,6 @@
 ---
 name: animated-video-production
-description: "The stylized 3D animation layer for a short-form Google Flow video (Disney/Pixar-style or DreamWorks-style feature-animation CG; default: warm, jewel-toned Pixar look). It adds the look, the scene-still and clip prompt templates, product mascots, characters speaking on camera and the animated failure locks, on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is 3D feature animation, when continuing a project whose AGENTS.md names this skill, or for a single animated scene still or clip prompt. Not for claymation (clay-video-production), photoreal ads (photoreal-video-production) or UGC talking heads."
+description: "The stylized 3D animation layer for a short-form Google Flow video (Disney/Pixar-style or DreamWorks-style feature-animation CG; default: warm, jewel-toned Pixar look). It adds the look, the character, place and product sheets, the scene-still and clip prompt templates, product mascots, characters speaking on camera and the animated failure locks, on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is 3D feature animation, when continuing a project whose AGENTS.md names this skill, or for a single animated sheet, scene still or clip prompt. Not for claymation (clay-video-production), photoreal ads (photoreal-video-production) or UGC talking heads."
 ---
 
 # Animated Video Production
@@ -17,6 +17,9 @@ Files, loaded only when a phase needs them:
 
 | File | Load it for |
 |---|---|
+| [references/characters.md](references/characters.md) | Character sheets in animation (phase 2) |
+| [references/places.md](references/places.md) | Place sheets in animation (phase 2) |
+| [references/product.md](references/product.md) | The product sheet and product mascots (phase 2) |
 | [references/scene-still.md](references/scene-still.md) | Writing any still prompt (phase 3) |
 | [references/clip-prompt.md](references/clip-prompt.md) | Writing any clip prompt (phase 4), including characters who speak on camera |
 | [references/failure-locks.md](references/failure-locks.md) | Before writing prompts, and whenever a result is rejected, with `video-production/references/failure-locks.md` |
@@ -24,9 +27,10 @@ Files, loaded only when a phase needs them:
 
 ## Reference sheets
 
-- Follow `character-generation`, `environment-generation` and `prop-generation` in their animated mode: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes.
+The layouts are shared (`video-production/references/sheets/`); the files above say what changes for animation: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes.
+
 - **Hero still per environment.** Video 1 of the Milo project lost most of its rejected versions to shots in a location that had no hero still. A still that lists the hero takes it for light and render only: it must not hand over its framing or poses (see `scene-still.md`).
-- **Product mascots** (a real product with a face and limbs): image models redraw logos and labels wrong. Make the sheet by editing the client's real product photo with `make.py sheet ... --ref`, adding only the face, arms and legs. Quote the label text exactly, and never generate the product or its logo from a description.
+- **Product mascots** (a real product with a face and limbs): edit the client's real product photo, never generate the product or its logo from a description (`product.md`).
 
 ## Visual direction
 

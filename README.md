@@ -1,6 +1,6 @@
 # AI Content Skills
 
-Agent skills for the short-form video pipeline: **script** → **character / prop / environment** references → **AI video** on Google Flow, plus a talking-head remake path for cloning winning UGC ads and a Gemini 3.1 Pro JSON video decode.
+Agent skills for the short-form video pipeline: **script** → **character / place / product** sheets → **AI video** on Google Flow, plus a talking-head remake path for cloning winning UGC ads and a Gemini 3.1 Pro JSON video decode.
 
 Compatible with the [Agent Skills](https://agentskills.io/) open standard and installable via [skills.sh](https://skills.sh).
 
@@ -14,10 +14,6 @@ npx skills add niiithish/ai-content-skills --all
 
 # Or pick specific skills
 npx skills add niiithish/ai-content-skills --skill script-generation
-npx skills add niiithish/ai-content-skills --skill prop-generation
-npx skills add niiithish/ai-content-skills --skill character-generation
-npx skills add niiithish/ai-content-skills --skill environment-generation
-npx skills add niiithish/ai-content-skills --skill photoreal-still-prompt
 npx skills add niiithish/ai-content-skills --skill video-production
 npx skills add niiithish/ai-content-skills --skill animated-video-production
 npx skills add niiithish/ai-content-skills --skill photoreal-video-production
@@ -45,14 +41,10 @@ npx skills add niiithish/ai-content-skills --list
 | Skill | Description |
 | --- | --- |
 | [`script-generation`](./skills/script-generation) | Spoken TikTok/Reels UGC scripts. Cut list only when you ask for AI video. |
-| [`prop-generation`](./skills/prop-generation) | One 16:9 JSON composite prop sheet (2 for loop-and-clasp jewellery, otherwise 3–4) on a #504f50 background, cells butted edge to edge with no divider lines. |
-| [`character-generation`](./skills/character-generation) | One 16:9 JSON three-panel sheet: headless front + back bodies, large 3/4 portrait; #504f50 background, panels butted edge to edge with no divider lines. |
-| [`environment-generation`](./skills/environment-generation) | JSON wide 3/4-view location references for image and video. |
-| [`photoreal-still-prompt`](./skills/photoreal-still-prompt) | JSON prompts for one believable real-world image or video start frame, defaulting to 9:16 portrait, with grounded product packaging, camera, and light. |
 | [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or ElevenLabs Scribe), with suggested visuals marked. |
 | [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
-| [`animated-video-production`](./skills/animated-video-production) | The DreamWorks-style 3D animation layer on `video-production`: look, still and clip prompts, product mascots, on-camera speech. |
-| [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
+| [`animated-video-production`](./skills/animated-video-production) | The Pixar-style 3D animation layer on `video-production`: look, character, place and product sheets, still and clip prompts, product mascots, on-camera speech. |
+| [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, character and product sheets, JSON still prompts, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
 | [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, ElevenLabs Scribe timing, a preview frame first. |
 | [`captions-filmcraft`](./skills/captions-filmcraft) | Captions as editable text clips in a FilmCraft project: phrase blocks of at most 4 words, each starting on the frame its words are heard and on every cut (Parakeet + faster-whisper timing checked against the voiceover waveform), then export from FilmCraft. |
 | [`filmcraft`](./skills/filmcraft) | Edit with the user in FilmCraft: build hook timelines from approved clips, live edits in the open app over the bridge, clip swaps without Link Media popups, and Meta-ready exports (about 45 MB a minute) one hook after another. |
@@ -70,28 +62,21 @@ npx skills add niiithish/ai-content-skills --list
 ```text
 script-generation      →  spoken UGC script (+ cut list if AI video)
     ↓
-character / prop /     →  reference images per cut
-environment-generation
-    ↓
 flow                   →  stills and clips on Google Flow
 ```
 
-Animated and photoreal projects run on one shared pipeline, with a style layer on top:
+Photoreal, animated and clay projects run on one shared pipeline, with a style layer on top. Each style skill holds its own character, place and product sheet rules, still and clip prompts and failure locks; the sheet layouts every style shares live in `video-production/references/sheets/`:
 
 ```text
-video-plan → video-production + animated- or photoreal-video-production
-  sheets (character / environment / prop) → stills → 360p clips (agent runs and reviews)
+video-plan → video-production + photoreal-, animated- or clay-video-production
+  sheets (character / place / product) → stills → 360p clips (agent runs and reviews)
   → 1080p finals (user runs) → hand-off → FilmCraft edit → pacing → captions      (generation via flow)
 ```
 
 | Stage | Delivers |
 | --- | --- |
 | **script-generation** | Spoken UGC script for TikTok/Reels. Optional ≤3s cut list for AI video. |
-| **prop-generation** | Studio multi-view product identity sheet. |
-| **character-generation** | Front/back wardrobe + large face sheet for consistent talent. |
-| **environment-generation** | Spatially clear 3/4 location sheet. |
-| **photoreal-still-prompt** | One photoreal lifestyle, product-in-context, or scene image prompt. |
-| **animated-video-production** / **photoreal-video-production** | A whole animated or photoreal project on `video-production`: sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
+| **photoreal-** / **animated-** / **clay-video-production** | A whole photoreal, animated or clay project on `video-production`: sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
 | **captions** | Captions and section labels burned into the user's finished edit. |
 | **captions-filmcraft** | Frame-exact captions as text clips in the user's FilmCraft project, exported from FilmCraft. |
 | **filmcraft** | Live edits in the user's open FilmCraft project, clip swaps, Meta-ready exports. |

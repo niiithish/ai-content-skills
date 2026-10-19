@@ -1,35 +1,10 @@
----
-name: character-generation
-description: >-
-  Write JSON image prompts for three-panel character reference sheets — headless full-body
-  front, full-body back, and a large 3/4 close portrait — on a #504f50 studio background.
-  Photoreal by default, with an animated mode for stylized 3D characters and animals.
-  Outputs prompt text only. Use whenever a person or recurring character must appear in AI
-  images or video and needs a consistent face, hair, wardrobe and accessories across
-  shots: an AI model, spokesmodel, brand model, creator, influencer, UGC creator,
-  presenter, avatar, persona, or an animated character. Also use to design or remix a
-  character. Trigger on "I want an AI model", "give me a model for my brand", "creator for
-  this ad", "character sheet", or "character for a jewelry ad".
----
+# Character sheet
 
-# Character Generation
+The layout every style uses for a character reference sheet: wardrobe (front + back) and face identity for every later still and clip. It is written for photoreal, the default; the style skill's `references/characters.md` says what changes (render, material, scale).
 
-Write one image-generation prompt for a wide landscape character reference sheet: wardrobe (front + back) + face identity for downstream image and video work.
+Write one JSON object in the structure of [character-blueprint.md](character-blueprint.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields. A required smile variant is a second, separate JSON object.
 
-**Output is a JSON image prompt only.** Return one valid JSON object in a `json` code block and stop. Do not generate, render, preview, or offer to generate the image. A required smile variant is a second, separate JSON object in its own `json` code block.
-
-Use the structured JSON style in [references/prompt-blueprint.md](references/prompt-blueprint.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
-
-## Animated mode
-
-Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same panels, butted edge to edge with no divider lines. What changes:
-
-- **Render** the character as sculpted, slightly stylized feature-animation CG: appealing proportions, large expressive eyes with catch-lights, shaped hair or groomed fur, simplified skin with soft subsurface shading. Replace the photoreal skin rules (pores, oil, fine lines) and `studio photograph` wording with this. Keep the studio sheet neutral and evenly lit.
-- **Animals and creatures** use the same three panels: headless front body, back body, and a large 3/4 head portrait. Describe fur colour, pattern and markings concretely, since they are the identity.
-- **A group** of near-identical characters (a litter of kittens, a squad) can be one lineup sheet of complete characters instead of three panels. Say so in the prompt, and in every scene prompt that uses it.
-- **Scale:** state the character's size against a familiar reference ("a small young cat, back at an adult's shin"). Scene prompts reuse it.
-- **Product mascots** (a real product given a face and limbs): don't write the product from a description, because logos and labels get redrawn wrong. Pass the client's real product photo as the reference and ask for an edit that adds only the face, arms and legs, keeping the label, logo, colours and shape exactly; quote the label text. When the user already likes a take, edit that exact file, one take at a time.
-- **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
+**Where the prompt goes.** In a project, save it to the asset's `prompts/` folder and make the sheet with `make.py sheet` (`video-production`). For a one-off request outside a project, return the JSON in a `json` code block and stop; don't generate it unless asked.
 
 ## Outfit sheets
 
@@ -60,7 +35,7 @@ In the JSON image prompt, describe the visible cues—skin texture, hair strands
 1. Identity: face structure, hair, eyes, age range, expression. Specificity from bone structure and hair — not moles or other discrete marks. Portrait default slight **3/4**. Ethnicity unspecified → default white American; state skin/hair/eye concretely, not as a nationality label. Reference image always wins.
 2. Purpose check: if they model a product, keep product zones bare (jewellery → bare ears/neck/wrists/fingers).
 3. One canonical outfit: every garment, layer, color, material, opacity/weight, fit, graphic, accessory, footwear — identical across all panels (upper match on portrait; full match front/back).
-4. Load [references/prompt-blueprint.md](references/prompt-blueprint.md) and fill the JSON object with the locked details.
+4. Load [character-blueprint.md](character-blueprint.md) and fill the JSON object with the locked details.
 5. If a smile will be needed later and the user did not already lock one, note that a second smile-portrait sheet should be generated; write it when asked or when the brief clearly requires smiling performance.
 6. Final check (below). Return only the prompt unless the user asks for explanation.
 

@@ -14,7 +14,7 @@ Known ways Flow (Nano Banana) stills and Flow Omni clips go wrong in claymation,
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| The clay product reads as a real plastic bottle (Mysa bottle sheet v1) | "Clay version" stated, but the shape stayed machined | Hand-rolled clay, deep thumbprints and whorls everywhere, uneven bulging walls, soft edges, separate hand-pressed cap with uneven ribs, zero shine; print painted on the front face only (`sheets.md`). |
+| The clay product reads as a real plastic bottle (Mysa bottle sheet v1) | "Clay version" stated, but the shape stayed machined | Hand-rolled clay, deep thumbprints and whorls everywhere, uneven bulging walls, soft edges, separate hand-pressed cap with uneven ribs, zero shine; print painted on the front face only (`product.md`). |
 | Product in a scene with a wraparound coloured label or a smooth cap (video-7 52) | The product sheet wasn't passed, or the scene described the pack | Pass the clay product sheet in every still with the product and quote its print; fix a wrong still by editing it with the sheet as the second ingredient. |
 | A prop that "doesn't make sense" (video-7 3: a drawer knob on the side panel) | Real-world object logic not stated | Shoot the object square-on and state where its parts are ("one centre knob on the drawer front"); things face whoever uses them. |
 | A metaphor prop nobody understands (video-7 5: a brass timer dial with a 0–90 gauge plus a second clock) | Several symbolic objects, or one complex one | ONE everyday object whose meaning reads instantly, its words painted on it ("90 SECONDS" on a stopwatch dial); "two clocks or timers", "a gauge or meter" in the negatives. |

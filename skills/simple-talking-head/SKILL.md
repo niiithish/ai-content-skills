@@ -9,6 +9,7 @@ description: >
   man saying, he says, she says, holding the phone, selfie ugc, tripod talking
   head, no product in hand. Do not use to remake a winning ad, swap a product
   into a reference clip (that is ugc-ad-remake), or write silent cinematic b-roll.
+disable-model-invocation: true
 ---
 
 # Simple talking head

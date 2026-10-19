@@ -1,35 +1,10 @@
----
-name: prop-generation
-description: >-
-  Write detailed JSON image prompts for consistent multi-view prop and product reference
-  sheets on a #504f50 studio background, choosing a tight set of views that explain the
-  object for video and ad workflows (jewellery often 2-view loop + clasp; otherwise 3-4).
-  Outputs prompt text only and never generates the image itself. Use whenever a physical
-  product or object must appear in AI images or video — jewellery, apparel, footwear,
-  cosmetics, packaging, gadgets, toys, appliances, tools, vehicles, furniture, or any
-  other non-character item — including for a product ad, campaign, or video clip. Also use
-  to design or remix a product, turn a concept or reference photo into front, side, rear,
-  three-quarter, or detail views, or lock a product's exact appearance across shots.
-  Trigger on "prompt for my product", "reference sheet for this necklace", or an uploaded
-  product photo that needs consistent views. Has an animated mode for stylized 3D
-  projects.
----
+# Product sheet
 
-# Prop Generation
+The layout every style uses for a multi-view product or prop reference sheet. In a video, only the client's product gets one (`video-plan` step 7), made from its real photos with `make.py sheet ... --ref`, never from a description. It is written for photoreal; the style skill's `references/product.md` says what changes.
 
-Write one image-generation prompt for a multi-view prop/product reference sheet for downstream image and video identity.
+Write one JSON object in the structure of [product-blueprint.md](product-blueprint.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
 
-**Output is a JSON image prompt only.** Return one valid JSON object in a `json` code block and stop. Do not generate, render, preview, or offer to generate the image.
-
-Use the structured JSON style in [references/prompt-blueprints.md](references/prompt-blueprints.md). Emit parseable JSON with double-quoted keys and strings; no comments, markdown inside the object, trailing commas, or unresolved placeholders. Omit irrelevant fields instead of filling them with guesses. Keep `final_generation_instruction` consistent with the structured fields.
-
-## Animated mode
-
-Use this mode when the project is stylized 3D animation (the `animated-video-production` skill, or a request for Pixar-, DreamWorks- or feature-animation-style characters, places or props). The layout rules below still apply: one landscape image, the same cells, butted edge to edge with no divider lines. What changes:
-
-- **Render** the prop as feature-animation CG: slightly simplified, appealing shapes, clear readable colour, soft 3D shading, and materials that still read (glossy metal, wax paper, cardboard). Replace the `studio photograph` wording with this.
-- **Scale:** state its size against a character ("about the length of the cat's body") so scenes keep it consistent.
-- **Where the prompt goes:** in an animated project, save the prompt to the asset's `prompts/` folder. It may then be generated with the `flow` skill; the prompt-only rule above covers standalone requests.
+**Where the prompt goes.** In a project, save it to the asset's `prompts/` folder and make the sheet with `make.py sheet` (`video-production`). For a one-off request outside a project, return the JSON in a `json` code block and stop; don't generate it unless asked.
 
 ## Defaults
 
@@ -47,7 +22,7 @@ Use this mode when the project is stylized 3D animation (the `animated-video-pro
 1. Identify the hero prop and how it will appear on camera.
 2. Define one canonical design: shape, proportions, colors, materials, construction, markings, wear, asymmetries.
 3. Pick the smallest view set that covers surfaces the ad/video will show (see view rules). Use the jewellery 2-view exception when applicable.
-4. Load [references/prompt-blueprints.md](references/prompt-blueprints.md) and fill its JSON structure.
+4. Load [product-blueprint.md](product-blueprint.md) and fill its JSON structure.
 5. Final check. Return only the prompt unless the user asks for explanation.
 
 Infer restrained design choices. Ask only when a missing choice would change the prop's identity.

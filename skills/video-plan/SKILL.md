@@ -71,4 +71,4 @@ Once the plan is approved, load the skill for its style. It starts from `PLAN.md
 | Photoreal scenes under a voiceover (ads, b-roll) | `photoreal-video-production` (it loads `video-production`) |
 | UGC: a person talking to camera | `ugc-ad-remake` to remake a winning ad, `simple-talking-head` for a single line |
 
-The sheet skills (`character-generation`, `environment-generation`, `prop-generation`) follow the style: photoreal by default, animated mode for 3D animation.
+Sheets use the shared layouts in `video-production/references/sheets/` plus the style skill's `characters.md`, `places.md` and `product.md`.

@@ -4,18 +4,18 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 
 ## Before writing
 
-- Look at every reference you'll pass: sheets and the place's look still.
+- Look at every reference you'll pass: sheets, the place sheet and the place's look still.
 - Read the shot's row in `PLAN.md` and the lessons in `failure-locks.md`.
 - Open two or three images in `look/` closest to this shot (home at night, bathroom, metaphor prop, inside world, group, crowd, macro, landscape, product) and read their `.md` prompts. Write to that level of detail; a thin prompt gives a flat, toy-like frame.
 - The still shows the **state before the action** of its clip: an empty flipper before the softgels drop in, a closed drawer before it opens. The clip adds the action; it can't take away what the still already shows.
 
 ## Ingredients, in this order
 
-1. **The look still** of this place (its first approved still), when one exists. Its `use_for` takes the set design, light, colour and clay render **only**, and describes the new camera: "Take only its set design, light, colour and clay render; match its brightness and colour exactly. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose."
+1. **The look still** of this place (its first approved still), when one exists; for a place's first still, its place sheet instead (`places.md`), when it has one. Its `use_for` takes the set design, light, colour and clay render **only**, and describes the new camera: "Take only its set design, light, colour and clay render; match its brightness and colour exactly. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose."
 2. **Character sheets**, one per character in frame, with an `adapt`: "The left and middle panels are the body, the right panel is the head; show one complete character with a full head, not the sheet layout and not a headless body."
 3. **The clay product sheet** whenever the product is in frame, even small or in the background. Its `use_for` lists the pack's print word for word.
 
-The first still in a place has no look still: write the set, palette and light in full. Never pass a rejected attempt as a reference.
+The first still in a place has no look still: pass its place sheet if it has one, and write the set, palette and light in full. Never pass a rejected attempt as a reference.
 
 **Only the references this frame needs.** Before adding an image, name its one job (the product's label, its angle, its size in a hand, a face, this place's look) and check no other reference already does it. If it has no job of its own, leave it out, however relevant it looks or wherever you found it. An image from another scene brings its pose, outfit, room and light into this one (Aleo 127a v29: the product, its angle and its size in a hand were enough; a fourth still of a woman in a yellow robe from another shot was added only because it was in the folder). Fewer references, each with a clear job, beat more.
 

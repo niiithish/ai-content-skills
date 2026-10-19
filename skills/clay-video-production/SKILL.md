@@ -1,6 +1,6 @@
 ---
 name: clay-video-production
-description: "The claymation / stop-motion layer for a short-form Google Flow video (default look: hand-sculpted plasticine puppets with fingerprints, warm golden practical light, jewel tones, shallow macro depth of field). It adds the look, the sheet, scene-still and clip prompt templates, the clay product treatment and the clay failure locks, on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is claymation, plasticine or stop-motion, when continuing a project whose AGENTS.md names this skill, or for a single claymation still or clip prompt. Not for 3D feature-animation CG (animated-video-production), photoreal ads (photoreal-video-production) or UGC talking heads."
+description: "The claymation / stop-motion layer for a short-form Google Flow video (default look: hand-sculpted plasticine puppets with fingerprints, warm golden practical light, jewel tones, shallow macro depth of field). It adds the look, the character, place and product sheets, the scene-still and clip prompt templates, the clay product treatment and the clay failure locks, on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is claymation, plasticine or stop-motion, when continuing a project whose AGENTS.md names this skill, or for a single claymation sheet, still or clip prompt. Not for 3D feature-animation CG (animated-video-production), photoreal ads (photoreal-video-production) or UGC talking heads."
 ---
 
 # Clay Video Production
@@ -17,7 +17,9 @@ Files, loaded only when a phase needs them:
 
 | File | Load it for |
 |---|---|
-| [references/sheets.md](references/sheets.md) | Character, group and product sheets in clay (phase 2) |
+| [references/characters.md](references/characters.md) | Character and creature sheets in clay (phase 2) |
+| [references/places.md](references/places.md) | Place sheets in clay (phase 2) |
+| [references/product.md](references/product.md) | The clay product sheet (phase 2) |
 | [references/scene-still.md](references/scene-still.md) | Writing any still prompt (phase 3) |
 | [references/clip-prompt.md](references/clip-prompt.md) | Writing any clip prompt (phase 4) |
 | [references/failure-locks.md](references/failure-locks.md) | Before writing prompts, and whenever a result is rejected, with `video-production/references/failure-locks.md` |
@@ -42,12 +44,11 @@ Describe these visible qualities in every prompt; the word "claymation" alone gi
 
 ## Reference sheets
 
-See [references/sheets.md](references/sheets.md). In short:
+The layouts are shared (`video-production/references/sheets/`); the files above say what changes for clay. In short:
 
-- **Characters:** `character-generation`'s three-panel sheet, written as a hand-sculpted plasticine puppet (the animated mode's layout, with the clay material instead of CG).
-- **Creatures** (the inside-world helpers): one three-panel sheet of one creature; stills say how many copies appear.
+- **Characters:** the three-panel sheet as a hand-sculpted plasticine puppet. **Creatures** (the inside-world helpers): one sheet of one creature; stills say how many copies appear.
+- **Places:** a sheet for each place with characters in two or more shots, as a handmade miniature set; its first approved still then becomes the look still for every later shot there.
 - **The product:** a clay version of the client's real product photo, made with `make.py sheet ... --ref <photo>`. The silhouette, cap, label layout and every word stay; the material becomes hand-rolled clay with print painted on the front only.
-- **No environment sheets.** The first approved still of each place is its look still for every later shot there. Ask the image model for the change (a new camera, a new pose) from that still.
 
 ## Workflow notes (what worked on video-7)
 

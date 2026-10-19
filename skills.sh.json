@@ -3,13 +3,9 @@
   "groupings": [
     {
       "title": "AI Content Generation",
-      "description": "An end-to-end short-form video pipeline: ad scripts, a brief-to-plan step with voiceover timing, model-ready image prompts for props, characters and environments, video production in animated, photoreal or claymation style, and captions on the final edit.",
+      "description": "An end-to-end short-form video pipeline: ad scripts, a brief-to-plan step with voiceover timing, video production in photoreal, animated or claymation style (each with its own character, place and product sheets and still and clip prompts), and captions on the final edit.",
       "skills": [
         "script-generation",
-        "prop-generation",
-        "character-generation",
-        "environment-generation",
-        "photoreal-still-prompt",
         "video-plan",
         "video-production",
         "animated-video-production",
