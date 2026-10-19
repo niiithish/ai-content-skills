@@ -14,7 +14,7 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 1. **The look still:** the location's hero still, which fixes light, brightness, colour and render style. For a location's first still, use the environment sheet instead. Its `use_for` says light, colour and render **only**, and names what must differ: "Take only its light, colour and render. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose." Otherwise the model hands back the look still with small changes (pie heist 2b and 3a came back as scene 1 again).
 2. **The composition still** (optional): an approved still whose framing you want. Say exactly what to take from it ("composition only") and what to ignore ("ignore its dark lighting").
 3. **Character sheets**, one per character in frame.
-4. **Prop sheets** for props whose design matters.
+4. **The product sheet** when the product is in frame (and any other prop sheet the plan lists). Items that belong to the room come from the environment sheet and the look still.
 5. **The environment sheet**, when no hero still exists yet.
 
 Never pass a rejected attempt as a reference, because its flaws get copied. Name each ingredient by its role ("the look still", "the orange tabby cat sheet"), list them in `reference_images_in_order`, and give each one a `use_for`.
