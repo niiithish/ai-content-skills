@@ -583,7 +583,7 @@ def render_one(edit, out):
     scale = "" if (w, h) == (W, H) else f",scale={w}:{h}"
     fc = f"[1:v]fps={fps}{scale},format=rgba[c];[0:v][c]overlay=0:0:eof_action=pass"
     inputs = ["-i", str(edit), "-f", "concat", "-safe", "0", "-i", str(listfile)]
-    ac = audio_codec(edit)   # a Resolve .mov carries PCM, which an mp4 can't hold
+    ac = audio_codec(edit)   # a .mov can carry PCM, which an mp4 can't hold
     aud = ["-c:a", "copy"] if ac in ("aac", "mp3") else ["-c:a", "aac", "-b:a", "192k"]
     tail = ["-map", "[v]", "-map", "0:a?", "-t", f"{dur:.3f}", *aud, "-movflags", "+faststart", str(tmp)]
     br = sh("ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=bit_rate", "-of", "csv=p=0", str(edit)).strip()
