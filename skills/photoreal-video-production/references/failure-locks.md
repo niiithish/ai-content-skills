@@ -1,6 +1,6 @@
 # Failure locks: photoreal
 
-Known ways Nano Banana Pro stills and Flow Omni clips go wrong in photoreal ad scenes, with the fix that worked. Check new prompts against this list, and read it with the shared list in `video-production/references/failure-locks.md` (the QA checklist, Flow and batches, edit and delivery). Add a row whenever a fix works that isn't here yet.
+Known ways Flow (Nano Banana) stills and Flow Omni clips go wrong in photoreal ad scenes, with the fix that worked. Check new prompts against this list, and read it with the shared list in `video-production/references/failure-locks.md` (the QA checklist, Flow and batches, edit and delivery). Add a row whenever a fix works that isn't here yet.
 
 ## Stills
 

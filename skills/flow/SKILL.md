@@ -126,7 +126,7 @@ Use absolute paths for prompt files, ingredients and outputs. Inspect every refe
   | 360p draft | 4 | 5 | 6 | 7 |
   | 720p | 7 | 10 | 12 | 15 |
 
-  Nano Banana Pro stills cost nothing (there is a daily cap per account).
+  Stills cost nothing (there is a daily cap per account). `flow image` and `flow images` default to **Nano Banana 2.1** (`BELUGA`); pass `--model nano-banana-pro` only when the user asks for Pro.
 - 1080p is a download upscale of a **native 720p** generation, free only on a paid account. A 360p draft cannot be upscaled, so a final reruns the same prompt at 720p with `--upsample 1080p`. That is a new generation and can differ from the draft; check it.
 - Never request 1080p, 2K or 4K generation, and never invent endpoints.
 - For story work, a single coherent multi-beat generation can replace several tiny clips. Project skills that lock one shot per clip (`video-production` and its style skills) take precedence.

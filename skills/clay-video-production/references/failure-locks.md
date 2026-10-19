@@ -1,6 +1,6 @@
 # Failure locks: claymation
 
-Known ways Nano Banana Pro stills and Flow Omni clips go wrong in claymation, with the fix that worked (mostly from the Mysa "Hidden Cause" VSL, Calvin video-7). Check new prompts against this list, and read it with the shared list in `video-production/references/failure-locks.md`. Add a row whenever a fix works that isn't here yet.
+Known ways Flow (Nano Banana) stills and Flow Omni clips go wrong in claymation, with the fix that worked (mostly from the Mysa "Hidden Cause" VSL, Calvin video-7). Check new prompts against this list, and read it with the shared list in `video-production/references/failure-locks.md`. Add a row whenever a fix works that isn't here yet.
 
 ## Look
 
