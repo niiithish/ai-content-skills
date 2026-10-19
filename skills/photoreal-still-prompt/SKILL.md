@@ -30,6 +30,10 @@ Use [references/json-blueprint.md](references/json-blueprint.md) for the JSON st
 - Wardrobe, when present, needs a specific garment type, fit, fabric weight, wear, and natural folds. Avoid generic fashion styling, implausible cling or shine, and perfect AI-looking fabric. Keep a supplied outfit unchanged unless asked to edit it.
 - Use a few relevant imperfections that follow the scene (fingerprints on glass, garment creases, water meniscus, slight household clutter), not a stock list of dust, grain, and mess. Make the product and scene physically plausible before adding micro-detail.
 
+## Who is where
+
+Two or more characters sharing a place across stills keep their sides only when every prompt pins them to the room. Follow "Who is where" in `animated-video-production/references/scene-still.md`: each one named by traits and by a landmark side ("the man, grey beard, on the window side of the bed"), then the frame side "as the viewer sees it", never a bare left or right; the camera stays on one side of them for the scene; a swap is a reject, never fixed by mirroring the image.
+
 ## Final check
 
 - One real-world photo; 9:16 portrait by default or the user's explicit aspect and crop; no panel sheet or illustrated look. If the prompt is used to render an image, verify the final file's dimensions before calling it compliant.

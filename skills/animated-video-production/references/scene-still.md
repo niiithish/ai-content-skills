@@ -11,7 +11,7 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 
 ## Ingredients, in this order
 
-1. **The look still:** the location's hero still, which fixes light, brightness, colour and render style. For a location's first still, use the environment sheet instead. Its `use_for` says light, colour and render **only**, and names what must differ: "Take only its light, colour and render. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose." Otherwise the model hands back the look still with small changes (pie heist 2b and 3a came back as scene 1 again).
+1. **The look still:** the location's hero still, which fixes light, brightness, colour and render style. For a location's first still, use the environment sheet instead. Its `use_for` says light, colour and render **only** (plus who is where, see "Who is where" below), and names what must differ: "Take only its light, colour and render. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose." Otherwise the model hands back the look still with small changes (pie heist 2b and 3a came back as scene 1 again).
 2. **The composition still** (optional): an approved still whose framing you want. Say exactly what to take from it ("composition only") and what to ignore ("ignore its dark lighting").
 3. **Character sheets**, one per character in frame.
 4. **The product sheet** when the product is in frame (and any other prop sheet the plan lists). Items that belong to the room come from the environment sheet and the look still.
@@ -34,6 +34,18 @@ Never pass a rejected attempt as a reference, because its flaws get copied. Name
 - **Light:** the physical sources, direction, brightness and warmth, and the mood ("Night: one warm brass floor lamp as the key, pooling amber light on Carol, the room in warm moody shadow, raindrops catching the lamp light. Sad but rich and warm, never grey."). Default warm: window sun, rim light on hair, warm practicals, candles, string lights, golden bokeh. A store is "bright and inviting, warm-white overhead light plus soft daylight from skylights, never cold or fluorescent".
 - **Render:** "Fully 3D rendered high-end Disney/Pixar-style feature-animation CG: sculpted, appealing, slightly stylized characters with big glossy expressive eyes and catch-lights, soft subsurface glow on skin, big sculpted groomed hair with clumped curls, detailed fabric weave and stitching, rich saturated jewel-tone colour, polished like a theatrical release. Not 2D, no outlines, not photographic, not plastic or toy-like." (For a project with a different agreed look, describe that look's visible qualities instead.)
 - **Format:** "one 9:16 frame for a vertical short film; important action in the central 70% of the frame". Never name a social app or mention a phone interface.
+
+## Who is where: blocking and left/right
+
+Two people sharing a place across many stills (a couple in bed over ten shots) swap sides from still to still, and "left" gets read from the wrong point of view, unless every prompt pins them to the room.
+
+- **Pin people to the set, not the frame.** Each place where two or more sheet characters share shots has a Blocking line in the plan, copied to the Environments table in `AGENTS.md`: "Bedroom: Mark on the window side of the bed (tall window, green armchair); Anna on the door side (brass lamp, her nightstand with the book)." Every still there names each side by its landmark: "Mark lies on the window side of the bed, next to the green armchair; Anna on the lamp side."
+- **Then say where that lands in this frame, as the viewer sees it.** Work it out from where the camera stands: from the foot of the bed facing the headboard, the window side is frame-left; from the window, Mark is in the foreground. Write "on the LEFT of the picture as the viewer sees it (frame-left)". Never a bare "left" or "right", and never "on his left" for a place in the frame: the model reads it from the character's side, which flips whenever he faces the camera.
+- **A character's own hands and sides** go by landmark or camera, not by body: "the hand nearer the camera", "the hand on the window side". If the body side matters (a ring hand): "his own right hand, which is on the left of the picture because he faces us".
+- **Keep the camera on one side** of the line between the two people for the whole scene (the 180° rule), so they keep their frame sides from shot to shot. A reverse angle across the line flips both: write the new frame sides out, and keep the landmark sentence the same.
+- **Name the traits with the position,** in the same sentence: "Mark (the man: short dark beard, navy T-shirt) on the window side … Anna (the woman: long auburn hair, lilac nightgown) on the lamp side". The model matches each sheet to a position through these traits.
+- **The look still carries positions.** When the location's hero still shows both people, its `use_for` adds "Keep who is where from it: Mark on the window side, Anna on the lamp side." Positions yes, poses and framing still no.
+- **Check every still before approving:** who is on which landmark side, and which hand holds what. A swap is a reject: regenerate with the sides in `scene` and `final_generation_instruction`. Never mirror-flip the image instead: text, the room's layout and one-sided details (a hair part, a ring, a watch) flip with it.
 
 ## Negative list
 

@@ -10,6 +10,7 @@ Use this for B-roll that plays muted under a song or a voiceover (song ads, stor
 - **Add nothing.** No person, object or prop that isn't in the still; props in the still stay put unless the action needs them, and never disappear.
 - **Characters act, the camera moves.** A clear, expressive performance with body and face, an expression that changes within the shot, and one gentle camera move (slow push-in, tilt up, slide, rack focus). A held, locked frame only when the user asks for one.
 - **Silent unless the user asks for talking.** When a character does talk (muted later, so it only drives the mouth), quote only their own words, never a narrator's tag ("he said") and never a web address.
+- **Everyone keeps their side.** With two or more characters, name each by trait and landmark ("the man on the window side stays there; the woman on the lamp side stays there; nobody crosses or swaps places").
 - **Time the action to the second** and tie movement to the still ("keeps walking the way he faces, out of the door; never turns back").
 - **A jump to the past** is its own clip: a fast push into the character's face at the end of the present-day clip, then the flashback clip.
 - Length 4, 6 or 8 s; 360p drafts of the whole batch first, finals after approval.

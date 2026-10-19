@@ -34,6 +34,10 @@ The first still in a place has no look still: write the set, palette and light i
 
 - **Format:** "One 9:16 frame for a vertical short film, full-bleed edge to edge; important action in the central 70% of the frame, clear of the bottom and right edges." Never name a social app.
 
+## Who is where
+
+Two or more characters sharing a place across stills keep their sides only when every prompt pins them to the room. Follow "Who is where" in `animated-video-production/references/scene-still.md`: each one named by traits and by a landmark side ("the man, grey beard, on the window side of the bed"), then the frame side "as the viewer sees it", never a bare left or right; the camera stays on one side of them for the scene; a swap is a reject, never fixed by mirroring the image.
+
 ## Text in the frame
 
 Anything that carries print in real life (a cream tube, a jar, a calendar, a book, a phone screen, a sign) gets short, readable text quoted in the prompt ("RAW MATERIAL" on a jar, "DAY 4" on a wall calendar), painted or pressed into the clay. Never a blank white product. Never captions, subtitles, watermarks or app UI. Check spelling in the render.
