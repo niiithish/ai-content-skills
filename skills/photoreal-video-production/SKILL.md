@@ -22,7 +22,7 @@ Files, loaded only when a phase needs them:
 
 ## Sheets and stills
 
-- Sheets follow `character-generation`, `environment-generation` and `prop-generation` in their default photoreal mode. The product sheet is made from the client's real product photo (`make.py sheet ... --ref`), never generated from a description, and every prompt that shows it quotes the label text exactly.
+- Sheets follow `character-generation` and `prop-generation` in their default photoreal mode. **No environment sheets** unless the user asks: each location's first approved still is its look reference, which later stills in that place pass as an ingredient. The product sheet is made from the client's real product photo (`make.py sheet ... --ref`), never generated from a description, and every prompt that shows it quotes the label text exactly.
 - Each still prompt is a `photoreal-still-prompt` JSON object, saved in `scenes/scene-N/scene-Nx/prompts/scene-Nx-vK.md`: a one-line `#` heading, then the JSON in a `text` code block (flow reads only a `text`, `prompt` or bare code block, never a `json` one). Its `reference_fidelity` names what each ingredient gives (product label, a person's face, a softgel's look) and what to ignore (the sheet's grey backdrop, its layout).
 - **Casting.** Before the sheets, check each person's age and look against what the scene asks of them (a couple in a romantic beat reads wrong if they look too old for it). Put the age in the character sheet and every still.
 - **Reuse first.** When an earlier video for the client has an approved clip of the same beat (`video-1/clips/all/`, `video-1/final/`), bring it in with `make.py reuse` rather than regenerate it.
