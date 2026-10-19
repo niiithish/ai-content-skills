@@ -1,0 +1,5 @@
+6-second vertical 9:16 3D animated clip, one continuous shot with no cuts. @image1 is the starting frame and the source of truth: the same world, materials, colours and light as @image1. Do not add anything that is not in @image1 unless described below.
+
+Camera: starts close and pulls back and up slowly in a smooth rising arc, revealing more and more plump layers. 0–6 s: glowing golden omega-7 droplets keep raining down gently and sink into the glossy peach layers, each leaving a soft glowing ring; the layers swell thicker and plumper as we watch, and a brand-new soft layer rises and fills in at the centre, glistening with fresh dew. The light at the centre grows brighter and warmer; in the last second it blooms into a soft warm white-gold glow across the frame.
+
+Style: polished high-end 3D macro CGI exactly as in @image1, luxury supplement commercial look, warm subsurface glow, shallow macro depth of field, floating golden dust motes. Never gory, never a medical diagram, never photoreal. Sound: soft airy whooshes and shimmering fizz of the visible action only. No music, no narration, no voices. No captions, subtitles, labels or on-screen text.
