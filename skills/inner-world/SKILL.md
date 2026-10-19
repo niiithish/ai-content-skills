@@ -49,17 +49,23 @@ A typical sequence (the Mysa test, `references/look/`, prompts beside each still
 | The fix | the healed world, plump and glowing, still changing; camera pulls back | a warm white-gold glow |
 | Back out | (room clip) her, transformed, in sunlight with golden sparkles | — |
 
-Every clip prompt times the action in seconds and **ends on a frame that matches the next clip's start** (a colour, a shape in the same screen position, or a white-gold flash). Clips 6 s; the edit uses 1–2 s of each.
+Every clip prompt times the action in seconds. Clips 6 s; the edit uses 1–2 s of each.
 
-## Transitions
+## Transitions: generate them, don't build them in the edit
 
-From `references/breakdown.md` section 3A, the five that work:
+**A transition is part of the generation.** The two scenes on either side of it are ONE Flow clip of 8–10 s, with the move between them happening inside the shot: one unbroken camera path that flies through the softgel, the eye or the burst into the next world. Pass both stills as ingredients: `@image1` is the exact first frame, `@image2` is the world the camera arrives in. Time it: scene 1 for 3–4 s, the fly-through 1–2 s, scene 2 for the rest. Say "no cut, no fade, no flash, no dissolve; the transition happens inside the shot". Example: `references/look/c12-softgel-into-dry-layers.md` (2026-10-19, worked first take: kitchen → into the softgel → a swirling golden tunnel → out over the dry layers).
 
-1. **Into an object:** push into the softgel, the eye or the belly; cut on the matching circle into the tunnel. In the edit: a fast scale-up with radial blur over the last 0.4 s, a 3-frame warm flash.
+This overrides the one-still-per-clip rule of `animated-video-production` for transition clips only. The second scene holds up because inner worlds have no faces to drift; a room scene with characters after the transition drifts more, so keep its part short or cut away from it.
+
+**Don't fake it in FilmCraft.** A zoom, blur and flash over a cut (tested on the same pair) only looks like a zoom and a flash; the generated fly-through is what the reference does. FilmCraft cuts only between clips that already end and start on matching frames.
+
+The transition moves, from `references/breakdown.md` section 3A:
+
+1. **Into an object:** the camera flies into the softgel, the eye or the belly and through it into the tunnel.
 2. **Through a floating cutaway:** a sphere of the inner world floats in the room and the camera pushes into it. **The floating sphere appears in that one bridge shot only.** Every shot inside is full-frame, never an island on a backdrop.
-3. **Body → body:** lunge into a target until its colour fills the frame; the next clip opens on the same colour. Directional blur 4 frames each side.
-4. **Out by burst:** the fix explodes into white-gold light; a 4-frame white-gold flash; the room clip opens with golden sparkles drifting.
-5. **Out by shape:** end on a golden sphere centre frame; cut to two softgels in her palm in the same spot.
+3. **Body → body:** lunge into a target until its colour fills the frame, and come out in the next place.
+4. **Out by burst:** the fix explodes into white-gold light that clears to the room, golden sparkles drifting around her.
+5. **Out by shape:** a golden sphere in the centre pulls back to become the softgels in her palm.
 
 ## Labels on screen
 
