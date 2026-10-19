@@ -633,11 +633,17 @@ def encode_segment(src, seconds, label, dest, still):
 
 
 def shot_list_lengths():
-    """{shot: seconds} from the Clip column of PLAN.md rows like | 1a | ... | 6 s | (SHOT-LIST.md in older videos)."""
+    """{shot: seconds} from PLAN.md's Time column (| 1a | 12.6 – 14.4 s | ...), or the Clip column of older plans
+    (| 1a | ... | 6 s |; SHOT-LIST.md in the oldest videos)."""
     p = next((f for f in (VIDEO / "PLAN.md", VIDEO / "SHOT-LIST.md") if f.is_file()), VIDEO / "PLAN.md")
     rows = [l.strip().strip("|").split("|") for l in p.read_text().splitlines() if l.lstrip().startswith("|")] if p.is_file() else []
-    return {r[0].strip().lower(): float(m[1]) for r in rows
-            if len(r) > 1 and (m := re.match(r"^\s*(\d+(?:\.\d+)?)\s*s", r[-1]))}
+    out = {}
+    for r in rows:
+        if len(r) > 1 and (m := re.match(r"^\s*([\d.]+)\s*[–-]\s*([\d.]+)\s*s\s*$", r[1])):
+            out[r[0].strip().lower()] = float(m[2]) - float(m[1])
+        elif len(r) > 1 and (m := re.match(r"^\s*(\d+(?:\.\d+)?)\s*s\s*$", r[-1])):
+            out[r[0].strip().lower()] = float(m[1])
+    return out
 
 
 def cmd_animatic(args):

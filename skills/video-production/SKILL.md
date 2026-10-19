@@ -87,15 +87,13 @@ Only when the user says to run the whole video without them (they are away and w
 
 Every video starts with the `video-plan` skill. It writes `video-N/PLAN.md` and prints `PLAN.pdf`. `PLAN.md` holds:
 
-- the brief table;
-- the voiceover timing;
-- the sheets to make;
-- the shot table, with clip lengths.
+- the concept, look, camera, cast, sheets, on-camera and end card paragraphs;
+- the shot table: Shot, Time (timed to the voiceover), Voiceover, What we show.
 
 Don't start phase 2 until the user has approved the plan.
 
 - The plan's shot table is the story lock. After approval, add or cut shots only when the user asks. When they do, update `PLAN.md` and reprint the PDF. Then insert the new job in `scenes/stills-batch.json` at its place in story order, because the manifest order is the edit order.
-- A shot's clip length comes from the plan and is never shortened.
+- A shot's clip covers its Time in the plan and is never shorter.
 - When the client's real voiceover arrives, retime it with `video-plan` before the clips are made.
 - Mark shots that reuse an approved clip from an earlier video, and bring them in with `make.py reuse` instead of writing prompts.
 
@@ -110,7 +108,7 @@ Don't start phase 2 until the user has approved the plan.
    - It adds `AGENTS.md` (naming the style skill), the sheet folders, `project.conf`, the manifests, `.flow/` and `scripts/make.py`. It never overwrites existing files.
    - After the skill is updated, refresh a video's copy of `make.py` with `--update-scripts`.
    - For a standalone video (its own `AGENTS.md` and brief inside the video folder), pass `.` as the video: `init-project.sh <client>/video-2 . --style animated`.
-2. Take every recurring character, location and prop from the plan's "Sheets to make". Make only the environment sheets the plan lists, and push back on any that isn't a real place seen in several shots from different angles (see `video-plan` step 7): CGI, macro and one-shot sets get no sheet. Write each sheet prompt with the matching sheet skill (`character-generation`, `environment-generation`, `prop-generation`) in the mode the style skill names. Save it to `assets/characters/<name>/prompts/`, `assets/environments/<name>/prompts/` or `assets/props/<name>/prompts/`. Sheets always live under `assets/`, never loose in the client folder's root.
+2. Take every recurring character, location and prop from the plan's Cast and Sheets paragraphs. Make only the environment sheets the plan lists, and push back on any that isn't a real place seen in several shots from different angles (see `video-plan` step 7): CGI, macro and one-shot sets get no sheet. Write each sheet prompt with the matching sheet skill (`character-generation`, `environment-generation`, `prop-generation`) in the mode the style skill names. Save it to `assets/characters/<name>/prompts/`, `assets/environments/<name>/prompts/` or `assets/props/<name>/prompts/`. Sheets always live under `assets/`, never loose in the client folder's root.
 3. Generate them one or two at a time, because sheets need individual attention: run from the client folder, `video-N/scripts/make.py sheet assets/characters/rocco/prompts/rocco-v1.md` saves `assets/characters/rocco/rocco-v1.jpg`. Add `--ref <image>` for a reference (a new version made from an approved one).
 4. **Hero still per location:** one still in each location or recurring set (with or without an environment sheet), usually its first shot, becomes its look reference. It fixes brightness, light direction, colour and render. It is made and approved first in phase 3, then recorded in the Environments table in `AGENTS.md`. Every other still in that location passes it as an ingredient.
 5. **Gate:** the user approves the sheets. Fill in the Characters, Environments, Props and Look sections of `AGENTS.md`.
@@ -133,7 +131,7 @@ Don't start phase 2 until the user has approved the plan.
 1. Load the style skill's clip reference. Open each approved still first, then write its clip prompt from what is actually in it (who stands where, facing which way), not from the still's prompt. One prompt per shot, in `clips/clip-N/clip-Nx/prompts/clip-Nx-v1.md`.
 2. Add jobs to `clips/clips-batch.json`:
    - `"resolution": "360p"` and `"timeout": 900`;
-   - duration from the plan's Clip column;
+   - duration: the shortest Flow length (4, 6, 8 or 10 s) that holds the shot's Time in the plan;
    - ingredients: the approved still first, then the sheet of every character in the shot;
    - one variant.
 3. Run `make.py clips` in the background. Every clip starts from its own approved still, so every clip can run in the first batch. Chaining is only for when the user asks for it, or when the plan splits one spoken line across clips.

@@ -9,7 +9,8 @@
   plan.py voiceover VIDEO_DIR --on-camera      lines spoken inside the clips (Flow makes the voice): time each
                                                from its word count, no Cartesia; writes voiceover/timing.md
   plan.py pdf VIDEO_DIR                        PLAN.pdf from PLAN.md (rerun after every edit); first rewrites
-                                               the totals line under the shot table (shots, length, credits)
+                                               the summary line under the title (shots, length, average and
+                                               longest shot) and flags gaps, overlaps and shots over 10 s
 
 Settings come from VIDEO_DIR/project.conf when it exists (CARTESIA_VOICE, CARTESIA_SPEED,
 CARTESIA_MODEL, CARTESIA_API_KEY). The key falls back to $CARTESIA_API_KEY, then
@@ -35,9 +36,7 @@ from pathlib import Path
 SKILL = Path(__file__).resolve().parent.parent
 CLIP_LENGTHS = (4, 6, 8, 10)
 HEADROOM = 1.0  # seconds of picture past a line's slot; a clip that is too long only gets trimmed
-DRAFT_CREDITS = {4: 4, 6: 5, 8: 6, 10: 7}  # Flow credits per clip at 360p (labflow config.CREDIT_TABLE_360P)
-FINAL_CREDITS = {4: 7, 6: 10, 8: 12, 10: 15}  # at 720p; the 1080p upsample is free on the paid account
-TOTALS = re.compile(r"^(\d+ shots · )?Voiceover .*$", re.M)
+TIME = re.compile(r"^([\d.]+)\s*[–-]\s*([\d.]+)\s*s$")  # a shot's Time cell: "12.6 – 14.4 s"
 ON_CAMERA_WPS = 3.2  # words per second Flow speaks a line asked for "at a brisk, natural pace" (Mysa video 2, measured: 3.0-3.3)
 ON_CAMERA_HEADROOM = 0.5  # the clip ends this soon after the last word; the character holds the pose
 LINE_GAP = 0.4  # pause between lines in the scratch read
@@ -310,40 +309,56 @@ def md_to_html(md, base):
 
 
 CSS = """
-@page { size: A4 landscape; margin: 14mm 14mm 16mm; }
-* { box-sizing: border-box; }
-body { font-family: "Noto Sans", "DejaVu Sans", Arial, sans-serif; font-size: 10.5pt; color: #1d1d20; line-height: 1.45; }
-h1 { font-size: 22pt; margin: 0 0 4pt; }
-h2 { font-size: 14pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 2px solid #1d1d20; break-after: avoid; }
-h3 { font-size: 11.5pt; margin: 12pt 0 4pt; break-after: avoid; }
-p, ul, ol { margin: 0 0 6pt; }
-code { font-family: "DejaVu Sans Mono", monospace; font-size: 9pt; background: #f1f1f3; padding: 0 3px; border-radius: 3px; }
-table { width: 100%; border-collapse: collapse; margin: 4pt 0 10pt; font-size: 9.5pt; }
-th { text-align: left; background: #1d1d20; color: #fff; padding: 5pt 6pt; font-weight: 600; }
-td { padding: 5pt 6pt; border-bottom: 1px solid #d9d9de; vertical-align: top; }
-tr { break-inside: avoid; }
-tbody tr:nth-child(even) td { background: #f7f7f9; }
-td img { max-width: 150px; max-height: 90px; border-radius: 3px; }
-em { color: #8a4b00; }
-ul.checks { list-style: none; padding-left: 0; }
+@page { size: A4; margin: 14mm; }
+body { font: 10pt Arial, sans-serif; color: #000; background: #fff; }
+h1 { font-size: 14pt; margin: 0 0 4px; } p { margin: 0 0 6px; } code { font-size: 9pt; }
+table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+th, td { border: 1px solid #000; padding: 5px 6px; vertical-align: top; text-align: left; }
+th { font-weight: bold; } tr { page-break-inside: avoid; }
+table.what-we-show td:nth-child(1) { width: 7%; }
+table.what-we-show td:nth-child(2) { width: 14%; white-space: nowrap; }
+table.what-we-show td:nth-child(3) { width: 32%; }
 """
 
 
-def totals(md, video):
-    """The line under the shot table: shot count, voiceover and picture length, Flow credits for one take of each."""
-    body = md.split("## Shots", 1)[-1].split("\n## ", 1)[0]
-    clips = [int(m[1]) for m in re.finditer(r"^\|\s*\d+[a-z]?\s*\|.*\|\s*(\d+) s\s*\|\s*$", body, re.M)]
-    if not clips:
+def shots(md):
+    """[(shot, start, end)] from the shot table's Time column."""
+    out = []
+    for l in md.splitlines():
+        c = [x.strip() for x in l.strip().strip("|").split("|")]
+        if l.lstrip().startswith("|") and len(c) > 1 and (m := TIME.match(c[1])):
+            out.append((c[0], float(m[1]), float(m[2])))
+    return out
+
+
+def summary(md, video):
+    """Rewrite the line under the title and print what to check in the shot timings."""
+    rows = shots(md)
+    if not rows:
         return md
-    bad = sorted({n for n in clips if n not in DRAFT_CREDITS})
-    if bad:
-        die(f"clip lengths must be 4, 6, 8 or 10 s, not {bad}")
-    timing = video / "voiceover" / "timing.md"
-    m = timing.is_file() and re.search(r"Length ([\d.]+) s", timing.read_text())
-    line = (f"{len(clips)} shots · Voiceover {m[1] + ' s' if m else 'not timed'} · picture {sum(clips)} s · "
-            f"Flow credits for one take of each: 360p drafts {sum(DRAFT_CREDITS[n] for n in clips)}, "
-            f"720p finals {sum(FINAL_CREDITS[n] for n in clips)}.")
-    return TOTALS.sub(line, md, count=1)
+    end = rows[-1][2]
+    longest = max(rows, key=lambda r: r[2] - r[1])
+    audio = real_voiceover(video) or next((p for p in [video / "voiceover" / "scratch.wav"] if p.is_file()), None)
+    timed = f"timed to `voiceover/{audio.name}`" if audio else "not timed to a voiceover yet"
+    line = (f"{len(rows)} shots, {end:.1f} s, {timed}. New shot every {end / len(rows):.1f} s on average; "
+            f"longest {longest[2] - longest[1]:.1f} s (shot {longest[0]}).")
+    for (a, _, e), (b, s, _) in zip(rows, rows[1:]):
+        if abs(s - e) > 0.05:
+            print(f"  check: shot {a} ends at {e:.1f} s but shot {b} starts at {s:.1f} s")
+    for n, s, e in rows:
+        if e - s > 10:
+            print(f"  check shot {n}: {e - s:.1f} s is longer than a 10 s clip; split it")
+        elif e - s < 1.2:
+            print(f"  check shot {n}: {e - s:.1f} s")
+    if audio and end + 0.05 < ffprobe_duration(audio):
+        print(f"  check: the shots end at {end:.1f} s, before the voiceover ({ffprobe_duration(audio):.1f} s)")
+    m = re.search(r"^# .*\n\n", md, re.M)
+    if not m:
+        return md
+    rest = md[m.end():]
+    if not rest.startswith(("**", "|")):  # replace the old summary line, else insert one
+        rest = rest.split("\n", 1)[1].lstrip("\n") if "\n" in rest else ""
+    return md[:m.end()] + line + "\n\n" + rest
 
 
 def cmd_pdf(args):
@@ -355,9 +370,9 @@ def cmd_pdf(args):
     if not browser:
         die("needs Chromium or Chrome to print the PDF")
     md = plan.read_text()
-    if totals(md, video) != md:
-        md = totals(md, video)
-        plan.write_text(md)
+    new = summary(md, video)
+    if new != md:
+        plan.write_text(md := new)
     doc = f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{md_to_html(md, video)}</body></html>"
     dest = video / "PLAN.pdf"
     with tempfile.TemporaryDirectory() as tmp:
