@@ -360,7 +360,8 @@ def cmd_plan(a):
     ons = silence_ends(P["vo.wav"])
     x = pcm16k(P["vo.wav"])
     # Parakeet's lead on this recording: where a word follows silence, how far before the voice it marks it
-    lead = [min(c) for c in ([o - t for o in silence_ends(P['vo.wav'], 0.06) if -0.05 <= o - t <= 0.25] for _, t in pk) if c]
+    short = silence_ends(P['vo.wav'], 0.06)   # once: it reads the whole recording
+    lead = [min(c) for c in ([o - t for o in short if -0.05 <= o - t <= 0.25] for _, t in pk) if c]
     off = statistics.median(lead) if len(lead) >= 5 else 0.08
     rows = []
     for i, (b, p, f) in enumerate(zip(blocks, ps, fs)):
@@ -400,9 +401,20 @@ def cmd_plan(a):
             notes.append(f"cut at {tc(c, fps)} is {abs(d)} frames {'after' if d > 0 else 'before'} the voice of "
                          f"{rows[j][0]!r} ({tc(rows[j][1], fps)}): move the cut onto the voice")
         rows[j][1], rows[j][2] = c, rows[j][2] + "+cut"
-    for r0, r1 in zip(rows, rows[1:]):
-        if r1[1] <= r0[1]:
-            die(f"{r1[0]!r} starts at or before {r0[0]!r} ({r1[1]} <= {r0[1]}): check blocks.txt order")
+    # Fast or sung lines: the engines miss words, or a cut snap lands two blocks on one frame. Spread those blocks
+    # evenly up to the next block that starts later, and list them, rather than stopping on the first one.
+    i = 1
+    while i < len(rows):
+        if rows[i][1] <= rows[i - 1][1]:
+            j = i
+            while j < len(rows) and rows[j][1] <= rows[i - 1][1]:
+                j += 1
+            lo, hi = rows[i - 1][1], rows[j][1] if j < len(rows) else end
+            for k in range(i, j):
+                rows[k][1], rows[k][2] = lo + round((hi - lo) * (k - i + 1) / (j - i + 1)), "spread"
+                notes.append(f"{rows[k][0]!r} had no clear start (fast words): spread to {tc(rows[k][1], fps)}, check it")
+            i = j
+        i += 1
     # a caption leaves the screen in a real pause: 2 frames after the voice stops, back when it starts again
     gaps = [(s0, e0) for s0, e0 in voice_pauses(P["vo.wav"], a.hide)] if a.hide else []
     out = []
