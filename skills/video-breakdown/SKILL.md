@@ -73,7 +73,7 @@ Save it as `<video name>.breakdown.md` next to the video, in this order (the use
 1. **Specs** table: size, fps, length, words and wpm, shot count and average shot, look, audio (VO, music, SFX), captions in one line. From `specs.txt`, corrected by eye.
 2. **Pattern:** the formula, the timeline engine (what moves the story forward), mirrored beats, the visual euphemism system (how it shows what it can't show), the hook, why it works. This is what planning copies.
 3. **Style bible + recurring cast:** medium/look, light, palette, each character's look and world.
-4. **Captions:** font family and weight, case, colour, outline/shadow/box, words per page, position (y as % of height), word highlight, titles or labels. Then name the **nearest captions template** (`captions` skill: 1 boxed two-line, 2 bold caps one-liner, 3 karaoke one-liner with a hook title, 4 sentence-case one-liner) and what differs, so the edit can say "template-3" instead of describing it.
+4. **Captions:** font family and weight, case, colour, outline/shadow/box, words per page, position (y as % of height), word highlight, titles or labels. Then name the **nearest captions template** (`captions-filmcraft`: 2 bold caps one-liner, 4 sentence-case one-liner) and what differs, so the edit can name a template instead of describing it.
 5. **Transcript**, word-timed (from the `.srt`).
 6. **Shot list, one row per cut** from `cuts.txt` and the sheets: `# | time | shot | camera | build | VO words`. Whip pans and dissolves get their own rows.
 7. **Checked against the frames:** what you confirmed, what you corrected in Gemini's JSON, and anything neither source settles.
