@@ -31,7 +31,7 @@ Never pass a rejected attempt as a reference, because its flaws get copied. Name
 - **Expression, described physically:** not "sad" but "brows drawn together, mouth turned down, a faraway look toward the rainy window". Say what the expression is hiding when that's the beat ("a strained polite smile while her brows pinch").
 - **Age, for older characters, every time:** "She is clearly 63, not young: crow's feet, laugh lines, gentle lines under the eyes, a mature lived-in face exactly like the sheet portrait." Without it, close-ups come back as a 30-year-old.
 - **Background people** do something real and named (reading a label, reaching for a bottle, laughing over wine), are given a size in the frame ("each about one tenth of the frame height"), a distance and a facing, and don't look at the camera. Every character the beat needs is in the first still, with their sheet passed.
-- **Light:** the physical sources, direction, brightness and warmth, and the mood ("Night: one warm brass floor lamp as the key, pooling amber light on Carol, the room in warm moody shadow, raindrops catching the lamp light. Sad but rich and warm, never grey."). Default warm: window sun, rim light on hair, warm practicals, candles, string lights, golden bokeh. A store is "bright and inviting, warm-white overhead light plus soft daylight from skylights, never cold or fluorescent".
+- **Light:** name the source as an object in the room, where it is, and what it does: which side of each face it lights, which side falls into shadow, what rims the hair, and what stays dark ("Night: the brass floor lamp beside the sofa, frame-right, is the key; it lights the right side of Carol's face and leaves the left in soft shadow; the side-table lamp rims her hair; the corners and the photo wall fall into warm darkness."). Start from the place's Light line in the plan. Keep it to two or three sentences: a long light paragraph pulls poses and props off what the prompt asks (Calvin video-13 light test, 2026-10-21). Wide shots need the strongest push ("the room is dim except two pools of lamplight"). Shadows are wanted; what's banned is grey, cold or flat light. A light that isn't in the frame or named ("warm lamplight from the living room") gives an evenly lit, flat frame. Default warm: lamps, window sun, string lights, candles, golden bokeh. A store is "bright and inviting, warm-white overhead light plus soft daylight from skylights, never cold or fluorescent".
 - **Render:** "Fully 3D rendered high-end Disney/Pixar-style feature-animation CG: sculpted, appealing, slightly stylized characters with big glossy expressive eyes and catch-lights, soft subsurface glow on skin, big sculpted groomed hair with clumped curls, detailed fabric weave and stitching, rich saturated jewel-tone colour, polished like a theatrical release. Not 2D, no outlines, not photographic, not plastic or toy-like." (For a project with a different agreed look, describe that look's visible qualities instead.)
 - **Format:** "one 9:16 frame for a vertical short film; important action in the central 70% of the frame". Never name a social app or mention a phone interface.
 
@@ -55,7 +55,7 @@ Keep it to concrete failure modes for this shot:
 - the 2D or photoreal drift
 - the sheet layout, a headless body, a grey studio backdrop
 - "looking at the camera, posing for the camera" when the characters should watch something in the scene
-- grey, desaturated or washed-out colour; cold blue or fluorescent light; flat lighting (or golden light, when the project's look is neutral daylight)
+- grey, desaturated or washed-out colour; cold blue or fluorescent light; flat lighting, an evenly lit face with no shadow side, every part of the room equally bright (or golden light, when the project's look is neutral daylight)
 - "photoreal humans", "plastic toy look", "a young woman" for an older character
 - captions, watermarks, app UI, garbled or misspelled lettering
 
@@ -66,7 +66,7 @@ Don't list an object the positive text never mentions and that the frame has no 
 Append these to every still's own negatives:
 
 ```json
-"three-panel sheet layout", "headless body", "grey studio background", "2D cartoon, outlines", "photoreal humans", "plastic toy look", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat lighting", "captions, subtitles, watermark", "on-screen UI overlays or app buttons", "blank, empty or plain glowing screens", "garbled or misspelled lettering", "logos of real companies", "blank unlabelled packaging", "every product plain white"
+"three-panel sheet layout", "headless body", "grey studio background", "2D cartoon, outlines", "photoreal humans", "plastic toy look", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat lighting", "an evenly lit face with no shadow side", "every part of the room equally bright", "light with no visible source", "captions, subtitles, watermark", "on-screen UI overlays or app buttons", "blank, empty or plain glowing screens", "garbled or misspelled lettering", "logos of real companies", "blank unlabelled packaging", "every product plain white"
 ```
 
 ## Text in the frame

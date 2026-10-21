@@ -17,8 +17,8 @@ One paragraph: the render style and the light, as the approved sheets and hero s
 
 ## Environments
 
-| Location | Sheet | Hero still (look reference) | Blocking (who is where, by landmark) | Shots |
-|---|---|---|---|---|
+| Location | Sheet | Hero still (look reference) | Blocking (who is where, by landmark) | Light (key object, rim, what stays dark) | Shots |
+|---|---|---|---|---|---|
 
 ## Props
 

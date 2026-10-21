@@ -22,7 +22,9 @@ Template (`[...]` filled per shot):
 
 Shot (0–[N] s): [who does what, timed: "0–2 s: ... 2–4 s: ..."; the expression and how it changes; where each prop stays; walking direction tied to the still]. [She says nothing. | Dialogue as below.] Camera: [one gentle move].
 
-Everyone in frame is actively acting the whole time with clear, expressive Pixar-level performances, plus natural secondary motion: blinking, breathing, hair and fabric moving. The camera is always gently moving as described; never a static frame.
+Light: [the key source by name and place, as in @image1: "the brass floor lamp at frame-right"]; it stays where it is, and every face keeps the same lit side and shadow side for the whole shot.
+
+Acting: [each character's base acting direction from the plan's Cast: "Darnell is sly and slow, big eyebrow work, leaning back"]. Everyone in frame is actively acting the whole time with clear, expressive Pixar-level performances, plus natural secondary motion: blinking, breathing, hair and fabric moving. The camera is always gently moving as described; never a static frame.
 
 Style: high-end 3D feature-animation CG exactly as in the images: appealing stylized characters with big expressive eyes, soft skin, detailed fabric, rich jewel-tone colour and the warm cinematic light of each image. Never photoreal or live action: every face stays the same stylized CG character from its image in every frame, with the same simplified smooth skin, big eyes and sculpted hair; faces never drift toward realistic human skin, pores or proportions.
 
