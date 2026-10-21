@@ -29,7 +29,7 @@ Files, loaded only when a phase needs them:
 
 The layouts are shared (`video-production/references/sheets/`); the files above say what changes for animation: one landscape image, stylized CG, neutral light, and no grey studio backdrop leaking into scenes.
 
-- **Hero still per environment.** Video 1 of the Milo project lost most of its rejected versions to shots in a location that had no hero still. A still that lists the hero takes it for light and render only: it must not hand over its framing or poses (see `scene-still.md`).
+- **Sheets only, never scene stills.** Every still takes only the environment, character and product sheets as ingredients, never an earlier scene still: reusing stills degraded quality on video-13. Consistency comes from the environment sheet plus the same Light line for that place in every prompt.
 - **Product mascots** (a real product with a face and limbs): edit the client's real product photo, never generate the product or its logo from a description (`product.md`).
 
 ## Visual direction

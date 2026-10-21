@@ -1,6 +1,6 @@
 ---
 name: captions-filmcraft
-description: "Put captions into a FilmCraft project as editable text clips, each one starting on the exact frame its phrase is spoken and on the frame of every picture cut, then export the deliverable from FilmCraft. Caption blocks are whole script phrases of at most 4 words, back to back while the voice runs and cleared in real pauses, in the captions skill's one-line templates (4 sentence-case Montserrat, 2 ALL CAPS TikTok Sans). Timing comes from the project's own voiceover track: Parakeet and faster-whisper word times calibrated against the waveform (`--fast` for Parakeet alone). Use when the user edits in FilmCraft and wants captions, subtitles or supers on a .fcproj, wants caption timing fixed in one, or a client complains captions are late or don't change with the picture. For burning captions into an exported video file instead, use captions."
+description: "Put captions into a FilmCraft project as editable text clips, each one starting on the exact frame its phrase is spoken and on the frame of every picture cut, then export the deliverable from FilmCraft. Caption blocks are whole script phrases of at most 4 words, back to back while the voice runs and cleared in real pauses, in two one-line templates (4 sentence-case Montserrat, 2 ALL CAPS TikTok Sans). Timing comes from the project's own voiceover track: Parakeet and faster-whisper word times calibrated against the waveform (`--fast` for Parakeet alone). Use when the user edits in FilmCraft and wants captions, subtitles or supers on a .fcproj, wants caption timing fixed in one, or a client complains captions are late or don't change with the picture."
 ---
 
 # Captions in FilmCraft
@@ -55,7 +55,7 @@ ElevenLabs Scribe alone was 0.16 s (4 frames) late on part of a voiceover, and t
 | 4 | Sentence-case white Montserrat ExtraBold 68, 3 px black outline, soft shadow (blur 7, 4 px down, 75%), centred, baseline y 1420 |
 | 2 | Same, ALL CAPS TikTok Sans ExtraBold 68 |
 
-They match the `captions` skill's templates of the same number, inside the Meta/TikTok safe box (bottom y 1500 on 1080×1920). A missing font is installed from the `captions` skill's `fonts/` into `~/.local/share/fonts`. Boxed (1), karaoke (3) and extruded (5) captions need the `captions` skill.
+Both stay inside the Meta/TikTok safe box (bottom y 1500 on 1080×1920); previews are in `templates/`. A missing font is installed from `fonts/` into `~/.local/share/fonts`.
 
 ## Rules
 

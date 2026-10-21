@@ -49,7 +49,7 @@ from transcribe import words
 words("voiceover/recording.wav")   # [(word, start, end), ...]
 ```
 
-`captions.py words`, `plan.py voiceover` and `song-ad` (through `plan.py`) get their heard words this way, then align the script to them, so the wording on screen still comes from the script.
+`fc_captions.py`, `plan.py voiceover` and `song-ad` (through `plan.py`) get their heard words this way, then align the script to them, so the wording on screen still comes from the script.
 
 ## Pauses: where the voice actually stops
 

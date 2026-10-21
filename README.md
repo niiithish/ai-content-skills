@@ -17,7 +17,6 @@ npx skills add niiithish/ai-content-skills --skill script-generation
 npx skills add niiithish/ai-content-skills --skill video-production
 npx skills add niiithish/ai-content-skills --skill animated-video-production
 npx skills add niiithish/ai-content-skills --skill photoreal-video-production
-npx skills add niiithish/ai-content-skills --skill captions
 npx skills add niiithish/ai-content-skills --skill captions-filmcraft
 npx skills add niiithish/ai-content-skills --skill filmcraft
 npx skills add niiithish/ai-content-skills --skill filmcraft-pacing
@@ -45,7 +44,6 @@ npx skills add niiithish/ai-content-skills --list
 | [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
 | [`animated-video-production`](./skills/animated-video-production) | The Pixar-style 3D animation layer on `video-production`: look, character, place and product sheets, still and clip prompts, product mascots, on-camera speech. |
 | [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, character and product sheets, JSON still prompts, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
-| [`captions`](./skills/captions) | Burns locked-style captions and red section labels into a finished 9:16 edit: script wording, ElevenLabs Scribe timing, a preview frame first. |
 | [`captions-filmcraft`](./skills/captions-filmcraft) | Captions as editable text clips in a FilmCraft project: phrase blocks of at most 4 words, each starting on the frame its words are heard and on every cut (Parakeet + faster-whisper timing checked against the voiceover waveform), then export from FilmCraft. |
 | [`filmcraft`](./skills/filmcraft) | Edit with the user in FilmCraft: build hook timelines from approved clips, live edits in the open app over the bridge, clip swaps without Link Media popups, and Meta-ready exports (about 45 MB a minute) one hook after another. |
 | [`filmcraft-pacing`](./skills/filmcraft-pacing) | Pacing pass on a FilmCraft edit: dead air in the voice cut to a breath (pauses from the waveform), other tracks kept in sync, punch-ins at jump cuts, slow pushes on still shots and B-roll, before/after numbers. Calm or punchy style. |
@@ -77,7 +75,6 @@ video-plan → video-production + photoreal-, animated- or clay-video-production
 | --- | --- |
 | **script-generation** | Spoken UGC script for TikTok/Reels. Optional ≤3s cut list for AI video. |
 | **photoreal-** / **animated-** / **clay-video-production** | A whole photoreal, animated or clay project on `video-production`: sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
-| **captions** | Captions and section labels burned into the user's finished edit. |
 | **captions-filmcraft** | Frame-exact captions as text clips in the user's FilmCraft project, exported from FilmCraft. |
 | **filmcraft** | Live edits in the user's open FilmCraft project, clip swaps, Meta-ready exports. |
 | **filmcraft-pacing** | Dead air out and motion in, on the user's FilmCraft edit, before captions. |

@@ -34,7 +34,7 @@ SAFE_Y = 1500                                        # Meta/TikTok caption safe 
 MAXWORDS = 4
 MAX_W = 860  # px: widest caption line on 1080, so 110 px stays clear each side (Max video-2: wide lines ran off the frame)
 
-# One-line templates from the captions skill, as FilmCraft text. Fonts must be installed for fontconfig.
+# One-line caption templates, as FilmCraft text. Fonts must be installed for fontconfig.
 SHADOW = {"shadow": True, "shadow_angle": 90, "shadow_distance": 4, "shadow_blur": 7, "shadow_opacity": 75,
           "shadow_color": "#000000"}
 STYLES = {
@@ -458,7 +458,7 @@ def fit_size(st, text):
 def ensure_font(st):
     if subprocess.run(["fc-list", f"{st['font']}:style={st['fontStyle']}"], capture_output=True, text=True).stdout.strip():
         return
-    src = HERE.parent.parent / "captions" / "fonts" / st["file"]
+    src = HERE.parent / "fonts" / st["file"]
     if not src.exists():
         die(f"font {st['font']} {st['fontStyle']} isn't installed and {src} is missing")
     dst = Path.home() / ".local/share/fonts" / st["file"]

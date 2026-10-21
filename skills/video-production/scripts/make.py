@@ -71,7 +71,7 @@ def die(msg):
 
 
 def conf():
-    c = {"CONCURRENCY": "5", "RPM": "6"}
+    c = {"CONCURRENCY": "10", "RPM": "12"}
     p = VIDEO / "project.conf"
     if p.is_file():
         for line in p.read_text().splitlines():
@@ -104,6 +104,8 @@ def load_jobs(kind):
         if Path(j["output"]).name != j["id"] + KINDS[kind]["ext"]:
             die(f"{path.name}: job {j['id']} must write {j['id']}{KINDS[kind]['ext']}, not {Path(j['output']).name}")
         j["ingredient"] = [str((path.parent / p).resolve()) for p in j.get("ingredient", [])]
+        # flow's own default is landscape: a still or clip job that forgets "aspect" must still come out vertical
+        j.setdefault("aspect", "9:16")
         folder = VIDEO / KINDS[kind]["folder"] / f"{stem}-{m[3]}" / (f"{stem}-{m[2]}" if m[4] else "")
         if Path(j["output"]).parent != folder:
             die(f"{path.name}: job {j['id']} must write into {folder.relative_to(VIDEO)}/")

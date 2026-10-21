@@ -4,20 +4,18 @@ A scene still is one composed 9:16 frame: the opening image of one clip. Write i
 
 ## Before writing
 
-- Look at every reference you'll pass: sheets, the location's hero still, and any approved still whose composition you're reusing.
+- Look at every sheet you'll pass.
 - Read the shot's row in `PLAN.md` and the lessons in `failure-locks.md`.
 - Open two or three images in `look/` that are closest to this shot (store, home at night, close-up, group, product, cutaway) and read their `.md` prompts. Every new prompt is written to that level of detail; a thin prompt gives a flat, boring frame.
 - The still shows the **first frame** of the clip: the starting pose and prop state before the main action. Put characters where the clip needs them to start.
 
 ## Ingredients, in this order
 
-1. **The look still:** the location's hero still, which fixes light, brightness, colour and render style. For a location's first still, use the environment sheet instead. Its `use_for` says light, colour and render **only** (plus who is where, see "Who is where" below), and names what must differ: "Take only its light, colour and render. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose." Otherwise the model hands back the look still with small changes (pie heist 2b and 3a came back as scene 1 again).
-2. **The composition still** (optional): an approved still whose framing you want. Say exactly what to take from it ("composition only") and what to ignore ("ignore its dark lighting").
-3. **Character sheets**, one per character in frame.
-4. **The product sheet** when the product is in frame (and any other prop sheet the plan lists). Items that belong to the room come from the environment sheet and the look still.
-5. **The environment sheet**, when no hero still exists yet.
+1. **The environment sheet** of the place, for its layout, furniture and render. Never another scene still as a look or composition reference (user rule, video-13: it degrades the image and copies its framing); write the place's light in words, the same in every still of that place.
+2. **Character sheets**, one per character in frame.
+3. **The product sheet** when the product is in frame (and any other prop sheet the plan lists). Items that belong to the room come from the environment sheet.
 
-Never pass a rejected attempt as a reference, because its flaws get copied. Name each ingredient by its role ("the look still", "the orange tabby cat sheet"), list them in `reference_images_in_order`, and give each one a `use_for`.
+Never pass a rejected attempt as a reference, because its flaws get copied. Name each ingredient by its role ("the kitchen environment sheet", "the orange tabby cat sheet"), list them in `reference_images_in_order`, and give each one a `use_for`.
 
 **Only the references this frame needs.** Before adding an image, name its one job (the product's label, its angle, its size in a hand, a face, this place's look) and check no other reference already does it. If it has no job of its own, leave it out, however relevant it looks or wherever you found it. An image from another scene brings its pose, outfit, room and light into this one (Aleo 127a v29: the product, its angle and its size in a hand were enough; a fourth still of a woman in a yellow robe from another shot was added only because it was in the folder). Fewer references, each with a clear job, beat more.
 
@@ -46,7 +44,6 @@ Two people sharing a place across many stills (a couple in bed over ten shots) s
 - **A character's own hands and sides** go by landmark or camera, not by body: "the hand nearer the camera", "the hand on the window side". If the body side matters (a ring hand): "his own right hand, which is on the left of the picture because he faces us".
 - **Keep the camera on one side** of the line between the two people for the whole scene (the 180° rule), so they keep their frame sides from shot to shot. A reverse angle across the line flips both: write the new frame sides out, and keep the landmark sentence the same.
 - **Name the traits with the position,** in the same sentence: "Mark (the man: short dark beard, navy T-shirt) on the window side … Anna (the woman: long auburn hair, lilac nightgown) on the lamp side". The model matches each sheet to a position through these traits.
-- **The look still carries positions.** When the location's hero still shows both people, its `use_for` adds "Keep who is where from it: Mark on the window side, Anna on the lamp side." Positions yes, poses and framing still no.
 - **Check every still before approving:** who is on which landmark side, and which hand holds what. A swap is a reject: regenerate with the sides in `scene` and `final_generation_instruction`. Never mirror-flip the image instead: text, the room's layout and one-sided details (a hair part, a ring, a watch) flip with it.
 
 ## Negative list
@@ -69,12 +66,12 @@ Don't list an object the positive text never mentions and that the frame has no 
 Append these to every still's own negatives:
 
 ```json
-"three-panel sheet layout", "headless body", "grey studio background", "2D cartoon, outlines", "photoreal humans", "plastic toy look", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat lighting", "captions, subtitles, watermark", "phone interface, app buttons or on-screen UI", "garbled or misspelled lettering", "logos of real companies", "blank unlabelled packaging", "every product plain white"
+"three-panel sheet layout", "headless body", "grey studio background", "2D cartoon, outlines", "photoreal humans", "plastic toy look", "grey, desaturated or washed-out colour", "cold blue or fluorescent light", "flat lighting", "captions, subtitles, watermark", "on-screen UI overlays or app buttons", "blank, empty or plain glowing screens", "garbled or misspelled lettering", "logos of real companies", "blank unlabelled packaging", "every product plain white"
 ```
 
 ## Text in the frame
 
-In-world text is welcome; overlays are not. Anything that carries print in real life (a newspaper, a sign, a book cover, packaging, a label, a shop front) gets short, readable, plausible text written into the prompt in quotes: a headline, a brand name, a product line. Invent fictional brands; use a real one only when the user supplies it. Keep each surface to a few words and leave fine print soft. Stores are stocked like a real store: each product has its own shape and a readable fictional label ("Silk Lotion", "Honey Oat", "Vanilla Glow", a "Bath & Body" aisle sign, price tags on the shelf edges), never plain colour blocks or blank jars. Story props carry their words ("DIVORCE AGREEMENT" on the papers). A phone screen shows the client's real web page from a screenshot, typed by touch, never a mouse pointer. Never captions, subtitles, watermarks, app UI or on-screen graphics. Say which surface each text is on, and check the spelling in the render before approving.
+In-world text is welcome; overlays are not. Anything that carries print in real life (a newspaper, a sign, a book cover, packaging, a label, a shop front) gets short, readable, plausible text written into the prompt in quotes: a headline, a brand name, a product line. Invent fictional brands; use a real one only when the user supplies it. Keep each surface to a few words and leave fine print soft. Stores are stocked like a real store: each product has its own shape and a readable fictional label ("Silk Lotion", "Honey Oat", "Vanilla Glow", a "Bath & Body" aisle sign, price tags on the shelf edges), never plain colour blocks or blank jars. Story props carry their words ("DIVORCE AGREEMENT" on the papers). **Screens are never blank.** Every phone, TV, laptop or tablet whose screen faces the camera shows real content written into the prompt: a text-message notification or thread (a round contact photo, the sender's name in quotes, a short message of 2–5 words in quotes, "large type"), a show or game on the TV, a video call, or the client's real web page from a screenshot, typed by touch, never a mouse pointer. A blank white glow reads as a mistake (video-13). A screen turned away from the camera needs nothing; a TV that the story needs off is dark, said in the shot. Never captions, subtitles, watermarks or on-screen graphics laid over the frame. Say which surface each text is on, and check the spelling in the render before approving.
 
 **Other brands' products** (a rival bottle, shelf stock, a jar on her vanity, the "old" product that failed her) get a made-up brand name and their own colour, written into the prompt for each one in focus: "a frosted sage-green glass jar labelled 'Verdelle' in cream serif", "an amber pump bottle, black cap, 'HONEY OAT' label". Left unsaid, the model whitewashes them: plain white bottles with blank labels, the same white as the client's product. The rules:
 - **A colour for every product, from a small set.** Pick 2–4 package colours that sit in the scene's palette (sage, terracotta, amber glass, navy, blush, cream, matte black) and spread them over the products; a shelf can repeat them. Not a rainbow, not neon, not all white.
@@ -87,9 +84,9 @@ In-world text is welcome; overlays are not. Anything that carries print in real 
 {
   "prompt_type": "animated_scene_still",
   "objective": "One fully 3D animated frame for a vertical short film: [who does what, where, at the start of the beat].",
-  "reference_images_in_order": ["the look still", "the [character] sheet", "..."],
+  "reference_images_in_order": ["the [location] environment sheet", "the [character] sheet", "..."],
   "references": [
-    {"image": "the look still", "use_for": "only the look of [location] and its light: [source, direction, brightness]. Match its brightness and colour exactly. This is a new camera: [where it stands, what fills the frame]. Do not copy its framing, camera angle or anyone's pose."},
+    {"image": "the [location] environment sheet", "use_for": "the room's exact layout, furniture, materials and render; the light, people and camera are described below. Never a scene still here."},
     {"image": "the [character] sheet", "use_for": "[name]'s exact design", "adapt": "Left and middle panels are the body, right panel is the head; show one complete [character] with a full head, not the sheet layout."}
   ],
   "canvas": {"image_count": 1, "aspect_ratio": "9:16", "orientation": "portrait"},

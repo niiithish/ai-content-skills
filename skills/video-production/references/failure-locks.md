@@ -29,6 +29,7 @@ For every tile, check:
 |---|---|
 | `lost by Google · regenerating on another account` | Normal: Google dropped the clip or left it stuck for 5 minutes, and flow is regenerating it once in the same run. Let the batch finish; don't stop or rerun it. |
 | `NOT_FOUND` after that regeneration | Put a new `"seed"` on the job and rerun: the batch resumes jobs by prompt, ingredients and seed, so an unchanged rerun won't retry it. |
+| Scene stills come out landscape (1376×768) though the video is 9:16 (Mysa video-13, 2026-10-19) | A still job written without `"aspect"`, and flow defaults to landscape. `make.py` now fills in `"aspect": "9:16"` for any still or clip job that leaves it out; refresh an older video's copy with `init-project.sh ... --update-scripts`. Only sheets are 16:9 (`make.py sheet` sets it). Still write `"aspect": "9:16"` in every job. |
 | `QUEUE_STALLED` after that regeneration | Rerun the batch once later; if it stalls again, put a new `"seed"` on the job. |
 | `PROMPT_REJECTED` | Google discarded that exact clip on two accounts. Simplify or rewrite the shot's prompt. |
 | `BATCH_WORKER_FAILED` | Rerun the same command. |
@@ -46,7 +47,7 @@ For every tile, check:
 |---|---|
 | Full subtitles delivered when the client wanted a few captions | Reread the brief's caption section before any edit deliverable; use the client's exact wording at the moments they name; quote the brief back to the user. |
 | Time spent building an edit tool, or cutting the edit, when the user edits | The user stitches and times the edit themselves (our cut got about 90% there, not good enough). Deliver ordered clips; never offer to edit. |
-| Captions took seven rounds to land (video-3) | The `captions-filmcraft` skill on FilmCraft edits (`captions` for rendered files only): its locked templates, and `check` frames before the user exports. |
+| Captions took seven rounds to land (video-3) | The `captions-filmcraft` skill on FilmCraft edits: its locked templates, and `check` frames before the user exports. |
 | Clips shorter than their voiceover line, regenerated longer | Time the voiceover with `video-plan` before the shot list; each line's clips cover its slot plus 1 s. Longer is only trimmed. |
 | Shots added after the finals (a third of Milo video 1) | Story lock with the approved `PLAN.md`; check voiceover coverage with the animatic before any clips. |
 | A still picks up a pose, outfit, room or light from nowhere: an extra reference was passed only because it was in the folder (Aleo 127a v29: a still of a woman in a yellow robe from another shot) | Each reference needs one job no other reference covers; name it before adding the image, and leave out anything without one. |
