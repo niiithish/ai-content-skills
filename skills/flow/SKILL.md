@@ -110,11 +110,15 @@ flow generate --prompt-file /ABS/clip.md --aspect portrait --duration 8 \
   --ingredient /ABS/scene1.jpg --ingredient /ABS/scene2.jpg \
   --name /ABS/clip.mp4
 
+# One video that opens on an exact still (and optionally ends on another)
+flow generate --prompt-file /ABS/clip.md --aspect portrait --duration 6 \
+  --start-frame /ABS/first.jpg --end-frame /ABS/last.jpg --name /ABS/clip.mp4
+
 # 1080p of an existing native 720p clip (Pro, free)
 flow upsample MEDIA_ID --name /ABS/clip-1080p.mp4
 ```
 
-Use absolute paths for prompt files, ingredients and outputs. Inspect every referenced still before writing a video prompt. Ingredients are identity and cut references, not start or end frames. Tag them in a prompt as `@image1`, `@image2`, … in ingredient order when the shot needs an explicit reference. Up to 10 ingredients for an image and 7 for a video.
+Use absolute paths for prompt files, ingredients and outputs. Inspect every referenced still before writing a video prompt. Ingredients are identity and cut references, not start or end frames. For a clip that must open on an exact still, use `--start-frame` (plus `--end-frame` to land on another); in a manifest, `"start_frame"`/`"end_frame"` on a video job. Frames and ingredients can't be mixed in one clip, and `--end-frame` needs `--start-frame`. Tag them in a prompt as `@image1`, `@image2`, … in ingredient order when the shot needs an explicit reference. Up to 10 ingredients for an image and 7 for a video.
 
 ## Resolution and cost
 
