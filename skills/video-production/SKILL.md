@@ -1,6 +1,6 @@
 ---
 name: video-production
-description: The shared production pipeline for a short-form Google Flow video in any style. It starts from an approved video-plan PLAN.md and covers the project layout, init-project.sh, make.py (every batch, review and hand-off command), reference sheets, stills, 360p draft clips, 1080p finals, reuse of approved clips and the hand-off to the user's edit. It is loaded by a style skill (animated-video-production, photoreal-video-production or clay-video-production), which adds the look and the prompt templates. Use it with one of those; use it alone only for project housekeeping (status, layout, sync, reuse).
+description: The shared production pipeline for a short-form Google Flow video in any style. It starts from an approved video-plan PLAN.md and covers the project layout, init-project.sh, make.py (every batch, review and hand-off command), reference sheets, stills, 360p draft clips, 1080p finals, reuse of approved clips and the hand-off to the user's edit. It is loaded by a style skill (animated-video-production, photoreal-video-production, clay-video-production or talking-head-video-production), which adds the look and the prompt templates. Use it with one of those; use it alone only for project housekeeping (status, layout, sync, reuse).
 ---
 
 # Video Production
@@ -12,7 +12,7 @@ Turn an approved plan into a finished set of 1080p 9:16 clips with as few regene
 - reviewing one file at a time;
 - batch files and retries piling up beside the media.
 
-This workflow stops each of them at a gate. It is style-agnostic: the style skill that loaded it (`animated-video-production`, `photoreal-video-production` or `clay-video-production`) holds the look, the still and clip prompt templates and its own failure locks.
+This workflow stops each of them at a gate. It is style-agnostic: the style skill that loaded it (`animated-video-production`, `photoreal-video-production`, `clay-video-production` or `talking-head-video-production`, a speaker to camera with inserts) holds the look, the still and clip prompt templates and its own failure locks.
 
 Files, loaded only when a phase needs them:
 
@@ -43,7 +43,7 @@ Generation runs through the `flow` skill's CLI. Flow chooses the account for eve
   - Never ask the user to list what they flagged. Reviews are saved in `<project>/review.json`; don't edit it.
 - **Stop at every gate** and wait for approval.
 - **Terse replies.** At most a short table (shot, result, your call) and one line on what's next, ending on your recommendation or the command. No write-ups, no menus of options, no detail the user didn't ask for.
-- **The edit is in FilmCraft, with the user.** Build the timeline from the approved clips with the `filmcraft` skill, ready to export but not exported. The user tweaks it in the open app. Then `filmcraft-pacing` (dead air, motion) and `captions-filmcraft` (captions as text clips) when asked, and `filmcraft` exports when the user says so.
+- **The edit is in FilmCraft, with the user, in the house style:** load `edit-style` (and its `talking-head-edit` or `voiceover-edit` sub-skill) before building or changing a timeline. Build the timeline from the approved clips with the `filmcraft` skill, ready to export but not exported. The user tweaks it in the open app. Then `filmcraft-pacing` (dead air, motion) and `captions-filmcraft` (captions as text clips) when asked, and `filmcraft` exports when the user says so.
 - **Nothing is overwritten.** A new attempt is the next version (`v2`, `v3`), with its own prompt file and a manifest job that replaces the old one. An approved still or clip is listed in `APPROVED.md` in `scenes/all/` or `clips/all/`. From then on it's locked unless the user asks to redo it.
 - **`make.py` owns batching (hard rule).**
   - Every still and clip is a job in the one manifest (`scenes/stills-batch.json`, `clips/clips-batch.json`), run by `make.py stills|clips|finals [shots]`.

@@ -17,6 +17,10 @@ npx skills add niiithish/ai-content-skills --skill script-generation
 npx skills add niiithish/ai-content-skills --skill video-production
 npx skills add niiithish/ai-content-skills --skill animated-video-production
 npx skills add niiithish/ai-content-skills --skill photoreal-video-production
+npx skills add niiithish/ai-content-skills --skill talking-head-video-production
+npx skills add niiithish/ai-content-skills --skill edit-style
+npx skills add niiithish/ai-content-skills --skill talking-head-edit
+npx skills add niiithish/ai-content-skills --skill voiceover-edit
 npx skills add niiithish/ai-content-skills --skill captions-filmcraft
 npx skills add niiithish/ai-content-skills --skill filmcraft
 npx skills add niiithish/ai-content-skills --skill filmcraft-pacing
@@ -44,6 +48,10 @@ npx skills add niiithish/ai-content-skills --list
 | [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
 | [`animated-video-production`](./skills/animated-video-production) | The Pixar-style 3D animation layer on `video-production`: look, character, place and product sheets, still and clip prompts, product mascots, on-camera speech. |
 | [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, character and product sheets, JSON still prompts, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
+| [`talking-head-video-production`](./skills/video-production/talking-head) | The talking-head layer on `video-production`: one speaker carries the script to camera (master still, one line or one take per hook), voice-changed master, then the FilmCraft edit with box stills and full-screen inserts, clause-only jump cuts with zoom changes, dead air cut and captions. |
+| [`edit-style`](./skills/edit-style) | The house FilmCraft edit style for every ad, whatever is on screen: pictures change only on caption starts or cuts, cuts on first words, something new every 2–4 s, every still pushing, dead air cut, captions on the words, music under the voice, hooks 2–3 cloned from the user's hook 1; the user's working rules, checks, change recipes and a new-machine checklist. |
+| [`talking-head-edit`](./skills/edit-style/talking-head) | Sub-skill of `edit-style`: the client-approved talking-head format (full-screen picture per phrase, template-6 captions at y 1360, 100/110% talking steps, two hook formats, 12 Loom rules, edit scripts). |
+| [`voiceover-edit`](./skills/edit-style/voiceover) | Sub-skill of `edit-style`: many shots or stills under a voiceover or song (shots from plan times through the tightened voice, cuts rolled onto words, splits, song-take hook clones). |
 | [`captions-filmcraft`](./skills/captions-filmcraft) | Captions as editable text clips in a FilmCraft project: phrase blocks of at most 4 words, each starting on the frame its words are heard and on every cut (Parakeet + faster-whisper timing checked against the voiceover waveform), then export from FilmCraft. |
 | [`filmcraft`](./skills/filmcraft) | Edit with the user in FilmCraft: build hook timelines from approved clips, live edits in the open app over the bridge, clip swaps without Link Media popups, and Meta-ready exports (about 45 MB a minute) one hook after another. |
 | [`filmcraft-pacing`](./skills/filmcraft-pacing) | Pacing pass on a FilmCraft edit: dead air in the voice cut to a breath (pauses from the waveform), other tracks kept in sync, punch-ins at jump cuts, slow pushes on still shots and B-roll, before/after numbers. Calm or punchy style. |

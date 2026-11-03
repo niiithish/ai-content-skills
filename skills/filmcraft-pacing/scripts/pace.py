@@ -83,11 +83,28 @@ def broll_tracks(s):
     return [t for t in s["video"][1:] if any(not is_text(c) for c in t["items"])]
 
 
+def fills_frame(c, s):
+    """True when the clip's picture covers the whole frame. A box or picture-in-picture (scaled down, or moved
+    off centre) leaves the talking head visible, so a jump cut under it still shows."""
+    m = next((e for e in c["effects"] if e["effect"] == "motion"), None)
+    if not m:
+        return True
+    p = m["params"]
+    if p["scale"].get("keyframes") or p["position"].get("keyframes"):
+        return True   # animated: assume it fills, as before
+    sc = nums(p["scale"]["value"])[0] / 100
+    px, py = nums(p["position"]["value"])[-2:]
+    ax, ay = nums(p["anchor"]["value"])[-2:]   # the anchor sits at the source centre, so the source is 2x it
+    W, H = s["settings"]["width"], s["settings"]["height"]
+    hw, hh = ax * sc, ay * sc
+    return px - hw <= 2 and py - hh <= 2 and px + hw >= W - 2 and py + hh >= H - 2
+
+
 def covered(s, total):
     cov = [False] * total
     for t in broll_tracks(s):
         for c in t["items"]:
-            if c["enabled"] and not is_text(c):
+            if c["enabled"] and not is_text(c) and fills_frame(c, s):
                 for f in range(max(0, c["startFrame"]), min(total, c["endFrame"])):
                     cov[f] = True
     return cov

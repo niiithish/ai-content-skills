@@ -5,6 +5,8 @@ description: "Edit and export videos in FilmCraft (the open-source Premiere-styl
 
 # FilmCraft
 
+**House style:** for any client edit, load `edit-style` (and its `talking-head-edit` or `voiceover-edit` sub-skill) first. It holds the approved principles and numbers this tool applies.
+
 The user edits in FilmCraft and so does the agent: one project file, open in the user's app. Tool: `scripts/fc.py` (needs `filmcraft-cli` on PATH and ffprobe for the export check).
 
 ## The workflow

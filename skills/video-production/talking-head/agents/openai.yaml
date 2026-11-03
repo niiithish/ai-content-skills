@@ -1,0 +1,4 @@
+interface:
+  display_name: "Talking-Head Video Production"
+  short_description: "A speaker-to-camera Flow ad: master still, talking clips, one-voice master file, then inserts and the FilmCraft edit"
+  default_prompt: "Use $talking-head-video-production (with $video-production and $photoreal-video-production) to make this talking-head video: master still, talking clips, the master file, then the inserts and the edit in FilmCraft."

@@ -46,6 +46,70 @@ STYLES = {
               font="TikTok Sans", fontStyle="ExtraBold", size=68, caps=True, file="TikTokSans-ExtraBold.ttf",
               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 3,
                      "stroke_color": "#000000", **SHADOW, "position": [540, 1420]}),
+    # TikTok native-caption look (user's reference frame, Mysa video-14, 2026-10-23), measured at 1080x1920:
+    # "I was 47." 210 px wide, cap height 35 px (size 50), baseline y ~1408, thin dark outline + soft dark glow.
+    # Raised to 64 for the 45+ women audience (user, 2026-10-23).
+    "3": dict(about="Sentence-case white TikTok Sans SemiBold 64, 2 px black outline, soft glow, baseline y 1408",
+              font="TikTok Sans 24pt", fontStyle="SemiBold", size=64, caps=False, file="TikTokSans-SemiBold.ttf",
+              props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 2,
+                     "stroke_color": "#000000", "shadow": True, "shadow_angle": 90, "shadow_distance": 0,
+                     "shadow_blur": 9, "shadow_opacity": 90, "shadow_color": "#000000", "position": [540, 1409]}),
+    # Storybook-explainer look (Alaria video-4 reference ad): small, 1-2 words, just below mid-frame.
+    # Measured on the reference at 1080x1920: text ~210 px wide for "center of", baseline y ~1113, thin dark outline.
+    "5": dict(about="Sentence-case white TikTok Sans SemiBold 50, 2 px black outline, soft shadow, baseline y 1113, "
+                    "1-2 words a caption (plan --max-words 2)",
+              font="TikTok Sans 24pt", fontStyle="SemiBold", size=50, caps=False, file="TikTokSans-SemiBold.ttf",
+              props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 2,
+                     "stroke_color": "#000000", "shadow": True, "shadow_angle": 90, "shadow_distance": 0,
+                     "shadow_blur": 9, "shadow_opacity": 90, "shadow_color": "#000000", "position": [540, 1116]}),
+    # Doctor-explainer look (Aleo video-3 reference ad, 2026-10-24): black text on white rounded boxes, two lines,
+    # just above the box insert. Measured on the reference at 1080x1920: size 58 ("practitioner with a background"
+    # 810 px wide), baselines 74 apart, each line's box 17 px wider than its text on each side and about 89 px tall
+    # (7 px past the font's ascent and descent), radius 16. The boxes are shape layers behind both text layers, so
+    # they merge into one shape and never cover a letter; the text's own background padded both ways alike and came
+    # out 103 px tall ("too big, the gap is wider", user 2026-10-24).
+    # A block's line break is " / " in blocks.txt ("1 to 2 weeks / as the biofilm breaks down"); without one, build
+    # splits a block of 3+ words in two at the most even break.
+    "6": dict(about="Sentence-case black TikTok Sans SemiBold 58 on white rounded boxes merged behind both lines, "
+                    "baselines y 1098 and 1173 (plan --max-words 7, ' / ' marks the line break)",
+              font="TikTok Sans 24pt", fontStyle="SemiBold", size=58, caps=False, file="TikTokSans-SemiBold.ttf",
+              lines=[1098, 1173], boxes=dict(pad=[17, 7], radius=16, color="#ffffff"),
+              props={"align": "center", "fill_color": "#000000", "stroke": False, "shadow": False,
+                     "background": False, "position": [540, 1136]}),
+    # Word-by-word podcast-clip look (Aleo video-4 reference ad, 2026-10-27). Measured on the reference at 720x1280,
+    # scaled to 1080x1920: cap height 60 px ("VERY" 233 px wide), baseline y 1306, a thin black outline and a hard
+    # black drop shadow down-right with no blur. One word a caption, two when a short word leads ("OR YOUR",
+    # "THE BODY", "IT ISN'T"), the same spot on every shot. Blocks written by hand in blocks.txt (plan --max-words 3).
+    "7": dict(about="ALL CAPS white Montserrat ExtraBold 85, 3 px black outline, hard shadow down-right, baseline "
+                    "y 1306, no punctuation, 1-2 words a caption (plan --max-words 3)",
+              font="Montserrat", fontStyle="ExtraBold", size=85, caps=True, bare=True, file="Montserrat-ExtraBold.ttf",
+              props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 3,
+                     "stroke_color": "#000000", "shadow": True, "shadow_angle": 45, "shadow_distance": 6,
+                     "shadow_blur": 0, "shadow_opacity": 100, "shadow_color": "#000000", "position": [540, 1306]}),
+    # Doctor-explainer with TikTok-native italic captions (Mysa video-17 reference ad, 2026-10-30). Measured on the
+    # reference at 720x1280, scaled to 1080x1920: "STARTING TO SHIFT" 585 px wide, cap height 42 px, baseline y 1377
+    # (on the doctor's chest), slanted, thin black outline and a soft dark shadow, no punctuation. The hook line is
+    # lowercase ("what dies off", "in your gut"), everything after it ALL CAPS: build --caps-from <first cut, s>.
+    "8": dict(about="ALL CAPS white TikTok Sans SemiBold 62 slanted, 2 px black outline, soft shadow, baseline "
+                    "y 1377, no punctuation; lowercase before --caps-from",
+              font="TikTok Sans 24pt", fontStyle="SemiBold", size=62, caps=True, bare=True, file="TikTokSans-SemiBold.ttf",
+              props={"align": "center", "fill_color": "#ffffff", "faux_italic": True, "stroke": True,
+                     "stroke_width": 2, "stroke_color": "#000000", "shadow": True, "shadow_angle": 90,
+                     "shadow_distance": 2, "shadow_blur": 8, "shadow_opacity": 85, "shadow_color": "#000000",
+                     "position": [540, 1377]}),
+    # Claymation explainer, karaoke by line (Mysa video-18 reference ad DCT#22, 2026-11-02). Measured on the reference
+    # at 720x1280, scaled to 1080x1920: two lines centred about 70% down, baselines y 1346 and 1415, "gut lining
+    # while" 354 px wide in the bold weight (size 43, raised to 46); all lowercase, no outline, a soft dark shadow.
+    # Captions come in pairs, one phrase a line: the phrase being spoken is Montserrat Bold white, its partner line
+    # Montserrat Light white at 80% opacity. Each caption is one clip with both lines, so the bold moves down to the
+    # second line on that phrase's first word. A pair breaks where the captions clear in a pause.
+    "9": dict(about="Pairs of lowercase lines, the spoken one white Montserrat Bold 46, the other Montserrat Light at "
+                    "80% opacity, baselines y 1346 and 1415, soft shadow (plan --max-words 4)",
+              font="Montserrat", fontStyle="Bold", size=46, caps=False, lower=True, file="Montserrat-Bold.ttf",
+              pair=dict(lines=[1346, 1415], fontStyle="Light", file="Montserrat-Light.ttf", opacity=80),
+              props={"align": "center", "fill_color": "#ffffff", "stroke": False, "shadow": True,
+                     "shadow_angle": 90, "shadow_distance": 2, "shadow_blur": 8, "shadow_opacity": 70,
+                     "shadow_color": "#000000", "position": [540, 1415]}),
 }
 # Meta-ready, same as the filmcraft skill's fc.py export: 2 min ~ 90 MB, ~2.4x faster than 40 Mb/s 2-pass max quality
 EXPORT = {"bitrateKbps": 6000, "maxBitrateKbps": 9000, "bitrateMode": "vbr1Pass", "gpuRendering": "auto",
@@ -103,7 +167,7 @@ def is_text(item):
 
 def caption_track(s, plan):
     """Index of the text-only track (above V1) holding most of the plan's caption texts, or None."""
-    want = {b["text"].strip().lower() for b in plan["blocks"]}
+    want = {t.strip().lower() for b in plan["blocks"] for t in (b["text"], b["text"].split(" / ")[0])}
     best, score = None, 0
     for v, tr in enumerate(s["video"][1:], 1):
         items = tr["items"]
@@ -112,11 +176,25 @@ def caption_track(s, plan):
         hit = sum(i.get("name", "").strip().lower() in want for i in items)
         if hit >= max(3, len(items) // 2) and hit > score:
             best, score = v, hit
+    top = len(s["video"]) - 1   # re-blocked captions match no old name; the top text-only track is still the captions
+    if best is None and top > 0 and s["video"][top]["items"] and all(is_text(i) for i in s["video"][top]["items"]):
+        best = top
     return best
 
 
+def zoom_of(c):
+    m = next((e["params"].get("scale") for e in c.get("effects", []) if e["effect"] == "motion"), None)
+    return str(m["value"]) if m and not m.get("keyframes") else None
+
+
 def cuts_of(s):
-    return sorted({i["startFrame"] for i in s["video"][0]["items"]} - {0})
+    """V1 cuts the viewer sees. A join where the same media runs on (a razor around a sped-up pause) is not one,
+    unless the zoom changes there: a master with its jump cuts baked in is razored at each one and zoomed 100/108%
+    (calvin video-15, 2026-10-26), and those are cuts the viewer sees."""
+    v1 = sorted(s["video"][0]["items"], key=lambda c: c["startFrame"])
+    half = v1[0]["duration"] // max(1, v1[0]["durationFrames"]) // 2 if v1 else 0
+    return sorted(b["startFrame"] for a, b in zip(v1, v1[1:])
+                  if b["item"] != a["item"] or abs(b["sourceIn"] - a["sourceOut"]) > half or zoom_of(a) != zoom_of(b))
 
 
 def app_running():
@@ -337,6 +415,8 @@ def starts(blocks, asr, fx):
 
 
 def cmd_plan(a):
+    global MAXWORDS
+    MAXWORDS = a.max_words
     P = paths(a.project)
     for k in ("vo.wav", "pk.json"):
         if not P[k].exists():
@@ -426,7 +506,7 @@ def cmd_plan(a):
                     [math.ceil(voice_end(x) * fps) + TAIL]
         e = min([nxt] + [s for s in stop if f + round(fps / 2) <= s < nxt])
         out.append({"text": t, "start": f, "end": e, "src": src})
-    long = [r["text"] for r in out if len(r["text"].split()) > MAXWORDS]
+    long = [r["text"] for r in out if len(r["text"].replace(" / ", " ").split()) > MAXWORDS]
     json.dump({"project": str(Path(a.project).resolve()), "fps": fps, "cuts": cuts, "end": end, "lead": off,
                "blocks": out}, open(P["captions.json"], "w"), ensure_ascii=False, indent=1)
     for r in out:
@@ -445,14 +525,75 @@ def tc(fr, fps):
 
 # ---------- build ----------
 
-def fit_size(st, text):
-    """The template size, or smaller so the line (outline included) fits MAX_W."""
+def text_width(st, text, size):
     path = subprocess.run(["fc-match", "-f", "%{file}", f"{st['font']}:style={st['fontStyle']}"],
                           capture_output=True, text=True).stdout.strip()
-    w = int(subprocess.run(["magick", "-font", path, "-pointsize", str(st["size"]), f"label:{text}",
-                            "-format", "%w", "info:"], capture_output=True, text=True).stdout or 0)
-    w += 2 * st["props"].get("stroke_width", 0)
+    return int(subprocess.run(["magick", "-font", path, "-pointsize", str(size), f"label:{text}",
+                               "-format", "%w", "info:"], capture_output=True, text=True).stdout or 0)
+
+
+def fit_size(st, text):
+    """The template size, or smaller so the line (outline included) fits MAX_W."""
+    w = text_width(st, text, st["size"]) + 2 * st["props"].get("stroke_width", 0)
     return st["size"] if w <= MAX_W else int(st["size"] * MAX_W / w)
+
+
+def box_cmds(st, clip, ls, size, pos):
+    """Template 6: a white rounded box behind each line, as shape layers at the back of the clip. FilmCraft's text
+    sits on its baseline with the font's ascent (= size) above and 0.3 x size below."""
+    bx, out, n = st["boxes"], [], len(ls)
+    for k, (t, (x, y)) in enumerate(zip(ls, pos)):
+        w, top, bot = text_width(st, t, size), y - size, y + 0.3 * size
+        out += [{"id": "graphics.newShape", "params": {
+                    "shape": "rectangle", "clip": clip, "position": [x, (top + bot) / 2],
+                    "size": [w + 2 * bx["pad"][0], bot - top + 2 * bx["pad"][1]]}},
+                {"id": "graphics.set", "params": {"clip": clip, "layer": n + k, "props": {
+                    "fill_color": bx["color"], "corner_radius": bx["radius"], "stroke": False}}},
+                {"id": "graphics.arrangeLayer", "params": {"clip": clip, "layer": n + k, "to": "back"}}]
+    return out
+
+
+ONE_LINE = 26  # characters that sit on one line at size 58 (user, 2026-10-24: "is / thinner skin." looked ugly)
+
+
+def two_lines(text, one=False):
+    """A block as the lines template 6 shows: split at " / ", else at the most even break (after a comma if one).
+    one: always one line (build --one-line; Aleo video-5 user, 2026-10-29), shrunk by fit_size if it is too wide."""
+    flat = text.replace(" / ", " ")
+    if one or len(flat) <= ONE_LINE:  # fits on one line: never a one- or two-word line over another
+        return [flat]
+    if " / " in text:
+        return [t.strip() for t in text.split(" / ")]
+    w = text.split()
+    if len(w) < 3:
+        return [text]
+    def cost(k):
+        a, b = " ".join(w[:k]), " ".join(w[k:])
+        return abs(len(a) - len(b)) - (8 if a.endswith(",") else 0) + (6 if norm(w[k - 1]) in WEAK_END else 0)
+    k = min(range(1, len(w)), key=cost)
+    return [" ".join(w[:k]), " ".join(w[k:])]
+
+
+KEEP_CASE = {"mysa", "himalayan", "co2", "co2-extracted", "i"}  # template 9 lowercases everything but these
+
+
+def lower_text(text):
+    return " ".join(w if re.sub(r"[^\w-]", "", w).lower() in KEEP_CASE else w.lower() for w in text.split())
+
+
+def pairs(blocks):
+    """Template 9: (partner index, row) of each block. Blocks pair two by two, the first on the top row; a pair breaks
+    where the captions clear and at a sentence end, so a pair never runs into the next sentence."""
+    mate, i = {}, 0
+    while i < len(blocks):
+        if (i + 1 < len(blocks) and blocks[i]["end"] == blocks[i + 1]["start"]
+                and not blocks[i]["text"].rstrip().endswith((".", "?", "!"))):
+            mate[i], mate[i + 1] = (i + 1, 0), (i, 1)
+            i += 2
+        else:
+            mate[i] = (None, 0)
+            i += 1
+    return mate
 
 
 def ensure_font(st):
@@ -485,6 +626,8 @@ def cmd_build(a):
         die("the edit changed since plan: run plan again")
     st = dict(STYLES[a.template])
     ensure_font(st)
+    if st.get("pair"):
+        ensure_font(dict(st, fontStyle=st["pair"]["fontStyle"], file=st["pair"]["file"]))
     T = tpf(s)
     nv = len(s["video"])
     if a.track:
@@ -502,16 +645,57 @@ def cmd_build(a):
         cmds.append({"id": "sequence.addTracks", "params": {"video": 1}})
     if old:
         cmds.append({"id": "edit.clear", "params": {"clips": old}})
-    for b in plan["blocks"]:
-        text = b["text"].upper() if st["caps"] else b["text"]
+    lines, second = [], []  # template 6: line 1 is the clip, line 2 a second layer added once its clip id is known
+    mate = pairs(plan["blocks"]) if st.get("pair") else {}
+    for n, b in enumerate(plan["blocks"]):
+        before = a.caps_from is not None and b["start"] < a.caps_from * plan["fps"] - 0.5
+        text = b["text"].lower() if before else b["text"].upper() if st["caps"] else b["text"]
+        if st.get("pair"):  # its own line bold; the partner phrase dimmed on the other line
+            pr = st["pair"]
+            m, row = mate[n]
+            text = lower_text(text.replace(" / ", " "))
+            size = st["size"]
+            if m is not None:
+                size = min(fit_size(st, text), fit_size(st, lower_text(plan["blocks"][m]["text"].replace(" / ", " "))))
+            pos = [[540, pr["lines"][row if m is not None else 1]]]
+            cmds.append({"id": "graphics.newText", "params": {
+                "text": text, "position": pos[0], "size": size, "font": st["font"], "fontStyle": st["fontStyle"],
+                "seconds": (b["end"] - b["start"]) / plan["fps"], "track": v, "time": b["start"] * T}})
+            cmds.append({"id": "graphics.set", "params": {"props": dict(st["props"], position=pos[0])}})
+            if m is not None:
+                lines.append((len(cmds) - 2, [text, lower_text(plan["blocks"][m]["text"].replace(" / ", " "))],
+                              size, pos + [[540, pr["lines"][1 - row]]]))
+            continue
+        if st.get("bare"):  # the reference shows no commas or full stops
+            text = re.sub(r"[,.!?;:]+(?=\s|$)", "", text)
+        ls = two_lines(text, a.one_line) if st.get("lines") else [text]
+        size = min(fit_size(st, t) for t in ls)
+        ys = st["lines"] if len(ls) == 2 else [st["lines"][-1] if st.get("lines") else st["props"]["position"][1]]
+        pos = [[st["props"]["position"][0], y] for y in ys]
         cmds.append({"id": "graphics.newText", "params": {
-            "text": text, "position": st["props"]["position"], "size": fit_size(st, text), "font": st["font"],
+            "text": ls[0], "position": pos[0], "size": size, "font": st["font"],
             "fontStyle": st["fontStyle"], "seconds": (b["end"] - b["start"]) / plan["fps"], "track": v,
             "time": b["start"] * T}})
-        cmds.append({"id": "graphics.set", "params": {"props": st["props"]}})
+        cmds.append({"id": "graphics.set", "params": {"props": dict(st["props"], position=pos[0])}})
+        lines.append((len(cmds) - 2, ls, size, pos))
     tmp = project.with_name(f".{project.stem}.captions-tmp.fcproj")
     cmds.append({"id": "file.save", "params": {"path": str(tmp)}})
-    cli(project, cmds)
+    res = cli(project, cmds)
+    for i, ls, size, pos in lines:
+        clip = res[i]["result"]["clip"]
+        if len(ls) == 2 and st.get("pair"):
+            second += [{"id": "graphics.newText", "params": {"text": ls[1], "position": pos[1], "size": size,
+                                                              "font": st["font"], "fontStyle": st["pair"]["fontStyle"], "clip": clip}},
+                       {"id": "graphics.set", "params": {"clip": clip, "layer": 1, "props": dict(
+                           st["props"], position=pos[1], opacity=st["pair"]["opacity"])}}]
+        elif len(ls) == 2:
+            second += [{"id": "graphics.newText", "params": {"text": ls[1], "position": pos[1], "size": size,
+                                                              "font": st["font"], "fontStyle": st["fontStyle"], "clip": clip}},
+                       {"id": "graphics.set", "params": {"clip": clip, "layer": 1, "props": dict(st["props"], position=pos[1])}}]
+        if st.get("boxes"):   # after the text: each box goes to the back, so text is always on top
+            second += box_cmds(st, clip, ls, size, pos)
+    if second:
+        cli(tmp, second + [{"id": "file.save", "params": {}}])
     # verify the temp save before it replaces anything
     t = seq(tmp)
     got = [(i["startFrame"], i["startFrame"] + i["durationFrames"]) for i in t["video"][v]["items"]]
@@ -605,10 +789,13 @@ def main():
     w.add_argument("--fast", action="store_true",
                    help="Parakeet only (about 25 s instead of 80 s for 95 s of voice; mid-phrase starts can run 2-3 frames late)")
     p = sub.add_parser("plan"); p.add_argument("project"); p.add_argument("--script"); p.add_argument("--fixes")
+    p.add_argument("--max-words", type=int, default=MAXWORDS, help="most words a caption (template 5: 2, template 6: 7)")
     p.add_argument("--hide", type=float, default=0.4,
                    help="clear the screen in voice pauses at least this long, s (0: captions back to back)")
     b = sub.add_parser("build"); b.add_argument("project"); b.add_argument("-t", "--template", default="4", choices=STYLES)
     b.add_argument("--track")
+    b.add_argument("--caps-from", type=float, help="template 8: captions before this time (s) are lowercase")
+    b.add_argument("--one-line", action="store_true", help="template 6: every caption on one line (blocks must fit 860 px)")
     c = sub.add_parser("check"); c.add_argument("project"); c.add_argument("--n", type=int, default=8)
     e = sub.add_parser("export"); e.add_argument("project"); e.add_argument("-o", "--out", required=True)
     e.add_argument("--kbps", type=int, help="video bitrate (default 6000, ~45 MB a minute at 1080x1920; 4000 ~32 MB)")

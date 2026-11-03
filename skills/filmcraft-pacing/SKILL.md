@@ -5,6 +5,8 @@ description: "Make a FilmCraft talking-head or voiceover edit more engaging, in 
 
 # Pacing in FilmCraft
 
+**House style:** for any client edit, load `edit-style` (and its `talking-head-edit` or `voiceover-edit` sub-skill) first. It holds the approved principles and numbers this tool applies.
+
 Tool: `scripts/pace.py`. It needs the `filmcraft` skill (`fc.py`, so edits go live when the app has the project open) and the `transcribe` skill (`pauses.py`) installed alongside, plus numpy and ffmpeg (ffmpeg only reads the voice for analysis; the edit never leaves FilmCraft).
 
 ## The workflow

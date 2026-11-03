@@ -352,6 +352,7 @@ def cmd_finals(args):
             "timeout": 1500,  # upsample jobs only go to paid accounts; flow picks one
             "output": str(draft.parent / "final" / draft.name),
             **({"seed": j["seed"]} if "seed" in j else {}),
+            **{k: j[k] for k in ("start_frame", "end_frame") if k in j},
         })
     hd = [Path(f["output"]).with_name(Path(f["output"]).stem + "-1080p.mp4") for f in finals]
     finals = [f for f, h in zip(finals, hd) if not (Path(f["output"]).is_file() and h.is_file())]
