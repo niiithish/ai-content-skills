@@ -32,10 +32,11 @@ Run `flow` and deliver the requested media. Do not stop after writing a prompt u
 Run the requested generation command directly. Labflow owns:
 - session validation and repair, and recognised Google re-login
 - credit checks and account selection
-- project alignment and browser reuse
+- project alignment (an account saved without a project takes the last one its Chromium profile opened) and browser reuse
 - FIFO queueing and durable job resume
 
 What not to do:
+- A `PROJECT_MISSING` error naming an account means that account has no Flow project and Labflow can't create one. Tell the user to open a project in it and run `flow account add NAME --project UUID --force`; other accounts keep working.
 - Do not preflight with `flow account ls`, `flow whoami`, `flow credits` or `flow doctor` unless the user explicitly asks for account diagnostics.
 - Let flow pick the account, and don't set any env var to steer it. Stills cost no credits, so they use free and premium accounts alike. 360p drafts go to free accounts and fall back to premium only when no free account can take them (out of credits, refused). Native 720p goes to premium first, because only premium clips can be upscaled to 1080p. `--upsample` is premium-only. Do not run `flow account use`, `flow rotate` or `flow sync`, and never run `flow logout`, `flow account clear` or `flow account rm`: they remove saved logins. The one exception: when `flow accounts` shows the free accounts expired, run `flow account refresh` before a batch.
 - Do not pass `--no-rotate` unless the user explicitly asks to lock one account. Normal generation leaves rotation on so depleted or unhealthy accounts are replaced automatically.
@@ -55,6 +56,7 @@ For independent bulk jobs, use `flow batch` with one manifest entry per output. 
 - **Uploads:** an account reuses its upload of the same reference image for 24 hours, so reusing reference files across commands is cheap. `flow batch` also sends the next jobs' references to the current account ahead of their turn ("sent ahead to accN" lines are expected, not an error). Do not wrap Flow commands in an external retry loop.
 
 What the errors mean:
+- Signed-out accounts are not empty accounts. `flow batch` and `flow images` renew stale saved sessions themselves and print `renewed N stale session(s)` or `N account(s) signed out (...)`. A QUOTA error with `details.signedOut` means those accounts' credits are unknown: run `flow account refresh --only accX` once, rerun the same command, and if one still fails tell the user to run `flow account open accX`. Never report that as "out of credits".
 - A final `QUOTA` means the live account pool lacks enough credits. When every account is out (`details.allOut`, or `"outOfCredits": true` in a batch summary), stop and tell the user: Google refills free accounts daily, so ask them to run `flow account refresh` and then rerun the same command. Do not run the refresh yourself or retry in a loop.
 - `TIMEOUT` means an accepted job may still be resumable.
 - A clip Google drops, or leaves generating for 4 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
@@ -122,13 +124,15 @@ Use absolute paths for prompt files, ingredients and outputs. Inspect every refe
 
 ## Resolution and cost
 
-- Clip lengths are 4, 6, 8 or 10 s.
+- Videos use **Omni Flash 1.1** by default (cheaper): clips of 4, 6, 8 or 10 s. **Omni Flash 1.2** (`--model omni-1.2`) makes 3 to 15 s clips (at most 10 s with `--end-frame`) at a higher price, and only some accounts have it, so flow sends it only to those. With no `--model`, a length 1.1 lacks (3, 5, 7, 9, 11-15 s) goes to 1.2 and says so. Don't pass `--model` unless the user wants 1.2 or a length 1.1 can't make; `--model omni-1.2` fails with `MODEL_UNAVAILABLE` if no account has it, and `--model omni-1.1` never moves to 1.2.
 - **Credits:**
 
   | Resolution | 4 s | 6 s | 8 s | 10 s |
   |---|---|---|---|---|
   | 360p draft | 4 | 5 | 6 | 7 |
   | 720p | 7 | 10 | 12 | 15 |
+
+  Those are Omni 1.1 prices. Omni 1.2 (opt-in) costs more: 720p is 3 credits per second up to 10 s (4 s = 12, 8 s = 24, 10 s = 30) then 6 per second (15 s = 60); a 360p draft is 1 per second up to 10 s then 2 (4 s = 4, 8 s = 8, 15 s = 20).
 
   Stills cost nothing (there is a daily cap per account). `flow image` and `flow images` default to **Nano Banana 2.1** (`BELUGA`); pass `--model nano-banana-pro` only when the user asks for Pro.
 - 1080p is a download upscale of a **native 720p** generation, free only on a paid account. A 360p draft cannot be upscaled, so a final reruns the same prompt at 720p with `--upsample 1080p`. That is a new generation and can differ from the draft; check it.

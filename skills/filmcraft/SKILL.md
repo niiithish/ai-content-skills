@@ -21,8 +21,10 @@ The user edits in FilmCraft and so does the agent: one project file, open in the
 ## Setup (once per machine)
 
 `fc.py status` must show `bridge 127.0.0.1:9876: up` while FilmCraft is open. If it's down, or the `filmcraft` MCP isn't in bridge mode, run `scripts/setup.sh`. It does two things:
-- It makes the launcher start FilmCraft with `--control 9876`.
+- It makes the launcher start FilmCraft through `~/.local/bin/filmcraft-live`, which adds `--control 9876` and the control token.
 - It switches the MCP to `filmcraft-cli mcp --bridge 127.0.0.1:9876`.
+
+FilmCraft opens the bridge only with `FILMCRAFT_CONTROL_TOKEN` set to 64 hex characters, the same for the app and `filmcraft-cli` ("The control server is disabled: FILMCRAFT_CONTROL_TOKEN must contain 64 random hex characters" otherwise). `setup.sh` keeps one in `~/.config/filmcraft/control-token` (mode 600); `fc.py` loads it for every CLI call. To start FilmCraft by hand: `filmcraft-live PROJECT.fcproj`.
 
 Then the user restarts Claude Code and reopens FilmCraft from the launcher.
 

@@ -16,11 +16,16 @@ from pathlib import Path
 CLI = "filmcraft-cli"
 PORT = int(os.environ.get("FILMCRAFT_CONTROL_PORT", 9876))
 BRIDGE = f"127.0.0.1:{PORT}"
+# FilmCraft only opens its bridge with a 64-hex token, the same on both sides (app started by filmcraft-live,
+# see setup.sh). Every filmcraft-cli call below inherits it from here.
+TOKEN_FILE = Path.home() / ".config/filmcraft/control-token"
+if not os.environ.get("FILMCRAFT_CONTROL_TOKEN") and TOKEN_FILE.exists():
+    os.environ["FILMCRAFT_CONTROL_TOKEN"] = TOKEN_FILE.read_text().strip()
 AUDIO = {"bitrate_kbps": 192, "bits": 16, "channels": 2, "codec": "aac", "flac_level": 5, "float": False,
          "sample_rate": 48000}
 # Measured 2026-10-18 on the Iris Xe laptop, 10 s of 1080x1920: these settings 13 s / 7.6 MB; the old
 # 40 Mb/s 2-pass max-render-quality ones 31 s / 50 MB. GPU rendering is on (it is off by default).
-META = {"bitrateMode": "vbr1Pass", "gpuRendering": "auto", "h264Profile": "high", "audio": AUDIO}
+META = {"bitrateMode": "vbr1Pass", "gpuRendering": "auto", "hardwareEncoding": "auto", "h264Profile": "high", "audio": AUDIO}
 
 
 def die(msg):

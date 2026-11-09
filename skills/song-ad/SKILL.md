@@ -1,6 +1,6 @@
 ---
 name: song-ad
-description: Make an AI singing ad, a video sales letter that is sung like a song over 3D feature-animation. It covers the sub-avatar and hook, the song script (real lyrics with rhyme, meter, a refrain that returns and flips, backing answers and a section-by-section music direction, never plain voiceover), the song generated first in Suno (ElevenLabs Music only when asked) as the timing source, a plan timed to the sung lyrics, lip-sync shots cut from gapless song slices, and silent B-roll on the animated pipeline. Use when the user wants a song ad, singing ad, sung VSL, music-video ad, musical ad or jingle, lyrics for an ad, or to remake a winning song ad (Resilia, Rise style) for a new product. Not for spoken voiceover ads (script-generation, video-plan).
+description: Make an AI singing ad, a video sales letter that is sung like a song over 3D feature-animation. It covers the sub-avatar and hook, the song script (real lyrics with rhyme, meter, a refrain that returns and flips, backing answers and a section-by-section music direction, never plain voiceover), the song generated first in Suno (ElevenLabs Music only when asked) as the timing source, a plan timed to the sung lyrics, lip-sync shots cut from gapless song slices, and silent B-roll on the animated pipeline. Use when the user wants a song ad, singing ad, sung VSL, music-video ad, musical ad or jingle, lyrics for an ad, or to remake a winning song ad (Resilia, Rise style) for a new product. Not for spoken voiceover ads (video-plan).
 disable-model-invocation: true
 ---
 
@@ -46,7 +46,7 @@ Follow "Generating the song" in `song-craft.md`. **Suno (a paid plan) is the def
    python3 <skill-dir>/scripts/song.py lyrics video-N/song/lyrics-v1.md --video video-N
    ```
 
-5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with ElevenLabs Scribe (the `transcribe` skill). A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
+5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with Parakeet (the `transcribe` skill). A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
 
 ## Stage 3: plan
 

@@ -16,7 +16,10 @@ phrases, at most 4 words); read and fix it, then run plan again. Timing never co
     tone above a fixed -40 dB);
   - mid-sentence, at Parakeet's word start plus its measured lead on this recording, averaged with faster-whisper
     (unless words ran with --fast), and moved to the end of a real pause or to the loudness dip just before it;
+  - a sentence's last word, where Parakeet runs late, on the last rise out of a dip before Parakeet's start;
   - every picture cut (V1) starts a caption on that exact frame; a cut more than 2 frames off its voice is reported.
+  - then every caption is checked against the waveform: one shown over silence, late on its voice or left up over a
+    pause is fixed, and anything unclear is printed as a NOTE.
 Captions run back to back through short pauses. Where the voice stops for --hide seconds or more (default 0.4),
 the caption ends 2 frames after the last word and the screen is clear until the voice comes back.
 Work files go in <video>/captions/ (the nearest folder above the project with PLAN.md, AGENTS.md or project.conf).
@@ -29,6 +32,9 @@ for _d in (HERE.parent.parent / "transcribe" / "scripts", HERE.parent.parent / "
            Path.home() / ".claude/skills/transcribe/scripts", Path.home() / ".claude/skills/filmcraft/scripts"):
     sys.path.insert(0, str(_d))
 TAIL = 2  # frames a caption stays up after the last word before a pause
+EARLY_POP = 3  # frames a one/two-word pop caption leads its voice (matched to the raw-Parakeet demo, 2026-11-07)
+MIN_POP = 5  # frames: the shortest a pop caption gets from the lead (template 7 merges anything shorter)
+MIN_GAP = 2  # a mid-phrase caption's start is never snapped closer than this to the caption before it
 TPS = 254016000000                                   # FilmCraft ticks per second
 SAFE_Y = 1500                                        # Meta/TikTok caption safe box bottom on 1080x1920
 MAXWORDS = 4
@@ -238,23 +244,18 @@ def cmd_words(a):
     sys.path.insert(0, str(HERE.parent.parent / "transcribe" / "scripts"))
     sys.path.insert(0, str(Path.home() / ".claude/skills/transcribe/scripts"))
     import transcribe as T
-    audio = T.load_audio(str(P["vo.wav"]))
-    pk = T.parakeet_words(audio)
+    pk = T.words(str(P["vo.wav"]), verify=True)   # Vulkan GPU, re-checked on the CPU; CPU engines if it fails
     json.dump(pk, open(P["pk.json"], "w"))
     print(f"Parakeet: {len(pk)} words -> {P['pk.json']}")
-    if a.fast:
+    if a.fast:   # whisper stays on by default: without it 6 of 27 one-word captions moved 3-7 frames off (2026-11-07)
         P["fw.json"].unlink(missing_ok=True)  # a stale one from an older voiceover must not be averaged in
         return
-    from faster_whisper import WhisperModel
-    for name in ("medium.en", "small.en"):
-        try:
-            m = WhisperModel(name, device="cpu", compute_type="int8", local_files_only=True)
-            break
-        except Exception:
-            m = None
-    m = m or WhisperModel("small.en", device="cpu", compute_type="int8")
-    segs, _ = m.transcribe(str(P["vo.wav"]), language="en", word_timestamps=True)
-    fw = [(w.word.strip(), w.start, w.end) for sg in segs for w in sg.words if w.word.strip()]
+    try:
+        fw = T.whisper_file(str(P["vo.wav"]))   # medium.en if downloaded, else small.en; runs in the transcribe venv
+    except Exception as e:   # the second opinion is optional: carry on with Parakeet alone, as --fast does
+        print(f"faster-whisper failed ({e}); continuing with Parakeet only", file=sys.stderr)
+        P["fw.json"].unlink(missing_ok=True)
+        return
     json.dump(fw, open(P["fw.json"], "w"))
     print(f"faster-whisper: {len(fw)} words -> {P['fw.json']}")
 
@@ -339,6 +340,22 @@ def frame_db(x, fr, fps):
     return float(20 * np.log10(np.sqrt((seg ** 2).mean()) + 1e-9)) if len(seg) else -120.0
 
 
+def closure_onsets(x, t0, t1):
+    """Times in [t0, t1) where the voice comes out of a near-silence of 10-30 ms (a stop consonant's closure, the
+    gap between two words): on 10 ms steps, at least 10 dB under the 50 ms before and 15 dB under the 20 ms after.
+    A 33 ms video frame blurs these: "trick" showed only a 2 dB rise at frame 318-319, but -64 dB at 10.63 s."""
+    import numpy as np
+    def db(i):
+        seg = x[i * 160:i * 160 + 320]
+        return float(20 * np.log10(np.sqrt((seg ** 2).mean()) + 1e-9)) if len(seg) else -120.0
+    out = []
+    for i in range(max(5, int(t0 * 100) - 1), int(t1 * 100) - 1):
+        v = db(i)
+        if max(db(i + 1), db(i + 2)) - v >= 15 and max(db(j) for j in range(i - 5, i)) - v >= 10:
+            out.append((i + 1) / 100)
+    return out
+
+
 _QUIET = {}
 
 
@@ -352,11 +369,16 @@ def silent(x, fr, fps):
     return frame_db(x, fr, fps) < min(_QUIET[id(x)], peak - 20)
 
 
-def dip(x, fr, fps):
+def dip(x, fr, fps, floor=None):
     """The frame after the quietest moment in the 5 frames before `fr` (and 1 after), when the voice rises at least
     6 dB out of it: where a word starts between two others. Checked on Max video-2 against waveform onsets: exact on
-    6 of 8, 1 frame early on the rest, where Parakeet's start alone ran 2-3 frames late."""
-    v, k = min((frame_db(x, j, fps), j) for j in range(fr - 5, fr + 2))
+    6 of 8, 1 frame early on the rest, where Parakeet's start alone ran 2-3 frames late.
+    `floor`: the earliest frame the dip may be on. With one- or two-word captions the words are ~7 frames apart,
+    and an unbounded search found the previous caption's dip, put both on one frame and the second got spread late."""
+    lo = fr - 5 if floor is None else max(fr - 5, floor - 1)   # the start is the frame after the quiet one
+    if lo > fr + 1:
+        return None
+    v, k = min((frame_db(x, j, fps), j) for j in range(lo, fr + 2))
     rise = max(frame_db(x, j, fps) for j in range(k + 1, fr + 3))
     return k + 1 if rise - v >= 6 else None
 
@@ -443,6 +465,7 @@ def cmd_plan(a):
     short = silence_ends(P['vo.wav'], 0.06)   # once: it reads the whole recording
     lead = [min(c) for c in ([o - t for o in short if -0.05 <= o - t <= 0.25] for _, t in pk) if c]
     off = statistics.median(lead) if len(lead) >= 5 else 0.08
+    real_stops = [s0 for s0, _ in voice_pauses(P['vo.wav'], 0.15)]   # pauses, not stop consonants
     rows = []
     for i, (b, p, f) in enumerate(zip(blocks, ps, fs)):
         if p is None and f is None:
@@ -457,7 +480,13 @@ def cmd_plan(a):
             fr, src = int(min(near, key=lambda o: abs(o - est)) * fps), "onset"
         else:
             fr, src = round(est * fps), "words"
-            deep = [k for k in range(fr - 2, fr + 1) if silent(x, k, fps)]
+            # never snap back onto the caption before, nor onto the word before this one (which may be the last
+            # word of a two-word caption, "can look" / "away."): its start plus the lead is where its own dip is
+            floor = rows[-1][1] + MIN_GAP if rows else None
+            j = next((k for k, (_, t) in enumerate(pk) if t == p), None) if p is not None else None
+            if floor is not None and j:
+                floor = max(floor, round((pk[j - 1][1] + off) * fps) + 1)
+            deep = [k for k in range(fr - 2, fr + 1) if silent(x, k, fps) and (floor is None or k >= floor - 1)]
             if len(deep) == 3:  # inside a pause: the caption starts where the voice comes back
                 while fr < max(deep) + 8 and silent(x, fr, fps):
                     fr += 1
@@ -465,9 +494,26 @@ def cmd_plan(a):
             elif deep:          # just after a short pause before the word
                 fr, src = max(deep) + 1, "pause"
             else:               # mid-phrase: the word starts where the voice rises out of the dip before it
-                d = dip(x, fr, fps)
+                d = dip(x, fr, fps, floor)
                 if d is not None:
                     fr, src = d, "dip"
+            # overshot: under 5 frames of voice left before a real pause means the word was already over (Parakeet
+            # late on a sentence's last word, plus the lead, landed on its final consonant or in the silence after).
+            # "trick." landed on the "k" after the 2-frame "ck" closure, 10 frames late (user, 2026-11-07).
+            # Parakeet is late on these words, so search back from its own start for the last clear rise out of a dip
+            # (trick: 319, time: 365 out of the "t" closure; both match the waveform and the user's mark).
+            stop_at = next((s0 * fps for s0 in real_stops if s0 * fps > fr - 1), None)
+            if p is not None and (all(silent(x, k, fps) for k in range(fr, fr + 3))
+                                  or (stop_at is not None and stop_at - fr < 5)):
+                # Parakeet was late here, so its previous word is no floor either ("a" kept "time." 7 frames late):
+                # only the caption before. Look back up to 12 frames (0.4 s), never onto the overshoot itself.
+                raw = round(p * fps)
+                lo = max(raw - 12, rows[-1][1] + MIN_GAP if rows else 0)
+                back = closure_onsets(x, lo / fps, (raw - 1) / fps)
+                if back:
+                    fr, src = max(round(back[-1] * fps), lo), "back-dip"
+                else:
+                    fr, src = max(raw, floor or 0), "words-raw"
         rows.append([b, fr, src])
     notes = []
     for c in cuts:
@@ -495,17 +541,37 @@ def cmd_plan(a):
                 notes.append(f"{rows[k][0]!r} had no clear start (fast words): spread to {tc(rows[k][1], fps)}, check it")
             i = j
         i += 1
+    # pop styles: show each mid-phrase caption a few frames before its voice (on the voice it reads late).
+    # Never on a caption snapped to a cut (picture and caption change together) and never out of order.
+    early = a.early if a.early is not None else (EARLY_POP if MAXWORDS <= 3 else 0)
+    if early:
+        prev = -1
+        for r in rows:
+            if r[2] in LEADING:   # mid-phrase only: after a pause the voice
+                # onset is visible on the waveform and a caption before it shows over silence (user, 2026-11-07)
+                # never shorten the caption before below MIN_POP: "and" (on the voice after a pause) got 2 frames
+                # when "suddenly" led into it, a flash nobody can read (2026-11-07)
+                r[1] = max(r[1] - early, min(prev + MIN_POP, r[1]), 0)
+            prev = r[1]
     # a caption leaves the screen in a real pause: 2 frames after the voice stops, back when it starts again
     gaps = [(s0, e0) for s0, e0 in voice_pauses(P["vo.wav"], a.hide)] if a.hide else []
     out = []
     for k, (t, f, src) in enumerate(rows):
         nxt = rows[k + 1][1] if k + 1 < len(rows) else end
-        stop = [math.ceil(s0 * fps) + TAIL for s0, e0 in gaps if f < s0 * fps and e0 * fps <= nxt + 1]
+        stop = [math.ceil(s0 * fps) + TAIL for s0, e0 in gaps if f < s0 * fps and e0 * fps <= nxt + 1 + early]
         if k + 1 == len(rows):  # after the last word: the end card speaks for itself
             stop += [math.ceil(s0 * fps) + TAIL for s0, e0 in gaps if s0 * fps > f] + \
                     [math.ceil(voice_end(x) * fps) + TAIL]
-        e = min([nxt] + [s for s in stop if f + round(fps / 2) <= s < nxt])
+        # clear in the pause even when the voice stopped under half a second in: hold the half second, then clear
+        # (it used to skip the pause then, leaving the caption over the silence until the next one)
+        e = min([nxt] + [max(s, f + round(fps / 2)) for s in stop if s < nxt])
         out.append({"text": t, "start": f, "end": e, "src": src})
+    # check every caption against the waveform; fix the clear misses (start onto its voice, end in the pause), then
+    # check again and report whatever is left for a human
+    _, fixes = audit(x, out, fps, early, a.hide, real_stops, with_fixes=True, onsets=ons)
+    for line in apply_fixes(out, fixes, fps):
+        print("waveform check fixed:", line)
+    notes += audit(x, out, fps, early, a.hide, real_stops, onsets=ons)
     long = [r["text"] for r in out if len(r["text"].replace(" / ", " ").split()) > MAXWORDS]
     json.dump({"project": str(Path(a.project).resolve()), "fps": fps, "cuts": cuts, "end": end, "lead": off,
                "blocks": out}, open(P["captions.json"], "w"), ensure_ascii=False, indent=1)
@@ -516,6 +582,76 @@ def cmd_plan(a):
           f"not heard -> {P['captions.json']}")
     for n in notes + [f"over {MAXWORDS} words: {t!r}" for t in long]:
         print("NOTE", n)
+
+
+def apply_fixes(out, fixes, fps):
+    """Move each start onto its voice / end into its pause as audit() asks, keeping order and back-to-back runs."""
+    done = []
+    for k, what, val in fixes:
+        r = out[k]
+        if what == "end":
+            done.append(f"{r['text']!r} now ends {tc(val, fps)} (was {tc(r['end'], fps)})")
+            r["end"] = val
+            continue
+        lo = out[k - 1]["start"] + MIN_GAP if k else 0
+        hi = min(out[k + 1]["start"] - MIN_GAP if k + 1 < len(out) else r["end"] - 1, r["end"] - MIN_GAP)
+        val = min(max(val, lo), hi)
+        if val == r["start"]:
+            continue
+        if k and (out[k - 1]["end"] == r["start"] or out[k - 1]["end"] > val):
+            out[k - 1]["end"] = val   # back to back stays back to back
+        done.append(f"{r['text']!r} now starts {tc(val, fps)} (was {tc(r['start'], fps)})")
+        r["start"], r["src"] = val, r["src"] + "+fixed"
+    return done
+
+
+LEADING = ("dip", "words", "words-raw", "back-dip", "spread")   # sources that get the --early lead
+
+
+def audit(x, out, fps, early, hide, stops=(), with_fixes=False, onsets=()):
+    """Every caption against the waveform, for the misses users have caught (2026-11-07): a start over the silence
+    before its voice (AND IT, PUT IT), a start after its word has clearly begun (TRICK on its final "k", 10 frames
+    late), a caption left up over a pause (AWAY). `stops`: where real pauses (>= 0.15 s) begin, in seconds.
+    Returns NOTE lines; none means every caption sits on its voice. Tested against the flagged versions."""
+    quiet = lambda j: all(silent(x, i, fps) for i in (j, j - 1, j - 2))   # 3 frames: a pause, not a stop consonant
+    # a voice coming out of a pause shows on the frame it starts in, as plan places it (4.93 s -> frame 147, not 148)
+    on_frame = lambda v: next((int(o * fps) for o in onsets if abs(o * fps - v) <= 1.5), v)
+    notes, fixes = [], []
+    for k, r in enumerate(out):
+        f, e, t = r["start"], r["end"], r["text"]
+        prev = out[k - 1]["start"] if k else -99
+        if "cut" not in r["src"] and r["src"] not in ("start", "pinned"):   # by rule, or placed by hand
+            v = next((j for j in range(f, f + 15) if not silent(x, j, fps)), None)
+            if v is not None:
+                lead = 0 if quiet(v - 1) else early   # out of a pause: on the voice; mid-phrase: up to --early before
+                if v - f > lead + 1:
+                    notes.append(f"{t!r} at {tc(f, fps)} shows {v - f} frames before its voice (allowed {lead})")
+                    fixes.append((k, "start", on_frame(v) - lead))
+            q = next((j for j in range(f - 1, f - 9, -1) if quiet(j)), None)
+            stop = next((s0 * fps for s0 in stops if s0 * fps > f - 1), None)
+            if q is not None and f - (q + 1) > 1 and prev < q + 1 - 6:
+                notes.append(f"{t!r} at {tc(f, fps)} starts {f - q - 1} frames after the voice came back: late")
+                fixes.append((k, "start", on_frame(q + 1)))
+            elif stop is not None and stop - f < 5 and (v is None or v < stop) and e <= stop + TAIL + round(fps / 2):
+                # only when the caption ends in that pause: a short first word before a break ("not / from cream") is fine
+                notes.append(f"{t!r} at {tc(f, fps)} has only {max(0, round(stop - f))} frames of voice before the "
+                             f"pause: it starts on the end of its word, late")
+            elif q is None:
+                lead = early if r["src"] in LEADING else 0
+                late = [c for c in closure_onsets(x, (f - 6) / fps, (f - lead - 2) / fps) if c * fps > prev + 2]
+                if late and not closure_onsets(x, (f - lead - 2) / fps, (f + 3) / fps):
+                    notes.append(f"{t!r} at {tc(f, fps)}: the voice rises out of a gap {round(f - late[-1] * fps)} "
+                                 f"frames before it: maybe late")
+        run = 0
+        while run < e - f and silent(x, e - 1 - run, fps):
+            run += 1
+        after = 0   # the silence must be a real pause (--hide): short ones are run through by rule
+        while after < round(fps * 2) and silent(x, e + after, fps):
+            after += 1
+        if run > TAIL + 1 and e - f > round(fps / 2) and hide and (run + after) / fps >= hide:
+            notes.append(f"{t!r} stays up {run} frames over silence before {tc(e, fps)}")
+            fixes.append((k, "end", max(e - run + TAIL, f + round(fps / 2))))
+    return (notes, fixes) if with_fixes else notes
 
 
 def tc(fr, fps):
@@ -787,9 +923,11 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     w = sub.add_parser("words"); w.add_argument("project"); w.add_argument("--vo", default="A1")
     w.add_argument("--fast", action="store_true",
-                   help="Parakeet only (about 25 s instead of 80 s for 95 s of voice; mid-phrase starts can run 2-3 frames late)")
+                   help="Parakeet only (about 25 s instead of 80 s for 95 s of voice; mid-phrase starts can run 2-7 frames off)")
     p = sub.add_parser("plan"); p.add_argument("project"); p.add_argument("--script"); p.add_argument("--fixes")
     p.add_argument("--max-words", type=int, default=MAXWORDS, help="most words a caption (template 5: 2, template 6: 7)")
+    p.add_argument("--early", type=int, help=f"show captions this many frames before their voice (default {EARLY_POP} "
+                   "with --max-words 3 or fewer, the one- and two-word pop templates 5 and 7; else 0)")
     p.add_argument("--hide", type=float, default=0.4,
                    help="clear the screen in voice pauses at least this long, s (0: captions back to back)")
     b = sub.add_parser("build"); b.add_argument("project"); b.add_argument("-t", "--template", default="4", choices=STYLES)

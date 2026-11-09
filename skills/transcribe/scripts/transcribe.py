@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Speech to text with word timestamps: ElevenLabs Scribe by default, then Parakeet (local), then faster-whisper.
+"""Speech to text with word timestamps, fully local. Parakeet TDT 0.6B v3 on the Intel GPU, CPU fallbacks.
 
-  transcribe.py MEDIA [MEDIA ...] [--srt] [--out-dir DIR] [--engine auto|elevenlabs|parakeet|whisper]
+  transcribe.py MEDIA [MEDIA ...] [--srt] [--out-dir DIR] [--verify] [--engine NAME]
 
 Takes any audio or video file and writes next to it (or in --out-dir):
   <stem>.txt         the transcript
@@ -9,85 +9,114 @@ Takes any audio or video file and writes next to it (or in --out-dir):
   <stem>.srt         with --srt: subtitles split at sentence punctuation
 
 Other skills import it: `from transcribe import words` -> [(word, start, end), ...].
+It runs under any python3: every engine is its own process (parakeet.cpp binary, or the venv for ONNX/whisper).
 
-ElevenLabs Scribe v2 (cloud) got every word of a 145 s test voiceover right in about 5 s and marks
-muted or bleeped words as an audio event ("[censored]") with its times. Its key comes from
-$ELEVENLABS_API_KEY, else ~/.config/elevenlabs/api_key. With no key, or when the call fails, the
-local engines run: Parakeet (parakeet-tdt-0.6b-v3, pip install "onnx-asr[cpu,hub]"; the model is read
-from ~/.local/share/voxtype/models/ when present, otherwise downloaded once), then faster-whisper (small.en).
+Engines, tried in order until one gives a sane result:
+  parakeet-gpu   parakeet.cpp + Vulkan on the Arc GPU        (~70x real time)
+  parakeet-cpu   the same binary and model on the CPU         (~10x real time, same output format)
+  parakeet-onnx  onnx-asr, an independent Parakeet runtime    (venv, CPU)
+  whisper        faster-whisper small.en, a different model   (venv, CPU, last resort)
 """
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
 import tempfile
 import time
-import urllib.error
-import urllib.request
-import uuid
 import wave
 from pathlib import Path
 
-SCRIBE = "scribe_v2"
-SCRIBE_URL = "https://api.elevenlabs.io/v1/speech-to-text"
-KEY_FILE = Path.home() / ".config/elevenlabs/api_key"
-PARAKEET = "nemo-parakeet-tdt-0.6b-v3"
-LOCAL_MODELS = Path.home() / ".local/share/voxtype/models"
-WHISPER_MODEL = "small.en"
 RATE = 16000
-CHUNK = 300        # seconds per Parakeet pass; longer files are cut at the quietest moment near each boundary
-SEARCH = 20        # seconds before each boundary searched for that quiet moment
-LAST_WORD = 0.08   # length given to the final word, which has no next word to end it
+PCPP = Path.home() / ".local/share/parakeet-cpp"            # parakeet.cpp Vulkan build, see SKILL.md
+PCPP_MODEL = PCPP / "model/tdt-0.6b-v3-f16.gguf"
+VK_DEVICE = os.environ.get("TRANSCRIBE_VK_DEVICE", "Vulkan0")
+VENV_PY = Path.home() / ".local/share/transcribe-venv/bin/python"   # has onnx-asr and faster-whisper
+PARAKEET_ONNX = "nemo-parakeet-tdt-0.6b-v3"
+LOCAL_MODELS = Path.home() / ".local/share/voxtype/models"
+WHISPER_MODELS = ("medium.en", "small.en")   # the first one already downloaded is used; small.en is fetched if none is
+CHUNK = 30         # seconds per ONNX pass, cut at the quietest moment in the last SEARCH seconds
+SEARCH = 5
+LAST_WORD = 0.08   # ONNX: length given to the final word, which has no next word to end it
+VERIFY_TOL = 0.15  # --verify: a word start may differ by one 80 ms Parakeet step between GPU and CPU, not two
 
 
-def elevenlabs_key():
-    import os
-    k = os.environ.get("ELEVENLABS_API_KEY", "").strip()
-    return k or (KEY_FILE.read_text().strip() if KEY_FILE.exists() else "")
+def to_wav(path, d):
+    """Any media file -> 16 kHz mono WAV in directory d; returns (wav, seconds)."""
+    wav = Path(d) / "a.wav"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(path), "-vn", "-ar", str(RATE), "-ac", "1",
+                    "-c:a", "pcm_s16le", str(wav)], check=True)
+    with wave.open(str(wav)) as w:
+        return wav, w.getnframes() / RATE
 
 
-def elevenlabs_words(path):
-    """Scribe word timestamps. Audio events ("[censored]", "[laughter]") are kept as words, brackets and all."""
-    key = elevenlabs_key()
-    if not key:
-        raise RuntimeError(f"no ElevenLabs key ($ELEVENLABS_API_KEY or {KEY_FILE})")
-    with tempfile.TemporaryDirectory() as d:  # 16 kHz mono FLAC: a small upload that loses nothing the model uses
-        flac = Path(d) / "a.flac"
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(path), "-vn", "-ar", str(RATE), "-ac", "1",
-                        str(flac)], check=True)
-        audio = flac.read_bytes()
-    b = uuid.uuid4().hex
-    fields = {"model_id": SCRIBE, "timestamps_granularity": "word", "tag_audio_events": "true"}
-    body = b"".join(f'--{b}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'.encode()
-                    for k, v in fields.items())
-    body += (f'--{b}\r\nContent-Disposition: form-data; name="file"; filename="a.flac"\r\n'
-             f"Content-Type: audio/flac\r\n\r\n").encode() + audio + f"\r\n--{b}--\r\n".encode()
-    req = urllib.request.Request(SCRIBE_URL, data=body, method="POST", headers={
-        "xi-api-key": key, "Content-Type": f"multipart/form-data; boundary={b}"})
-    try:
-        with urllib.request.urlopen(req, timeout=900) as r:
-            res = json.load(r)
-    except urllib.error.HTTPError as e:
-        raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from None
-    return [(w["text"].strip(), round(w["start"], 3), round(w["end"], 3))
-            for w in res["words"] if w["type"] != "spacing" and w["text"].strip()]
+def duration(path):
+    with tempfile.TemporaryDirectory() as d:
+        return to_wav(path, d)[1]
 
 
-def load_audio(path):
-    """Any media file -> float32 mono 16 kHz samples."""
+def sane(ws, seconds):
+    """Cheap check on any engine's result: ordered, inside the file, not an absurd word rate."""
+    if not ws:
+        return True    # silence is a valid answer (but see words(): only trusted on short files)
+    starts = [w[1] for w in ws]
+    return (all(a <= b for a, b in zip(starts, starts[1:])) and starts[0] >= 0 and ws[-1][1] <= seconds + 0.5
+            and len(ws) / max(seconds, 1) <= 8)
+
+
+# ---------- parakeet.cpp (GPU and CPU) ----------
+
+def parakeet_cpp(path, device):
+    """(words, device_that_ran) from parakeet-cli. One short-lived process: the model loads (~1 s), runs, and the
+    GPU is released when it exits. A crash ends only that process; a hang is killed by the timeout.
+    parakeet.cpp silently uses the CPU when the named GPU is missing, so the device is read back from its log."""
+    cli = PCPP / "bin/parakeet-cli"
+    if not (cli.exists() and PCPP_MODEL.exists()):
+        raise RuntimeError(f"parakeet.cpp not installed in {PCPP}")
+    with tempfile.TemporaryDirectory() as d:
+        wav, seconds = to_wav(path, d)
+        env = {**os.environ, "LD_LIBRARY_PATH": f"{PCPP / 'lib'}:" + os.environ.get("LD_LIBRARY_PATH", ""),
+               "PARAKEET_DEVICE": device}
+        # GPU measured ~70x real time and CPU ~10x; the timeouts leave 10-30x headroom, so only a real hang hits them
+        limit = 60 + (seconds / 2 if device != "cpu" else seconds)
+        r = subprocess.run([str(cli), "transcribe", "--model", str(PCPP_MODEL), "--input", str(wav), "--timestamps"],
+                           capture_output=True, text=True, env=env, timeout=limit)
+    if r.returncode:
+        raise RuntimeError(f"parakeet-cli exit {r.returncode}: {r.stderr.strip()[-200:]}")
+    m = re.search(r"using device: (\S+)", r.stderr)
+    ran = m.group(1) if m else "cpu"
+    ws = [(m.group(3), float(m.group(1)), float(m.group(2)))
+          for m in (re.match(r"([\d.]+)-([\d.]+)\s+(.+?)\s+\([\d.]+\)\s*$", l) for l in r.stdout.splitlines()) if m]
+    return ws, ran
+
+
+# ---------- engines that need the venv (run as a subprocess, so any caller's python works) ----------
+
+def _venv(flag, path, seconds):
+    py = str(VENV_PY if VENV_PY.exists() else sys.executable)
+    r = subprocess.run([py, __file__, flag, str(path)], capture_output=True, text=True, timeout=300 + 3 * seconds)
+    if r.returncode:
+        raise RuntimeError(r.stderr.strip()[-300:] or f"exit {r.returncode}")
+    return [tuple(w) for w in json.loads(r.stdout)]
+
+
+def whisper_file(path):
+    """faster-whisper words for a file, in the venv. fc_captions.py uses it as the second opinion on timing."""
+    return _venv("--whisper-words", path, duration(path))
+
+
+def _load_audio(path):
     import numpy as np
     with tempfile.TemporaryDirectory() as d:
-        wav = Path(d) / "a.wav"
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(path), "-vn", "-ar", str(RATE), "-ac", "1",
-                        "-c:a", "pcm_s16le", str(wav)], check=True)
+        wav, _ = to_wav(path, d)
         with wave.open(str(wav)) as w:
             pcm = w.readframes(w.getnframes())
     return np.frombuffer(pcm, dtype=np.int16).astype(np.float32) / 32768
 
 
-def chunks(audio):
+def _chunks(audio):
     """(offset_seconds, samples) pieces of at most CHUNK seconds, cut where it's quietest."""
     import numpy as np
     out, start, n = [], 0, len(audio)
@@ -102,17 +131,13 @@ def chunks(audio):
     return out
 
 
-def parakeet_model():
-    # full precision: int8 was no faster on a CPU and misheard swears (muted and not) on the test voiceover
+def _onnx_words(path):
+    # full precision on purpose: int8 was no faster on the CPU and misheard swears on the test voiceover
     import onnx_asr
     d = LOCAL_MODELS / "parakeet-tdt-0.6b-v3"
-    return onnx_asr.load_model(PARAKEET, str(d) if (d / "vocab.txt").exists() else None).with_timestamps()
-
-
-def parakeet_words(audio):
-    model = parakeet_model()
+    model = onnx_asr.load_model(PARAKEET_ONNX, str(d) if (d / "vocab.txt").exists() else None).with_timestamps()
     out = []
-    for offset, piece in chunks(audio):
+    for offset, piece in _chunks(_load_audio(path)):
         r = model.recognize(piece, sample_rate=RATE)
         for tok, ts in zip(r.tokens, r.timestamps):
             if tok.startswith(" ") or not out:
@@ -123,41 +148,84 @@ def parakeet_words(audio):
             for i, (w, s) in enumerate(out) if w]
 
 
-def whisper_words(audio):
+def _whisper_words(path):
     from faster_whisper import WhisperModel
-    try:    # the cached model first: the hub check can hang for minutes on a bad network
-        model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", local_files_only=True)
-    except Exception:
-        model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
-    segs, _ = model.transcribe(audio, language="en", word_timestamps=True)
+    model = None
+    for name in WHISPER_MODELS:   # cached models first: the hub check can hang for minutes on a bad network
+        try:
+            model = WhisperModel(name, device="cpu", compute_type="int8", local_files_only=True)
+            break
+        except Exception:
+            pass
+    model = model or WhisperModel(WHISPER_MODELS[-1], device="cpu", compute_type="int8")
+    # decoded samples, not the path: faster-whisper 1.2.1's own decoder breaks on newer PyAV (metadata_errors)
+    segs, _ = model.transcribe(_load_audio(path), language="en", word_timestamps=True)
     return [(w.word.strip(), round(w.start, 3), round(w.end, 3)) for s in segs for w in s.words if w.word.strip()]
 
 
-ENGINES = {"elevenlabs": ("ElevenLabs Scribe", elevenlabs_words),
-           "parakeet": ("Parakeet", lambda p: parakeet_words(load_audio(p))),
-           "whisper": (f"faster-whisper {WHISPER_MODEL}", lambda p: whisper_words(load_audio(p)))}
+# ---------- the chain ----------
+
+def _norm(ws):
+    return [re.sub(r"[^a-z0-9]", "", w.lower()) for w, _, _ in ws]
 
 
-def words(path, engine="auto"):
+def _agree(a, b):
+    """Same words and every start within VERIFY_TOL."""
+    return _norm(a) == _norm(b) and all(abs(x[1] - y[1]) <= VERIFY_TOL for x, y in zip(a, b))
+
+
+ENGINES = ["parakeet-gpu", "parakeet-cpu", "parakeet-onnx", "whisper"]
+LABELS = {"parakeet-gpu": "Parakeet (GPU, parakeet.cpp Vulkan)", "parakeet-cpu": "Parakeet (CPU, parakeet.cpp)",
+          "parakeet-onnx": "Parakeet (CPU, ONNX)", "whisper": "faster-whisper"}
+
+
+def _run(name, path, seconds):
+    """(words, label) from one engine, or an exception."""
+    if name in ("parakeet-gpu", "parakeet-cpu"):
+        ws, ran = parakeet_cpp(path, VK_DEVICE if name == "parakeet-gpu" else "cpu")
+        if name == "parakeet-gpu" and not ran.lower().startswith("vulkan"):
+            raise RuntimeError(f"GPU {VK_DEVICE} not found by parakeet.cpp (it ran on {ran})")
+        return ws, LABELS[name]
+    return _venv("--onnx-words" if name == "parakeet-onnx" else "--whisper-words", path, seconds), LABELS[name]
+
+
+def words(path, engine="auto", verify=None):
     """[(word, start, end), ...] for any audio or video file. Word text keeps its punctuation.
 
-    "auto" tries ElevenLabs, then Parakeet, then faster-whisper, moving on when one can't run;
-    naming an engine starts the chain there."""
-    order = list(ENGINES)
-    order = order[order.index(engine):] if engine in ENGINES else order
+    Engines run in ENGINES order; a crash, hang, missing install or a result that fails sane() moves on to the
+    next one. Zero words in a file over 3 s is also passed on, so silence is confirmed, never trusted.
+    Naming an engine starts the chain there. verify=True (or TRANSCRIBE_VERIFY=1) re-runs a GPU result on the
+    CPU and keeps the CPU words unless both agree on every word and every start (within one step)."""
+    if verify is None:
+        verify = os.environ.get("TRANSCRIBE_VERIFY", "0") == "1"
+    seconds = duration(path)
+    order = ENGINES[ENGINES.index(engine):] if engine in ENGINES else ENGINES
     for i, name in enumerate(order):
-        label, fn = ENGINES[name]
         try:
-            ws = fn(path)
+            ws, label = _run(name, path, seconds)
+            if not sane(ws, seconds):
+                raise RuntimeError("result failed the sanity check")
+            if not ws and seconds > 3:
+                raise RuntimeError("no words in a file longer than 3 s; letting the next engine confirm")
+            if verify and name == "parakeet-gpu":
+                try:
+                    cpu, cpu_label = _run("parakeet-cpu", path, seconds)
+                except Exception as e:   # no CPU check possible: the ONNX engine gives the result instead
+                    raise RuntimeError(f"--verify: the CPU check failed ({e})")
+                if _agree(ws, cpu):
+                    label += ", verified on CPU"
+                else:
+                    print("--verify: GPU and CPU differ; keeping the CPU result", file=sys.stderr)
+                    ws, label = cpu, cpu_label + " (GPU disagreed)"
             print(f"transcribed {Path(path).name} with {label}", file=sys.stderr)
             return ws
-        except Exception as e:  # no key, no network, no credits, a missing package or a model that won't load
-            nxt = ENGINES[order[i + 1]][0] if i + 1 < len(order) else None
-            print(f"{label} unavailable ({e.__class__.__name__}: {e})" + (f"; trying {nxt}" if nxt else ""),
-                  file=sys.stderr)
-    sys.exit(f"no speech-to-text ran: add an ElevenLabs key at {KEY_FILE}, or "
-             'pip install "onnx-asr[cpu,hub]" (Parakeet) or faster-whisper')
+        except Exception as e:
+            nxt = f"; trying {LABELS[order[i + 1]]}" if i + 1 < len(order) else ""
+            print(f"{LABELS[name]} failed ({e.__class__.__name__}: {e}){nxt}", file=sys.stderr)
+    sys.exit("no speech-to-text engine worked; see the messages above and transcribe/SKILL.md (setup)")
 
+
+# ---------- output ----------
 
 def stamp(t):
     ms = int(round(t * 1000))
@@ -179,14 +247,24 @@ def srt(ws):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("media", type=Path, nargs="+")
+    ap.add_argument("media", type=Path, nargs="*")
+    ap.add_argument("--onnx-words", metavar="FILE", help=argparse.SUPPRESS)
+    ap.add_argument("--whisper-words", metavar="FILE", help=argparse.SUPPRESS)
     ap.add_argument("--srt", action="store_true", help="also write <stem>.srt")
     ap.add_argument("--out-dir", type=Path)
-    ap.add_argument("--engine", choices=["auto", *ENGINES], default="auto")
+    ap.add_argument("--engine", choices=["auto", *ENGINES], default="auto", help="start the chain at this engine")
+    ap.add_argument("--verify", action="store_true",
+                    help="re-run a GPU result on the CPU and keep the CPU words unless both agree (use for captions)")
     a = ap.parse_args()
+    if a.onnx_words:
+        return print(json.dumps(_onnx_words(a.onnx_words)))
+    if a.whisper_words:
+        return print(json.dumps(_whisper_words(a.whisper_words)))
+    if not a.media:
+        ap.error("give at least one media file")
     for m in a.media:
         t = time.time()
-        ws = words(m, a.engine)
+        ws = words(m, a.engine, True if a.verify else None)
         d = a.out_dir or m.parent
         d.mkdir(parents=True, exist_ok=True)
         base = d / m.stem
