@@ -21,6 +21,7 @@ The user edits and exports in FilmCraft, so captions go into the project as text
 A single ASR engine alone was 0.16 s (4 frames) late on part of a voiceover, and the client saw it. Engines disagree by a few frames, and each one drifts. So `plan`:
 - After a pause, starts the caption on the frame where the voice comes back. Pauses come from the `transcribe` skill's `pauses.py`, with a threshold set from the recording (between its noise floor and its speech level). A fixed -40 dB found none of the pauses in Max video-2, whose AI clips carry room tone.
 - Mid-sentence, takes Parakeet's word start plus Parakeet's measured lead on this recording (about 0.08 s), averages it with faster-whisper when the two agree within 0.3 s, and moves it to the end of a real pause just before it, or to the dip just before the voice rises 6 dB (source `dip`). Expect about ±1 frame.
+- **`plan` prints what to look at:** `CHECK` for a caption whose first word wasn't heard as its own word (found by its letters, or GUESSED: look at that frame), `BRIEF` for a caption word the brief (`brief/*.txt`, or `--brief`) spells another way or never uses.
 - **Whisper stays on by default.** Rechecked 2026-11-07 on the one-word test: without it 6 of 27 captions moved 3–7 frames off the waveform and ONE started in the silence before its voice. Neither engine alone is more accurate (see the transcribe skill's model test), but they miss in different directions, so the average is closer. Tested on Max video-2 hook 1: Parakeet plus the dip matched the waveform on 71 of 74 onsets, but was still 2–5 frames late on about 14 mid-phrase captions, and late captions are what the client complained about. `words --fast` (Parakeet only, about 25 s instead of 80 s) is for drafts.
 - With one- and two-word captions (templates 5 and 7) words are ~7 frames apart: the dip search never goes back past the previous word's start, and a start that lands in the silence after a word falls back to Parakeet's own start. Before this (2026-11-07 test), captions doubled up on one frame and got spread up to 9 frames late. On that synthetic voice the 0.08–0.12 s lead made some mid-phrase starts ~3 frames late; it was measured on real voices, so recheck it on the next real one-word edit.
 - **Pop captions lead the voice by 3 frames** (`plan --early`, on by default with `--max-words 3` or fewer, i.e. templates 5 and 7; 0 for phrase captions). Placed exactly on the voice, one-word captions read as late next to a version that leads (user, 2026-11-07). The lead is for mid-phrase starts only (`dip`, `words`, `spread`): a caption after a pause (`onset`, `pause`) or on a cut stays exactly on the voice, else it shows in the silence before the word (user's waveform review, same day). A caption that ends in a pause clears 2 frames after the voice even when that makes it shorter than half a second, rather than staying over the silence. The lead never leaves the caption before it under 5 frames (a 2-frame "AND" flashed).
@@ -35,6 +36,9 @@ A single ASR engine alone was 0.16 s (4 frames) late on part of a voiceover, and
 
    ```bash
    <skill-dir>/scripts/fc_captions.py words video-N/edit/hook-1.fcproj        # --vo A2 if the voice isn't on A1
+   # it takes ~40 s: start it in the background as soon as the voice is on A1, and work on the blocks meanwhile.
+   # To know when it's done, read its output file or captions/<stem>.fw.json, never a pgrep/wait loop
+   # (on video-23 one matched its own command and wasted 3 minutes)
    ```
 
    It deletes every other audio track in memory, exports the voice as `captions/<stem>.vo.wav` and never saves the project.
@@ -69,6 +73,7 @@ A single ASR engine alone was 0.16 s (4 frames) late on part of a voiceover, and
 
 | # | Look |
 |---|---|
+| 1 | Podcast clip (Calvin video-23 DCT#28 reference, user 2026-11-09 "1:1 replica"): ALL CAPS white TikTok Sans SemiBold 70, no punctuation and no word hyphens (THIRD GENERATION, as the reference; omega-7 keeps its hyphen), on a solid black box per line (22 px side / 6 px top-bottom padding, radius 10), box centre y 1413. 1–3 words a page (`plan --max-words 3`), one line each where it fits (write blocks that fit 900 px); a longer one wraps over 900 px into two balanced lines, never one short word alone on the second (user 2026-11-09). In split shots move the captions onto the seam (motion position y 506; video-23 `edit/seam_captions.py`) after every build |
 | 4 | Sentence-case white Montserrat ExtraBold 68, 3 px black outline, soft shadow (blur 7, 4 px down, 75%), centred, baseline y 1420 |
 | 2 | Same, ALL CAPS TikTok Sans ExtraBold 68 |
 | 3 | TikTok's own caption look: sentence-case white TikTok Sans SemiBold 64, 2 px black outline, soft dark glow (blur 9, no offset, 90%), centred, baseline y 1408. Matched to a TikTok reference frame at 50, raised to 64 for a 45+ audience |

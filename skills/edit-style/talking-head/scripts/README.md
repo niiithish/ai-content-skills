@@ -40,3 +40,17 @@ Every script edits a `.fcproj` through `filmcraft-cli`, writes a backup next to 
 The `dct-2190/` scripts are the latest and most careful versions. When a kit script and a dct-2190 script do the same job (building hook 1, cloning), start from the dct-2190 one and change its constants.
 
 Shared overlays (🤯, CTA arrows, click) are in `../../assets/`, and the FilmCraft installer is in `../../scripts/setup/`.
+
+## dct-28/: format C, the two-woman podcast (Calvin video-23)
+
+Video-23's own scripts, kept as working examples: set the paths, shot lists and frame numbers at the top before reuse.
+
+| Script | Does |
+|---|---|
+| `build_hook1.py` | The whole hook-1 build: 1.1x talking pieces cut at every speech piece, punch-ins, inserts on V2, top/bottom splits with the listener clips, pushes |
+| `seam_captions.py PROJECT` | Generic: moves captions inside split shots onto the seam (y 506). Rerun after every caption build |
+| `make_focus_screens.py` | Focus screens: page zoomed ~2x on the spoken line at frame centre, blur above and below (`references/screen-inserts.md`) |
+| `make_219_scroll.py` | A slow product-page scroll from under the sale bar to Add to Cart at centre, timed to its slot |
+| `fill_jumpcuts.py PROJECT C [C…]` | Generic: puts a cut pause back at 1.5x with a ×1.08 zoom, moving everything after |
+| `build_hooks23.py N` + `add_opening_captions.py N` | Hooks 2–3 from the user's hook 1: only the opening replaced |
+| `speech_ranges.py`, `build_speaker_projects.py`, `check_exports.py` | The first voice-change route (one track per speaker, silences ≤ 0.3 s). Replaced by `voice_change.py` in talking-head-video-production |

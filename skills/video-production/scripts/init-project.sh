@@ -7,7 +7,8 @@
 #                                 a standalone video: everything below goes in that one folder
 #                                 (a client whose videos share nothing)
 #
-# --style animated|photoreal|clay names the style skill in a new AGENTS.md (default animated).
+# --style animated|photoreal|clay|talking-head names the style skill in a new AGENTS.md (default animated).
+# talking-head also makes video-N/audio/original/ and audio/voice-changed/ (the ElevenLabs voice change).
 #
 # Creates, without overwriting anything that exists:
 #   AGENTS.md                     client rules, look, sheets, decisions (from the template)
@@ -23,13 +24,13 @@ ROOT=""; VIDEO_NAME=""; UPDATE=0; STYLE=animated
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --update-scripts) UPDATE=1 ;;
-    --style) STYLE="${2:?--style needs animated, photoreal or clay}"; shift ;;
+    --style) STYLE="${2:?--style needs animated, photoreal, clay or talking-head}"; shift ;;
     *) if [[ -z "$ROOT" ]]; then ROOT="$1"; elif [[ -z "$VIDEO_NAME" ]]; then VIDEO_NAME="$1"; fi ;;
   esac
   shift
 done
-[[ -n "$ROOT" ]] || { echo "usage: init-project.sh /abs/client-folder [video-N|.] [--style animated|photoreal|clay] [--update-scripts]" >&2; exit 2; }
-[[ "$STYLE" == animated || "$STYLE" == photoreal || "$STYLE" == clay ]] || { echo "--style is animated, photoreal or clay" >&2; exit 2; }
+[[ -n "$ROOT" ]] || { echo "usage: init-project.sh /abs/client-folder [video-N|.] [--style animated|photoreal|clay|talking-head] [--update-scripts]" >&2; exit 2; }
+[[ "$STYLE" == animated || "$STYLE" == photoreal || "$STYLE" == clay || "$STYLE" == talking-head ]] || { echo "--style is animated, photoreal, clay or talking-head" >&2; exit 2; }
 VIDEO_NAME="${VIDEO_NAME:-video-1}"
 
 SKILL=$(cd "$(dirname "$0")/.." && pwd)
@@ -43,6 +44,7 @@ made() { echo "created $1"; }
 
 mkdir -p "$ROOT"/brief "$ROOT"/assets/{characters,environments,props} \
          "$VIDEO"/{scenes,clips,edit,review,scripts,deliverables,.flow}
+[[ "$STYLE" == talking-head ]] && mkdir -p "$VIDEO"/audio/{original,voice-changed}
 
 if [[ ! -e "$ROOT/AGENTS.md" ]]; then
   sed "s/{{STYLE}}/$STYLE/g" "$SKILL/templates/AGENTS.md" > "$ROOT/AGENTS.md"

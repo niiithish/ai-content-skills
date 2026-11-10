@@ -65,7 +65,7 @@ It replaces the project item's media (`media.replaceFootage`) and renames it to 
 - **Settings:** H.264 High at 6 Mb/s VBR 1-pass (peaks at 9 Mb/s), AAC 192k, GPU rendering on, at the sequence's own size and frame rate. That's about 45 MB a minute, so 2 minutes come to about 90 MB. Use `--kbps 4000` for smaller files (about 32 MB a minute). Meta re-encodes every upload, so more bitrate buys nothing on the phone.
 - **It exports the saved file.** If the user's open copy has unsaved changes, it saves them first and says so.
 - **Run it with `run_in_background`** so the user can keep editing. It exports one file at a time at low priority. Export rendering uses every core, so parallel exports only slow each other down.
-- **Speed:** about 1.3 s per second of video on the Iris Xe laptop (a 2 min hook takes about 2.6 min). Say so up front for several hooks.
+- **Speed:** with the patched GPU build, about 0.25 s per second of video on the Arc B570 (a 2 min hook takes about 30–40 s). Say so up front for several hooks.
 - **The check:** it prints size, length, frame size and codecs, and fails unless the file is H.264 + AAC. Report the size.
 - **Captions:**
   - Captions made with `captions-filmcraft` are text clips, so they're already in the picture.
@@ -80,8 +80,9 @@ It replaces the project item's media (`media.replaceFootage`) and renames it to 
 - Never export, delete clips from a project, or rebuild a project the user has tweaked without being asked. Rebuilding overwrites their tweaks, so ask first and keep a backup copy in `edit/backup-<date>/`.
 - Ask before rendering anything the user didn't ask for, test exports included. Use short ranges (`--start/--end`) for tests.
 
-## Known limits (FilmCraft 0.9.0, checked 2026-10-18)
+## The FilmCraft on this machine: the patched build
 
-- **Hardware encoding on Intel isn't in a release yet.** On Linux, `hardwareEncoding: auto` only reaches NVIDIA. PR #1256 (VA-API) is open, and testers on Iris Xe measured it about 25% faster. On this laptop, encoding is only about 12% of export time, so don't build it.
-- **What would make exports really faster** is the export renderer itself: open PRs #2233, #2193, #1284, #2025. Check `gh release list -R storytold/filmcraft` when the user asks about speed.
-- **The bridge can stall** for a few seconds while the app loads a project. `fc.py` waits and then stops rather than falling back to the file. Once, after an export started *inside* the app over the bridge, the app stopped answering the bridge. That's why `fc.py` exports from the CLI.
+- The only FilmCraft installed is the user's patched build (since 2026-11-09; the official pacman package was removed). `filmcraft` and `filmcraft-cli` in `~/.local/bin` point to `~/.local/opt/filmcraft-gpu`, and the launcher "FilmCraft" runs `filmcraft-live` (bridge on 9876 with the token). Update it with `filmcraft-update`, not the in-app updater or pacman.
+- It renders on the Intel Arc B570, converts to 4:2:0 on the GPU and **encodes H.264 on the GPU through VA-API**. Measured about 3x faster than the official build (177 s of video in 41 s).
+- When the user asks "is it using the GPU": yes, for both rendering and encoding.
+- **The bridge can stall** for a few seconds while the app loads a project. `fc.py` waits and then stops rather than falling back to the file. Once, after an export started *inside* the app over the bridge, the app stopped answering the bridge. That is why `fc.py` exports from the CLI.

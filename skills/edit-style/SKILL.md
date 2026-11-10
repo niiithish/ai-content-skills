@@ -9,11 +9,12 @@ This is how the user and I edit every ad in FilmCraft. The principles below held
 
 | Load | When |
 |---|---|
-| `talking-head-edit` ([talking-head/SKILL.md](talking-head/SKILL.md)) | One speaker carries the script on V1 with full-screen pictures over her (Aleo video-5, DCT-2190) |
+| `talking-head-edit` ([talking-head/SKILL.md](talking-head/SKILL.md)) | One speaker (Aleo video-5, DCT-2190) or a two-woman podcast (Calvin video-23) carries the script on V1 with full-screen pictures over her |
 | `voiceover-edit` ([voiceover/SKILL.md](voiceover/SKILL.md)) | Shots, clips or stills under a voiceover or a song, one picture per line (Mysa video-7 to 18, CloudAlign) |
+| [references/screen-inserts.md](references/screen-inserts.md) | Any search, AI-answer, typed-address, study or product-page screen: made by us as focus screens, full frame, key line at centre |
 | [references/recipes.md](references/recipes.md) | Any change request on a saved edit: swap, remove, retime, caption fixes; FilmCraft traps |
 | [references/new-machine.md](references/new-machine.md) | A new PC, or a missing tool or font |
-| `assets/` | Shared overlays: iPhone 🤯, red CTA arrows, the click sound |
+| `assets/` | Shared overlays: iPhone 🤯, red CTA arrows, the click sound; `assets/screens/` screen-UI templates and approved examples |
 | `scripts/setup/filmcraft-update` | Install or update FilmCraft |
 
 Also load `filmcraft` (CLI, bridge, export) and `captions-filmcraft` (`fc_captions.py`, `fc_inserts.py`). `filmcraft-pacing` cuts dead air and adds motion. The client folder's `AGENTS.md` / `CLAUDE.md` (playbook, taste log) and the video's own file win over this skill. Newest feedback wins over older notes.
@@ -26,8 +27,10 @@ Also load `filmcraft` (CLI, bridge, export) and `captions-filmcraft` (`fc_captio
 4. **Each picture holds until the next one.** No gap where something vanishes while the voice goes on.
 5. **Everything moves.**
    - Every still gets a slow, centred push from its first frame to its last at one rate: 2 % of its scale a second. It never starts late, never stops early.
-   - Every clip has motion in it. Flow clips start slowly, so skip their first 0.4–0.5 s.
+   - Every clip has motion in it. Flow clips start slowly, so start them from the 1 s mark (user 2026-11-09: "the main action is slow in the first 1 sec").
    - Talking shots get a slow push, plus hard zoom steps only on a cut or a caption start. Never a sideways drift.
+   - **In a hook opening, no hard zoom steps** (video-23 user, 2026-11-10: "no hard cut zoom… slow zoom"): the talking pieces share one continuous slow zoom across their jump cuts. A dead-air jump cut there is better as the real pause played at 1.5x with a quick ×1.08 zoom across it (`talking-head/scripts/dct-28/fill_jumpcuts.py`).
+   - **The hook-to-body cut gets a push-in blur**: FilmCraft's `zoom_blur` transition, 8 frames centred on the V1 cut (4 frames on a split's listener clip so the whole frame blurs).
 6. **A clip that goes from a start state to an end state plays whole.** Speed it up to fit its slot, so the end state is seen.
 7. **Dead air is cut to a breath.**
    - The voice is sped up 1.1x (1.12x when the user asks).
@@ -58,13 +61,14 @@ Also load `filmcraft` (CLI, bridge, export) and `captions-filmcraft` (`fc_captio
 - **Ask before any paid generation.** Give the count and the price, then wait for a yes. If they ask for one take, make one.
 - **Approve the still before making its clip.** Never crop or edit a still without asking. Video stays video: never swap a clip for a still.
 - **Only touch what was named.** Do exactly the client's items. Say plainly when a choice was ours, not the client's.
+- **Be quick.** The user measures it: on video-23 the captions took ~40 s and most of ~14 minutes was the agent waiting and adding extras. Start long steps (word timing, exports, renders) in the background at once, check their output files rather than polling processes, render check frames in parallel, and do only what was asked.
 - **Short replies, with frames as proof.** "Stop" means stop every background task.
 - **Log it.** Each decision goes in the video's `AGENTS.md`, dated, with who decided. Each action goes in `RUN-LOG.md`.
 - **ffmpeg only makes source media** (speed-ups, voice muxes, scaled stills) and does analysis. FilmCraft renders and exports the edit. Encode with `h264_vaapi`.
 
 ## Checks before anything goes back
 
-1. **`fc_inserts.py check edit/<hook>.fcproj`**: 0 changes under 8 frames, and no new mid-caption changes compared with before your edit.
+1. **`fc_inserts.py check edit/<hook>.fcproj`**: 0 changes under 8 frames, and no new mid-caption changes compared with before your edit. Look at every FLASH (the speaker showing under 18 frames between two pictures or at the end) and JUMP (a jump cut on her with no zoom change) it warns about, and fix it or say why it stays: on video-23 the user found these by eye ("weird cut… just after that b roll end").
 2. **Positions**: every clip you didn't mean to touch is where it was. After a cut, everything after it moved by exactly the cut.
 3. **V1 has no gaps.** Every jump cut sits under a picture or on a caption start.
 4. **New voice media** passes `transcribe.py --engine parakeet` against the script, word for word. Listen for bleeps, doubled words and a second voice.

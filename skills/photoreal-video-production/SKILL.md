@@ -1,6 +1,6 @@
 ---
 name: photoreal-video-production
-description: The photoreal layer for a short-form Google Flow video (real-world ad scenes, lifestyle and product b-roll under a voiceover). It adds the look, the character and product sheets, the still prompt, the photoreal clip template with a subtle camera move, and the photoreal failure locks (real-life logic, eyelines, tone, object counts, content-filter-safe intimacy), on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is photoreal scenes, when continuing a project whose AGENTS.md names this skill, or for a single photoreal sheet, still or clip prompt (lifestyle scenes, UGC frames, product-in-context photos, video start frames). Not for UGC talking heads (ugc-ad-remake, simple-talking-head) or 3D animation (animated-video-production).
+description: The photoreal layer for a short-form Google Flow video (real-world ad scenes, lifestyle and product b-roll under a voiceover). It adds the look, the character and product sheets, the still prompt, the photoreal clip template with a subtle camera move, and the photoreal failure locks (real-life logic, eyelines, tone, object counts, content-filter-safe intimacy), on top of the shared video-production pipeline (layout, make.py, gates), which it loads. Use when a video plan's style is photoreal scenes, when continuing a project whose AGENTS.md names this skill, or for a single photoreal sheet, still or clip prompt (lifestyle scenes, UGC frames, product-in-context photos, video start frames). Not for a person talking to camera (talking-head-video-production) or 3D animation (animated-video-production).
 ---
 
 # Photoreal Video Production
@@ -27,7 +27,8 @@ Files, loaded only when a phase needs them:
 
 - Sheets use the shared layouts (`video-production/references/sheets/`), which are photoreal by default; `characters.md` and `product.md` add the photoreal rules. **No place sheets** unless the user asks: each location's first approved still is its look reference, which later stills in that place pass as an ingredient.
 - Each still prompt follows `scene-still.md`. Its `reference_fidelity` names what each ingredient gives (product label, a person's face, a softgel's look) and what to ignore (the sheet's grey backdrop, its layout).
-- **Reuse first.** When an earlier video for the client has an approved clip of the same beat (`video-1/clips/all/`, `video-1/final/`), bring it in with `make.py reuse` rather than regenerate it.
+- **Reuse first.** When an earlier video for the client has an approved clip of the same beat (`video-1/clips/all/`, `video-1/final/`), bring it in with `make.py reuse` rather than regenerate it. Also look in the client's `assets/clips/` library (B-roll there starts at source 1 s).
+- **Continuous shots are a chain.** The second of two shots of the same moment is an image edit of the first approved still ("the same kitchen, now she lifts the glass to drink; everything else stays"), never a fresh generation from the sheets: on video-23 a fresh 216a lost the mug and grew a glass of water. Check both stills side by side for every object before the clips.
 
 ## Look
 

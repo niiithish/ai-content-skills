@@ -227,6 +227,8 @@ Optional: `"seed"` to force a fresh job, since Flow resumes a job whose prompt, 
     clips/clips-batch.json    clips/clip-1/clip-1a/{clip-1a-v1.mp4, prompts/, final/}
                               clips/clip-3/{clip-3-v1.mp4, prompts/, final/}
     clips/all/                newest clip per shot, 1080p once it exists + APPROVED.md
+    audio/original/           talking head: each clip's Flow voice (NN-clip-X.mp3, voice_change.py export)
+    audio/voice-changed/      talking head: the same files back from the ElevenLabs voice changer, same names
     review/  edit/
     captions/                 the caption tool's words, plan and frames for this video
     deliverables/             <Brand>_<Concept>_<Variant>_<Ratio>.mp4

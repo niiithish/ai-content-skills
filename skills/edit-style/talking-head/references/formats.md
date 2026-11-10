@@ -38,7 +38,18 @@ Hooks 2 and 3 are clones of the approved hook 1 with only the opening swapped. T
 - **CTA:** two red arrows bobbing over her (`edit-style/assets/cta-arrows-red.png`).
 - **Scripts:** `dct-2190/build_talking_head.py` (per-clip voice, 1.12x, gaps, −16 LUFS), then `build_hook1.py` (V1 cut at every join, V2 from the plan's shots), then captions, then `caption_layout.py`, `hook_text.py`, `card_words.py`, `talk_motion.py`, `add_music.py`. Hooks 2 and 3 come from `clone_hooks.py 2 3`.
 
-## Building a third format
+## Format C: two-woman podcast (Calvin video-23, DCT#28 reference, 2026-11-09)
+
+- **Cast.** A host and a guest in one room, each on her own master (close-up and wide per woman), never in one frame. They look at each other off-camera, never into the lens. Recast them at the audience's age (Mysa: 45–65) and change at least one outfit item from the reference (the user picked a camel-brown blazer for the host).
+- **One clip per spoken line, from one angle.** The guest alternates close-up and wide by line. A cut inside a line is a digital punch-in at a clause.
+- **Splits are built in the edit**: speaker on top, listener under, from two clips (crop top 10 % and bottom 40 %, motion position y 768 / 1728). The two silent listening clips (one per woman) feed every split. Captions inside a split move onto the seam (`dct-28/seam_captions.py PROJECT`, y 506), rerun after every caption build.
+- **Voice:** the clips split into one folder per speaker, one ElevenLabs voice each (`talking-head-video-production`, `voice_change.py`, speakers found from the master stills).
+- **Captions:** template 1 (ALL CAPS TikTok Sans SemiBold on black boxes, no punctuation, no word hyphens, 1–3 words).
+- **Screen inserts:** focus screens and a slow product-page scroll (`edit-style/references/screen-inserts.md`).
+- **Hook opening:** one continuous slow zoom across its jump cuts (no ×1.08 steps), a cut pause put back at 1.5x with a quick ×1.08 zoom instead of a hard jump cut (`dct-28/fill_jumpcuts.py`), and a FilmCraft `zoom_blur` transition (8 frames on V1, 4 on a split's listener) on the hook-to-body cut.
+- **Scripts (`dct-28/`, video-23's own; set the paths and shot lists at the top):** `build_hook1.py` (the whole hook-1 build: talking pieces, inserts, splits, pushes), `seam_captions.py`, `make_focus_screens.py`, `make_219_scroll.py`, `build_hooks23.py` + `add_opening_captions.py` (hooks 2–3), `fill_jumpcuts.py`. `speech_ranges.py` + `build_speaker_projects.py` + `check_exports.py` were the first voice-change route (one continuous track per speaker, silences over 0.3 s squeezed); `voice_change.py` replaces them.
+
+## Building a fourth format
 
 When a new reference ad doesn't fit A or B:
 

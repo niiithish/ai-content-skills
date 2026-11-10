@@ -10,7 +10,7 @@ description: The talking-head format of the house edit style in FilmCraft, as th
 | File | Load it for |
 |---|---|
 | [references/style.md](references/style.md) | Every edit: the exact numbers (speaker track, pictures, zoom, captions, audio, overlays) |
-| [references/formats.md](references/formats.md) | A new edit: format A (podcast mic, glam hook, 🤯 title) and format B (straight to lens, three pictures plus a black word card, red CTA arrows) |
+| [references/formats.md](references/formats.md) | A new edit: format A (podcast mic, glam hook, 🤯 title), format B (straight to lens, three pictures plus a black word card, red CTA arrows), format C (two-woman podcast with splits, Calvin video-23) |
 | [references/client-rules.md](references/client-rules.md) | Any feedback from Max: Looms 1–12, each with his words |
 | [scripts/README.md](scripts/README.md) | Which script does what and what to set |
 

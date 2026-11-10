@@ -13,7 +13,9 @@ Inserts are every clip on the video tracks between V1 (the talking head or main 
   check PROJECT [--render]  frame by frame, what the viewer sees (top insert, else the main video) may only change
                           on a caption start or cut, never for under 8 frames, with no caption 1-2 frames off a
                           change. --render also renders the frames around every change and checks the picture
-                          switches on that exact frame. Exit 1 on any problem.
+                          switches on that exact frame. Exit 1 on any problem. It also warns (no exit 1) where
+                          the speaker shows under 18 frames between pictures or at the end (FLASH), and at a jump
+                          cut on the speaker with no zoom change (JUMP): look at each one's frame.
 
 Order after any caption or insert change: split -> fc_captions.py plan -> build -> snap -> check --render."""
 import argparse, bisect, datetime, json, os, shutil, subprocess, sys, tempfile
@@ -23,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fc_captions as fcc
 
 MIN = 8                         # shortest a picture may show, frames
+FLASH = 18                      # shortest a stretch of the speaker (V1, uncovered) should show between other pictures
 NEAR, REACH, MINF = 11, 18, 10  # split: a change this close to a mark is left to snap; farthest split word; shortest half
 
 
@@ -243,6 +246,9 @@ def cmd_check(a):
         print(f"  SHORT  {x / fps:7.2f}s  a picture shows only {y - x} frames")
     for c in near:
         print(f"  NEAR   {c / fps:7.2f}s  a caption starts 1-2 frames from a picture change")
+    warns = speaker_warnings(a.project, v, seq, end, fps)
+    for w in warns:
+        print("  " + w)
     late = []
     if a.render:
         import numpy as np
@@ -265,8 +271,72 @@ def cmd_check(a):
                 late.append(f); print(f"  RENDER {f / fps:7.2f}s  the frame doesn't switch here (change {at:.1f}, frame before {before:.1f})")
         shutil.rmtree(d)
     print(f"{a.project}: {len(changes)} picture changes, {len(bad)} mid-caption, {len(short)} under {MIN} frames, "
-          f"{len(near)} near misses" + (f", {len(late)} not switching in the render" if a.render else ""))
+          f"{len(near)} near misses, {len(warns)} speaker warnings (look at each)"
+          + (f", {len(late)} not switching in the render" if a.render else ""))
     sys.exit(1 if bad or short or near or late else 0)
+
+
+def scale_at(clip, t):
+    """Motion scale of an fcproj clip at source time t (ticks), from its keyframes (linear) or its static value."""
+    m = next((e for e in clip.get("effects", []) if e.get("effect") == "motion"), None)
+    sc = m and m["params"].get("scale")
+    if not sc:
+        return 100.0
+    kf = sorted(sc.get("keyframes") or [], key=lambda k: k["time"])
+    if not kf:
+        return float(sc["value"]["Float"])
+    if t <= kf[0]["time"]:
+        return kf[0]["value"]["Float"]
+    for k0, k1 in zip(kf, kf[1:]):
+        if t <= k1["time"]:
+            f = (t - k0["time"]) / max(1, k1["time"] - k0["time"])
+            return k0["value"]["Float"] + f * (k1["value"]["Float"] - k0["value"]["Float"])
+    return kf[-1]["value"]["Float"]
+
+
+def speaker_warnings(proj, v, seq, end, fps):
+    """What the user caught by eye on video-23 (2026-11-09, "weird cut… hard cut zoom in short time just after that
+    b roll end"): the speaker showing for under FLASH frames between other pictures or at the end, and a jump cut
+    on the speaker with no zoom change. Warnings: some are meant, so look at each one's frame."""
+    out = []
+    v1 = sorted(v[0]["items"], key=lambda c: c["startFrame"])
+    cuts = {b["startFrame"] for a, b in zip(v1, v1[1:])}
+    edges = sorted(cuts | {0, end})
+    # visible stretches of V1: uncovered frames, split at V1 cuts
+    f = 0
+    while f < end:
+        if seq[f] != "main":
+            f += 1
+            continue
+        g = f + 1
+        while g < end and seq[g] == "main" and g not in cuts:
+            g += 1
+        covered_before = f > 0 and seq[f - 1] != "main"
+        covered_after = g < end and seq[g] != "main"
+        if g - f < FLASH and (covered_before or covered_after or g == end) and f > 0:
+            where = "at the end" if g == end else ("between two pictures" if covered_before and covered_after
+                                                   else "next to a picture and a cut")
+            out.append(f"FLASH  {f / fps:7.2f}s  the speaker shows only {g - f} frames {where}")
+        f = g
+    try:
+        d = json.load(open(proj))
+        seqj = next(i for i in d["project"]["items"].values() if "Sequence" in i["kind"])["kind"]["Sequence"]
+        byid = {c["id"]: c for c in seqj["video_tracks"][0]["items"]}
+    except Exception:
+        return out
+    tpf = v1[0]["duration"] // max(1, v1[0]["durationFrames"]) if v1 else 1
+    for a, b in zip(v1, v1[1:]):
+        x = b["startFrame"]
+        if x >= end or seq[x] != "main" or b["item"] != a["item"] or abs(b["sourceIn"] - a["sourceOut"]) <= tpf // 2:
+            continue   # covered, another clip, or a razor where the media runs on
+        ca, cb = byid.get(a["clip"]), byid.get(b["clip"])
+        if not ca or not cb:
+            continue
+        za = scale_at(ca, ca["source_in"] + ca["duration"] * ca.get("speed", 1.0))
+        zb = scale_at(cb, cb["source_in"])
+        if abs(zb - za) < 0.03 * za:
+            out.append(f"JUMP   {x / fps:7.2f}s  a jump cut on the speaker with no zoom change ({za:.0f}% -> {zb:.0f}%)")
+    return out
 
 
 if __name__ == "__main__":

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Builds video-N/edit/talking-head.fcproj: every talking clip's 1080p final back to back, untrimmed, in story order, on
 V1/A1. The order is the clip manifest's (clips/clips-batch.json, which is the edit order), talking shots only (numbered
-below 200; inserts are 201 up), or --order 1a,1b,2,...
-Finals come from each shot's versioned final/ file (the newest -vK-1080p.mp4), never clips/all (no Link Media popups).
-With --mp3 it also writes audio/NN-clip-X.mp3 (320k, play order) for the ElevenLabs voice change.
+below 200 or hook takes like h2; inserts are 201 up, listening clips are left out), or --order 1a,1b,2,...
+Finals are the ones clips/PICKS.md names, else each shot's newest versioned final/ file (voice_change.py rules),
+never clips/all (no Link Media popups).
+Uses each final's voice-changed copy (-vc.mp4, from voice_change.py apply) when it exists, and the clips and
+versions voice_change.py exported (audio/original/sources.json) unless --order is given.
+--mp3 (old way, before voice_change.py) writes audio/NN-clip-X.mp3 (320k, play order).
 Usage: build_talking_head.py video-N [--order 1a,1b,...] [--name talking-head] [--mp3]"""
 import json, re, subprocess, sys
 from pathlib import Path
@@ -14,23 +17,17 @@ NAME = sys.argv[sys.argv.index("--name") + 1] if "--name" in sys.argv else "talk
 PROJ = EDIT / f"{NAME}.fcproj"
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import voice_change as VC  # the same clip list, picks (clips/PICKS.md) and finals the voice change used
+
+
 def order():
-    if "--order" in sys.argv:
-        return sys.argv[sys.argv.index("--order") + 1].split(",")
-    seen = []
-    for j in json.load(open(ROOT / "clips" / "clips-batch.json"))["jobs"]:
-        shot = re.match(r"clip-(.+?)-v\d+", j["id"]).group(1)
-        if shot not in seen and int(re.match(r"\d+", shot).group()) < 200:
-            seen.append(shot)
-    return seen
+    return VC.order(ROOT)
 
 
 def final(shot):
-    d = ROOT / "clips" / (f"clip-{shot[:-1]}/clip-{shot}" if shot[-1].isalpha() else f"clip-{shot}") / "final"
-    files = sorted(d.glob(f"clip-{shot}-v*-1080p.mp4"), key=lambda p: int(p.name.split("-v")[1].split("-")[0]))
-    if not files:
-        sys.exit(f"no 1080p final for {shot} in {d}")
-    return files[-1]
+    VC.PICKED.update(VC.picked(ROOT))
+    return VC.final(ROOT, shot, {})
 
 
 def cli(cmds, project=None, save_as=None):
@@ -48,8 +45,21 @@ def cli(cmds, project=None, save_as=None):
     return [r.get("result") for r in res]
 
 
-shots = order()
-paths = [final(s) for s in shots]
+def with_vc(p):
+    """The voice-changed copy (voice_change.py apply) when it exists."""
+    vc = p.with_name(p.stem + "-vc.mp4")
+    return vc if vc.exists() else p
+
+
+SOURCES = ROOT / "audio" / "original" / "sources.json"
+if SOURCES.exists() and "--order" not in sys.argv:  # the clips and versions voice_change.py exported
+    rows = json.loads(SOURCES.read_text())
+    shots, paths = [r["shot"] for r in rows], [ROOT / r["final"] for r in rows]
+else:
+    shots = order()
+    paths = [final(s) for s in shots]
+paths = [with_vc(p) for p in paths]
+print("voice-changed: " + (", ".join(s for s, p in zip(shots, paths) if p.stem.endswith("-vc")) or "none"))
 if "--mp3" in sys.argv:
     (ROOT / "audio").mkdir(exist_ok=True)
     for i, (s, p) in enumerate(zip(shots, paths), 1):

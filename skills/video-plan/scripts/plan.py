@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Plan a short video from a client brief: folders, voiceover timing, and PLAN.pdf from PLAN.md.
 
-  plan.py init CLIENT_DIR [video-N]            brief/, video-N/PLAN.md, video-N/voiceover/ (never overwrites)
+  plan.py init CLIENT_DIR [video-N]            brief/, video-N/PLAN.md, video-N/voiceover/ (never overwrites); first
+                                               moves loose files into place: videos to video-N/reference-video/,
+                                               the rest (brief, docs, images) to brief/
   plan.py voiceover VIDEO_DIR [--voices WORD]  time each line of VIDEO_DIR/voiceover/script.md:
                                                the real voiceover/recording.* if present (transcribe skill),
                                                otherwise a Cartesia scratch read; writes
@@ -77,10 +79,37 @@ def ffprobe_duration(path):
 
 # ---------- init ----------
 
+VIDEO_EXT = {".mp4", ".mov", ".webm", ".mkv", ".m4v", ".avi"}
+KEEP = {"AGENTS.md", "CLAUDE.md", "PLAN.md", "PLAN.pdf", "project.conf"}
+
+
+def tidy(folder, brief, refs):
+    """Move files the user dropped loose in `folder` into place (a move, never a copy; nothing is overwritten):
+    videos (and files named after them, like REF.words.json) to refs/, everything else (brief PDFs, docs, images,
+    audio, zips) to brief/."""
+    loose = [f for f in sorted(folder.iterdir()) if f.is_file() and not f.name.startswith(".") and f.name not in KEEP]
+    stems = [f.stem for f in loose if f.suffix.lower() in VIDEO_EXT]
+    moved = []
+    for f in loose:
+        to = refs if f.suffix.lower() in VIDEO_EXT or any(f.name.startswith(st + ".") for st in stems) else brief
+        dest = to / f.name
+        if dest.exists():
+            print(f"left {f.name}: {dest} already exists")
+            continue
+        to.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(f), str(dest))
+        moved.append(f"{f.name} → {dest.parent.name}/")
+    return moved
+
+
 def cmd_init(args):
     root = Path(args.client).expanduser().resolve()
     video = root / args.video
-    for d in (root / "brief", video / "voiceover"):
+    # files dropped loose in the video folder belong to this video (the client's top folder is never touched)
+    moved = tidy(video, video / "brief", video / "reference-video") if video.exists() else []
+    if moved:
+        print("moved loose files into place:\n  " + "\n  ".join(moved))
+    for d in ((video / "brief") if (video / "brief").exists() else (root / "brief"), video / "voiceover"):
         d.mkdir(parents=True, exist_ok=True)
     plan = video / "PLAN.md"
     if not plan.exists():

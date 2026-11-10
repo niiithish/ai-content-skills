@@ -49,3 +49,17 @@ The user may run it straight to 1080p: `make.py finals 2c 3c --no-draft` (the 36
 2. Listen to each: every word once, nothing added, the line finished before the end, lips in sync, hands never on the mic. Frames can't show this; transcribe each draft (`transcribe`) and diff it against the line.
 3. Join all drafts untrimmed in order (the user asked for exactly this: "just combine as it is") and send it, so the user hears the delivery and transitions together.
 4. On approval, give the user `make.py finals` for all of them. Review finals the same way: a final is a new generation and can add a word the draft didn't.
+
+## Host clips that keep Flow's own voice (Alaria video-5, 2026-10)
+
+A retro-infomercial host at a desk, 12 lines, the voice generated inside each clip and kept (no voice change). Fixes that worked, from `upwork-alaria/video-5/AGENTS.md`:
+
+- **Flow's filter blocks a long prompt:** go short. Three lines (the line, the voice description, "locked camera, no music, no captions, no text") with a new seed passed where the full template was blocked. "A fictional presenter in a retro TV commercial" got past the REPUTATIONAL / prominent-people block. Never reword the client's line to pass.
+- **Too long a clip makes her fill the time:** a 10 s clip for a ~5 s line repeated words. Use the shortest length that holds the line plus ~1 s, and write `says "<LINE>", once.` then `Then she stops talking and smiles.`
+- **A one-word or two-word sentence gets repeated** ("Queen or king." came out "Queen… queen or king"). Fold it into the sentence before with the same words ("by bed size, queen or king") and add "each word once".
+- **Words repeated after the line:** don't regenerate. Trim the clip in the pause after the last word, at the point the audio goes silent, not at the ASR word end (that cut "-Align" off the brand name).
+- **Same voice in every clip:** paste the identical voice description into each prompt (age, accent, register, ~140 wpm, "clean studio sound"). For a retake that must sound like the others, keep the prompt and change only the seed.
+- **Hands:** small talking gestures with the hands on the desk. Never prompt her touching her neck, face or hand; it reads as forced.
+- **Product in hand:** the start still already has the product in frame (held, or on the desk), and the action never moves it (pushing it at the lens changed its shape). Give the product sheet with only its top-down and angled panels; a hand-held panel confused the size.
+- **Talking while doing something:** put the line first, then "She begins speaking in the first second. As she speaks, she reaches to her side and pulls…". Starting with the action gave a 1 s gap before the first word.
+- **Pauses between sentences:** "in one smooth flow with no pause between the sentences". Prompt phrases like "short pauses for emphasis" gave 1.5 s gaps.

@@ -44,6 +44,19 @@ MAX_W = 860  # px: widest caption line on 1080, so 110 px stays clear each side 
 SHADOW = {"shadow": True, "shadow_angle": 90, "shadow_distance": 4, "shadow_blur": 7, "shadow_opacity": 75,
           "shadow_color": "#000000"}
 STYLES = {
+    # TikTok auto-caption look on a podcast clip (Mysa video-23 reference DCT#28, 2026-11-09). Measured on the
+    # reference at 720x1280 and scaled x1.5: ALL CAPS white TikTok Sans SemiBold (stem 6.08 px at 720 = SemiBold),
+    # cap height 49.5 px (size 70), no punctuation, on a solid black box per line, radius 10, 103.5 px tall, box
+    # 499 px wide for "SO IT'S NANO" (magick width + 22 px a side). One line: box centre y 1413 (baseline 1438).
+    # Over ~800 px of text ("THE SECOND GENERATION") it wraps greedily, filling line 1 first: baselines 1396 and
+    # 1479, the two boxes overlap ~21 px, the block stays centred on 1413. 1-3 words a page, chunked by count, back
+    # to back (plan --max-words 3). In split two-shots the reference moves captions onto the seam (centre y 959).
+    "1": dict(about="ALL CAPS white TikTok Sans SemiBold 70 on a solid black rounded box per line, centred y 1413, "
+                    "no punctuation, 1-3 words a page (plan --max-words 3), wraps over 900 px into two balanced lines, never one short word alone",
+              font="TikTok Sans 24pt", fontStyle="SemiBold", size=70, caps=True, bare=True, file="TikTokSans-SemiBold.ttf",
+              lines=[1396, 1479], single=1438, wrap_px=900, boxes=dict(pad=[22, 6], radius=10, color="#000000"),
+              props={"align": "center", "fill_color": "#ffffff", "stroke": False, "shadow": False,
+                     "background": False, "position": [540, 1438]}),
     "4": dict(about="Sentence-case white Montserrat ExtraBold 68, 3 px black outline, soft shadow, baseline y 1420",
               font="Montserrat", fontStyle="ExtraBold", size=68, caps=False, file="Montserrat-ExtraBold.ttf",
               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 3,
@@ -412,20 +425,58 @@ def align(block_toks, asr):
     return m
 
 
+GUESSED = []  # (block, how) for every block whose first word was not heard as its own word
+
+
+def letter_starts(toks, asr):
+    """Start time of every script token, by matching letters with the word gaps taken out, so "sea buckthorn" finds
+    the heard "seabuckthorn" and "trymysa" finds "try mysa". A token starting inside a heard word gets that word's
+    start plus its share of the letters before it (None when its letters were not heard at all)."""
+    sc, sown = [], []
+    for i, (t, _) in enumerate(toks):
+        sc += t; sown += [i] * len(t)
+    ac, at = [], []
+    for k, (t, st) in enumerate(asr):
+        nxt = asr[k + 1][1] if k + 1 < len(asr) else st + 0.08 * len(t)
+        for c, ch in enumerate(t):
+            ac.append(ch); at.append(st + (nxt - st) * c / max(len(t), 1) if c else st)
+    first = {}
+    for i, ch in enumerate(sown):
+        first.setdefault(ch, i)
+    m = [None] * len(sc)
+    for si, ai, n in difflib.SequenceMatcher(None, sc, ac, autojunk=False).get_matching_blocks():
+        for k in range(n):
+            m[si + k] = ai + k
+    out = []
+    for i in range(len(toks)):
+        f = first.get(i)
+        hit = next((m[f + k] for k in range(min(3, len(toks[i][0]))) if f is not None and m[f + k] is not None), None)
+        out.append(at[hit] if hit is not None else None)
+    return out
+
+
 def starts(blocks, asr, fx):
-    """ASR start time of each block's first spoken word, or None."""
+    """ASR start time of each block's first spoken word, or None. A first word that was not heard as its own word
+    is found by its letters (letter_starts); only if that fails too is it guessed, and every such block is listed in
+    GUESSED so plan can print it (video-23: "sea buckthorn" heard as one word got a 2-frame caption)."""
     toks, first = [], []
     for b in blocks:
         first.append(len(toks))
         toks += [(norm(w, fx), 0) for w in b.split() if norm(w, fx)]
     m = align(toks, asr)
+    lt = None
     out = []
     for bi, ti in enumerate(first):
         end = first[bi + 1] if bi + 1 < len(first) else len(toks)
         if m[ti] is not None:
             out.append(asr[m[ti]][1]); continue
-        prev = next((m[k] for k in range(ti - 1, -1, -1) if m[k] is not None), None)
+        lt = lt or letter_starts(toks, asr)
+        prev_t = next((out[k] for k in range(bi - 1, -1, -1) if out[k] is not None), None)
         nxt = next((m[k] for k in range(ti + 1, end) if m[k] is not None), None)
+        cand = lt[ti]
+        if cand is not None and (prev_t is None or cand > prev_t) and (nxt is None or cand <= asr[nxt][1]):
+            out.append(cand); GUESSED.append((blocks[bi], "by letters")); continue
+        prev = next((m[k] for k in range(ti - 1, -1, -1) if m[k] is not None), None)
         guess = prev + 1 if prev is not None else None
         if guess is not None and guess < len(asr) and (nxt is None or guess <= nxt):
             out.append(asr[guess][1])
@@ -433,7 +484,37 @@ def starts(blocks, asr, fx):
             out.append(asr[nxt][1])
         else:
             out.append(None)
+        GUESSED.append((blocks[bi], "GUESSED"))
     return out, sum(x is None for x in m), len(m)
+
+
+def brief_check(blocks, brief, project):
+    """Caption words the client's brief spells another way: a hyphen it doesn't use (or drops), or a word it never
+    uses at all. Captions show the client's words, spelled the client's way."""
+    if not brief:
+        root = Path(project).resolve().parent
+        root = root.parent if root.name == "edit" else root
+        cands = sorted((root / "brief").glob("*.txt")) + sorted((root / "brief").glob("*.md"))
+        if not cands:
+            return []
+        brief = cands[0]
+    text = Path(brief).read_text(errors="ignore").lower().replace("\u2019", "'")
+    words = set(re.findall(r"[a-z0-9']+(?:-[a-z0-9']+)*", text))
+    flat = set(re.findall(r"[a-z0-9']+", text))
+    out, seen = [], set()
+    for b in blocks:
+        for w in re.findall(r"[a-z0-9']+(?:-[a-z0-9']+)*", b.lower().replace("\u2019", "'")):
+            if w in words or w in seen:
+                continue
+            seen.add(w)
+            parts = w.split("-")
+            if len(parts) > 1 and all(p in flat for p in parts):
+                out.append(f"{w!r}: the brief writes it without the hyphen ({' '.join(parts)})")
+            elif any(x.replace("-", "") == w for x in words if "-" in x):
+                out.append(f"{w!r}: the brief hyphenates it ({next(x for x in words if x.replace('-', '') == w)})")
+            elif w.strip("'") not in flat and not w.isdigit():
+                out.append(f"{w!r} is not in the brief ({Path(brief).name})")
+    return out
 
 
 def cmd_plan(a):
@@ -455,6 +536,7 @@ def cmd_plan(a):
     fps, end, cuts = fps_of(s), s["durationFrames"], cuts_of(s)
     pk = asr_tokens(json.load(open(P["pk.json"])), fx)
     ps, miss, total = starts(blocks, pk, fx)
+    heard = list(GUESSED)
     if P["fw.json"].exists():
         fs, _, _ = starts(blocks, asr_tokens(json.load(open(P["fw.json"])), fx), fx)
     else:
@@ -582,6 +664,11 @@ def cmd_plan(a):
           f"not heard -> {P['captions.json']}")
     for n in notes + [f"over {MAXWORDS} words: {t!r}" for t in long]:
         print("NOTE", n)
+    for n in brief_check(blocks, a.brief, a.project):
+        print("BRIEF", n)
+    for b, how in heard:
+        print(f"CHECK {b!r}: its first word was not heard as its own word, start found {how}"
+              + (" (look at this caption's frame before the build)" if how == "GUESSED" else ""))
 
 
 def apply_fixes(out, fixes, fps):
@@ -710,6 +797,23 @@ def two_lines(text, one=False):
     return [" ".join(w[:k]), " ".join(w[k:])]
 
 
+def greedy_lines(st, text):
+    """Template 1: one line while the text is at most wrap_px wide, else two balanced lines (the narrowest widest
+    line), never one short word alone on a line ("A THIRD-GENERATION / FIX" read badly, user 2026-11-09).
+    Best is blocks that fit one line: `build` prints every block that wraps."""
+    flat = text.replace(" / ", " ")
+    if " / " in text:
+        return [t.strip() for t in text.split(" / ")]
+    if text_width(st, flat, st["size"]) <= st["wrap_px"]:
+        return [flat]
+    w = flat.split()
+    opts = [(" ".join(w[:k]), " ".join(w[k:])) for k in range(1, len(w))]
+    ok = [o for o in opts if not any(len(x) <= 4 and " " not in x for x in o)] or opts
+    best = min(ok, key=lambda o: max(text_width(st, x, st["size"]) for x in o))
+    print(f"  wraps: {best[0]} / {best[1]}")
+    return list(best)
+
+
 KEEP_CASE = {"mysa", "himalayan", "co2", "co2-extracted", "i"}  # template 9 lowercases everything but these
 
 
@@ -802,11 +906,14 @@ def cmd_build(a):
                 lines.append((len(cmds) - 2, [text, lower_text(plan["blocks"][m]["text"].replace(" / ", " "))],
                               size, pos + [[540, pr["lines"][1 - row]]]))
             continue
-        if st.get("bare"):  # the reference shows no commas or full stops
+        if st.get("bare"):  # the reference shows no commas, full stops or word hyphens
             text = re.sub(r"[,.!?;:]+(?=\s|$)", "", text)
-        ls = two_lines(text, a.one_line) if st.get("lines") else [text]
+            # "third-generation" -> "third generation" (video-23 user: the reference writes THIRD GENERATION);
+            # a hyphen before a digit stays (omega-7)
+            text = re.sub(r"(?<=[A-Za-z])-(?=[A-Za-z])", " ", text)
+        ls = (greedy_lines(st, text) if st.get("wrap_px") else two_lines(text, a.one_line)) if st.get("lines") else [text]
         size = min(fit_size(st, t) for t in ls)
-        ys = st["lines"] if len(ls) == 2 else [st["lines"][-1] if st.get("lines") else st["props"]["position"][1]]
+        ys = st["lines"] if len(ls) == 2 else [st.get("single") or (st["lines"][-1] if st.get("lines") else st["props"]["position"][1])]
         pos = [[st["props"]["position"][0], y] for y in ys]
         cmds.append({"id": "graphics.newText", "params": {
             "text": ls[0], "position": pos[0], "size": size, "font": st["font"],
@@ -925,6 +1032,8 @@ def main():
     w.add_argument("--fast", action="store_true",
                    help="Parakeet only (about 25 s instead of 80 s for 95 s of voice; mid-phrase starts can run 2-7 frames off)")
     p = sub.add_parser("plan"); p.add_argument("project"); p.add_argument("--script"); p.add_argument("--fixes")
+    p.add_argument("--brief", help="the client's brief or script: flag caption words spelled differently there "
+                   "(video-23: our 'third-generation' where the brief says 'third generation'). Default: brief/*.txt|md")
     p.add_argument("--max-words", type=int, default=MAXWORDS, help="most words a caption (template 5: 2, template 6: 7)")
     p.add_argument("--early", type=int, help=f"show captions this many frames before their voice (default {EARLY_POP} "
                    "with --max-words 3 or fewer, the one- and two-word pop templates 5 and 7; else 0)")

@@ -1,87 +1,97 @@
 ---
 name: video-breakdown
 description: >
-  Decode a reference video into a remake bible. Gemini 3.1 Pro watches the video
-  (the agent runs gemini.google.com in its built-in browser when it has one, or
-  the user pastes our prompt there) and returns a v3 JSON: the
-  video's pattern and hook, one scene per hard cut with camera moves, start and
-  end states, how the picture builds on the spoken words, overlay captions and a
-  timestamped transcript. The agent then checks it against contact sheets of the
-  real frames. Use when the user wants a video breakdown, decode, shot list, cut
-  list, scene changes, remake bible, "what happens in this video", when a client
-  sends a reference or inspiration video with a brief, or on /video-breakdown.
-  Triggers: decode this video, detailed breakdown, the cuts, scene changes,
+  Decode a reference / inspiration video locally into the pattern we copy: every
+  cut, what kind of picture each shot is (speaker close-up, wide, split two-shot,
+  B-roll, product, CGI, screen recording), which spoken words each shot sits on,
+  how often inserts come and how that changes beat by beat, then lay that pattern
+  onto our script so the plan copies the reference's rhythm. Runs on this machine
+  (ffmpeg cut detection, shot grouping, Parakeet word timing, shot sheets the agent
+  reads); no Gemini. Use when a client sends a reference or inspiration video with
+  a brief, when the user wants a breakdown, decode, cut list, shot list, rhythm or
+  "how often do the clips come", wants to copy or remake an ad, or on
+  /video-breakdown. Triggers: decode this video, breakdown, the cuts, scene changes,
   shot-by-shot, beat-by-beat, analyze this clip/ad/reel, recreate this ad.
 ---
 
-# Video breakdown (Gemini remake bible + contact sheets)
+# Video breakdown (local)
 
-Most agent models can't take video as input; they only see still frames. Gemini 3.1 Pro watches the whole video with its sound, so it writes the breakdown, and you check it against real frames. `<skill-dir>` is the folder holding this file.
+The client's brief is usually the reference's voiceover rewritten for our product. So what the plan needs from the reference is its **visual pattern on the words**: on which words it cuts, what kind of picture comes in (and for how long), how often inserts come, and how this changes from the hook to the CTA. The words we already have.
 
-## 0. Prep (always, before or while Gemini runs)
+`<skill-dir>` is the folder holding this file. `breakdown.py` needs only ffmpeg, numpy, Pillow (tesseract optional).
 
-Gemini's JSON alone is too coarse: on one 80 s ad it gave 8 "scenes" for ~40 real cuts, the wrong resolution and `[cite]` junk. So always build the ground truth first, in one command (about 15 s for 80 s of video):
+## 1. Analyze (about 7 s for a 1-minute video, ~30 s for 4 minutes)
 
-```bash
-bash "<skill-dir>/scripts/prep.sh" /abs/path/to/reference.mp4
-```
-
-It writes next to the video: the word-timed transcript (`.txt`, `.words.json`, `.srt`, via the `transcribe` skill), `cuts.txt` (hard cuts, scene score > 0.3), 2 fps contact sheets in `sheets/`, and `specs.txt` (size, fps, length, words, wpm, shot count). Keep the files with the project, not in a scratchpad.
-
-## 1. Get the JSON
-
-If there is no v3 JSON yet, get one from Gemini. Don't invent a breakdown in the meantime.
-
-**With a built-in browser** (Claude or ChatGPT app browser tools; the user is signed in to Google there), run Gemini yourself:
-
-1. Open https://gemini.google.com/app in the browser pane. If it asks for sign-in, stop and ask the user to sign in there. Never type credentials yourself.
-2. Open the mode picker and choose **Pro** (Gemini 3.1 Pro). Never run it on Flash.
-3. Attach the video:
-   - a YouTube link: put the link on the first line of the message;
-   - a local file: the browser tools can't pick files from disk. Ask for this one step: "Drag `<abs path>` into the Gemini box in the browser pane." Wait until the video chip shows in the input box.
-4. Put the full text of [references/gemini-prompt.md](references/gemini-prompt.md) in the input box, word for word, with a `type` action (read the file first), and send it.
-5. Wait for the reply to finish (the stop button goes away; long videos take a few minutes), then read it with `get_page_text` or the reply's copy button. Save the JSON object as `<video name>.breakdown.json` next to the video.
-6. If Gemini refuses, cuts off or returns something other than one JSON object, send "Return the complete JSON object only." once in the same chat. If that fails too, fall back to the steps below.
-
-**Without a browser**, hand it to the user, then **stop and wait**:
-
-1. Open https://gemini.google.com/app and set the model to **Gemini 3.1 Pro** (not Flash).
-2. Attach the video.
-3. Paste the prompt in [references/gemini-prompt.md](references/gemini-prompt.md) word for word. Give the user the file path, or print it in one `text` block they can copy.
-4. Save Gemini's reply as `<video name>.breakdown.json` next to the video, or attach it here.
-
-A JSON is usable only if it has `"schema_version": 3`, a `pattern` object and `scenes` that cover 0.0 to `duration_sec` with no gaps, and every scene has `camera`, `build`, `still` and `timeline`. Anything else (an older schema, missing keys, one-line scenes): name what's missing and rerun Gemini with the prompt (yourself when you have a browser, otherwise ask the user). A JSON someone saved earlier in `brief/` gets the same check before you rely on it.
-
-## 2. Check it against the frames
-
-Gemini can miss or invent things, and the plan depends on getting the pattern right. Look at the video yourself, cheaply:
+The reference goes in `<project>/reference-video/`. If the user dropped it loose in the video folder, `plan.py init` (video-plan) moves it there; otherwise move it yourself with `mv`, never a copy. Then:
 
 ```bash
-bash "<skill-dir>/scripts/contact-sheets.sh" "/abs/path/to/video.mp4" /tmp/video-breakdown-$$
+python3 "<skill-dir>/scripts/breakdown.py" analyze "/abs/path/reference-video/REF.mp4"
 ```
 
-It samples at 2 fps, labels each frame with its time and puts 12 frames (6 s) on each sheet. Stdout gives `OUT=`, `MANIFEST=` and one row per sheet: `sheet_path  start_sec  end_sec  count  label`. Read every sheet in time order: never open the frames one by one, and don't spawn a subagent to look.
+It writes `REF.breakdown/` next to the video:
 
-(`prep.sh` already made them in `sheets/`.) Check the JSON's cuts, settings, characters and `build` against the sheets and `cuts.txt`: the shot list needs one row per real cut, not per Gemini scene. Where they disagree, trust the frames for what's visible and Gemini for the sound, motion between frames and the words. Pull a full-size frame (`ffmpeg -ss T -i video -frames:v 1 out.jpg`) only when a sheet cell is unclear: product text, a cut you can't place.
+- `words.json`, `transcript.txt`, `transcript.srt`: word-timed transcript (local Parakeet; it reuses `REF.words.json` if one exists).
+- `shots.json`: every shot with start, end, length, how it was cut in (`hard`, or `soft` for dissolves and whips), its **group**, its motion (`static` / `moving` / `busy`), its words, and where the cut falls against the voice (`on-word`, `mid-word`, `word-end`, `in-pause`).
+- `sheets/clusters_NN.jpg`: one row per **group**, meaning shots that look like each other (the same camera on the same person, the same B-roll clip). The group that comes back most is at the top.
+- `sheets/shots_NN.jpg`: 12 shots a sheet. Each shot shows its start, middle and end frames, a header (`#id time length group motion` plus flags) and the words spoken over it. `JUMP` means the same group as the shot before, so a punch-in or a cut inside the same angle. `SOFT` means a soft transition.
+- `labels.json`: what you fill in next.
 
-If the user doesn't want to use Gemini, write the breakdown from the prep files alone, and say it's weaker on motion between frames.
+## 2. Look and label (the only judgment step)
 
-## 3. Write it up
+Read **every** sheet in order: the cluster sheets first, then the shot sheets. Don't open single frames unless a cell is unclear, and don't hand this to a subagent. Then fill in `labels.json`:
 
-Save it as `<video name>.breakdown.md` next to the video, in this order (the user approved this layout on Mysa video-9):
+- **`groups`**: give every group a `type` and a short `label` (who or what, framing, camera move). Types are `talking-head` (one speaker; say which and how framed), `two-shot`, `split` (stacked or side by side speakers), `broll` (live-action clip), `still` (photo with a push), `cgi` (3D, inside the body, animated diagram), `product` (packshot or product in hand), `text` (screen recording, article, review, website, UI), `compare` (before/after side by side or a wipe between them), `story` (the cast acting a scene in a story or song ad; it counts as the spine like a speaker), `transition` (a black frame, flash or whip blur bridging two shots; not counted as an insert), and `other`. Because one group is often 30+ speaker shots, labeling the groups labels most of the video.
+- **`shots`**: `{"12": {"type": "...", "label": "...", "note": "..."}}` for single shots that differ from their group. Keys can be ranges (`"40-55"`); a later key overrides an earlier one. In an animated story or song ad almost every shot is its own group, so label by ranges along the story instead of by group.
+- **`drop_cuts`**: ids of shots that are not real cuts, such as one website scroll split into four pieces or a clip that carries on after a flash. Each one is merged into the shot before it.
+- **`sections`**: `[[start_sec, "Hook"], [8.9, "Host asks"], …]`. Name the beats from the transcript, and use the brief's beat names when the client gives them.
 
-1. **Specs** table: size, fps, length, words and wpm, shot count and average shot, look, audio (VO, music, SFX), captions in one line. From `specs.txt`, corrected by eye.
-2. **Pattern:** the formula, the timeline engine (what moves the story forward), mirrored beats, the visual euphemism system (how it shows what it can't show), the hook, why it works. This is what planning copies.
-3. **Style bible + recurring cast:** medium/look, light, palette, each character's look and world.
-4. **Captions:** font family and weight, case, colour, outline/shadow/box, words per page, position (y as % of height), word highlight, titles or labels. Then name the **nearest captions template** (`captions-filmcraft`: 2 bold caps one-liner, 4 sentence-case one-liner) and what differs, so the edit can name a template instead of describing it.
-5. **Transcript**, word-timed (from the `.srt`).
-6. **Shot list, one row per cut** from `cuts.txt` and the sheets: `# | time | shot | camera | build | VO words`. Whip pans and dissolves get their own rows.
-7. **Checked against the frames:** what you confirmed, what you corrected in Gemini's JSON, and anything neither source settles.
+Then:
 
-## 4. When the user wants a remake
+```bash
+python3 "<skill-dir>/scripts/breakdown.py" report "/abs/path/reference-video/REF.breakdown"
+```
 
-- Write our voiceover to the same formula and length: word count within ~5% of the reference.
-- Map every reference beat to ours in a table (reference time and words → our line → our shot).
-- Cite where each product claim comes from (brief, product page); never invent numbers.
-- Split-screen shots are never generated as one split frame: plan each side as its own still and clip (subject centred, action inside the middle half of the width) and build the split, seam and labels in the edit.
-- A known toy or brand look is fine to match, but describe it generically in prompts ("glossy plastic toy-brick minifigure") and use original characters and invented competitor brands.
+This writes `rhythm.md` and `timeline.png`:
+
+- `rhythm.md` has the share of runtime and average length for each type, the insert cadence (one insert block every N s, block length, speaker-shot lengths), cut timing against the voice, a per-section table (shots, average shot, speaker share, inserts by type) and the full shot list.
+- `timeline.png` is a colour bar of the whole video, one colour per type, with the sections marked.
+
+Read the timeline image to check the labels look right.
+
+**Story and song ads (Pixar, claymation, sung):** there is no speaker, so the cast acting the story is `story` (the spine) and inserts are the mechanism CGI, product and screens. The rhythm number that matters is in `rhythm.md` under "Words a shot" (how many sung words each picture carries) and the average shot per section (tempo follows the emotion). ASR is weak on singing; the burned-in captions on the sheets are the true lyric. Merge continuous camera moves and morphs that were cut into pieces (`drop_cuts`), but keep deliberate flicker montages.
+
+## 3. Lay the pattern on our script
+
+```bash
+python3 "<skill-dir>/scripts/breakdown.py" map "/abs/path/REF.breakdown" "/abs/path/brief/script.txt" [--hook 2]
+```
+
+- **What it does:** it aligns the reference words with ours. Runs of matching words are anchors, and every reference cut is placed between them, so each of our words lands in exactly one reference shot. The result is `pattern-on-script.md`: one row per reference shot with its type, the reference picture and **our words** under it, plus our lines that have no reference shot (new copy, which gets the pattern of the nearest beat).
+- **Script input:** `.txt`, `.md` or `.pdf`. Give it the plain script or lyric sheet, not a brief laid out as a table (the table's visuals column gets read as words). `--hook N` picks which `HOOK N` to use with the body. Speaker tags and BEAT headings are skipped.
+- **Once our voiceover exists:** run it again with `--vo our.words.json` to get our real times (`pattern-on-vo.md`).
+- **The match rate:** it prints this. Above ~50% the mapping is solid. Lower means the script was restructured, so map beat by beat yourself using `sections`.
+
+## 4. Write the breakdown
+
+Save `REF.breakdown/BREAKDOWN.md`. Keep it short, because the tables are already in `rhythm.md`:
+
+1. **Specs:** size, length, words and wpm, shot count, average shot. Look, audio (VO, music, SFX), and captions in one line each.
+2. **Pattern:** the format (for example, two-person podcast with the expert carrying the script), the beat structure, what the inserts do (illustrate the noun being said, prove a claim, show the product on the brand name), and the rhythm rules visible in `rhythm.md`. Write those rules as numbers the plan can copy, for example "an insert block every ~10 s, 1–3 shots, 1–3 s each; inserts cluster on the mechanism and product beats; host shots carry no inserts; split two-shot on beat transitions".
+3. **Insert vocabulary:** each kind of insert the reference uses, with the trigger word and length. For example: "screen recording of a search result when a new term is named", "CGI of the problem inside the body on the symptom line", "product macro burst of 0.2–1 s shots on the brand name".
+4. **Captions:** font, case, colour, box, words per page, position (y as % of height), then the nearest `captions-filmcraft` template (2 bold caps one-liner, 3 small native, 4 sentence-case, 6 two-line box) and how it differs.
+5. **Cast and setting:** who is on camera, their wardrobe and set, and how many camera angles each has (for the still prompts).
+6. **Not settled from frames:** music or SFX you can't hear, motion between sampled frames, unclear text.
+
+Then go to `video-plan` with `pattern-on-script.md` as the shot spine.
+
+## Rules for the remake
+
+- Copy the **rhythm and the kind of picture** on each phrase, not the exact pictures. A reference insert of gym powder becomes our product's own "old way" picture.
+- Keep our word count within ~5% of the reference unless the client's script says otherwise.
+- Cite where every product claim comes from (brief, product page), and never invent numbers.
+- Never generate a split screen as one split frame. Plan each half as its own still and clip (subject centred, action inside the middle half of the width), and build the split, seam and labels in the edit.
+- A known toy or brand look is fine to match. Describe it generically in prompts and use original characters and invented competitor brands.
+
+## Gemini (only if the user asks)
+
+Gemini can hear music and SFX and see motion between frames. If the user wants that layer, the old prompt is still in [references/gemini-prompt.md](references/gemini-prompt.md). Run it in the browser pane on Gemini Pro, and treat its output as notes on top of the local breakdown, never as the shot list.
