@@ -44,13 +44,14 @@ What not to do:
 
 Only when the user names one account for a batch, add `--account NAME` to `flow batch` (or set `FLOW_ACCOUNT=NAME`; the flag wins). Every job then runs on that account alone, paid or free, with no rotation.
 
-Treat queue and resume progress as informational, and let the command finish. Separate commands queue only for the submit itself: once Google accepts a job the next command starts, so a few `flow` commands from different agent sessions are fine. They submit one at a time through a single Labflow browser, so a short queue wait is normal. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
+Treat queue and resume progress as informational, and let the command finish. Separate commands queue only for the submit itself: once Google accepts a job the next command starts, so a few `flow` commands from different agent sessions are fine. Each picks a different account and browser while one is free (`FLOW_BROWSER_POOL`), so a short queue wait is normal only when all are busy. On `LOGIN_REQUIRED`, stop and tell the user a Google challenge needs manual completion. For any other failure, report the CLI's error code and hint instead of inventing a workaround or retry loop.
 
 ## Batches
 
 For independent bulk jobs, use `flow batch` with one manifest entry per output. Do not launch many separate CLI processes.
 - **Pacing:** the default is ten accepted jobs in flight (`--concurrency`, up to 20) and at most twelve new submissions per minute (`--rpm`, one every 5s), with per-account video-credit accounting. These are the defaults, so don't pass them. Within one batch, submits go one at a time; the clips then render in parallel.
-- **Stills** render `--concurrency` at a time in the one browser, so `--rpm` is what caps a large still batch: at the default `--rpm 12`, 20 stills take under 2 minutes.
+- **Browsers:** `flow batch` spreads its jobs over up to `FLOW_BROWSER_POOL` browsers (3 here), one account each, and prints `N jobs over 3 browsers`. `--rpm` and `--concurrency` apply per browser. Never split a batch into several `flow batch` or `flow image` commands to go faster: one batch already uses every browser, and its final JSON (with `"browsers": N`) covers all of them.
+- **Stills** are capped by verification, about 7 s per submit per browser: 20 stills over 3 browsers took 104 s (10 Nov), against about 3.5 minutes in one. An account a browser can't sign back in is skipped by every browser for the rest of the batch (`accN can't open Flow (login) · skipping it`): expected, not an error.
 - **Sequencing:** keep review-dependent or sequential shots in separate batches.
 - **Resume:** rerun the same batch after an interruption; completed outputs are skipped and accepted jobs resume. Rerunning approved 360p drafts at `720p` into the same output paths makes the 720p clips: a 360p file never counts as the finished 720p clip.
 - **Uploads:** an account reuses its upload of the same reference image for 24 hours, so reusing reference files across commands is cheap. `flow batch` also sends the next jobs' references to the current account ahead of their turn ("sent ahead to accN" lines are expected, not an error). Do not wrap Flow commands in an external retry loop.
