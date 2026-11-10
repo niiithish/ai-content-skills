@@ -44,6 +44,7 @@ npx skills add niiithish/ai-content-skills --list
 | Skill | Description |
 | --- | --- |
 | [`script-generation`](./skills/script-generation) | Spoken TikTok/Reels UGC scripts. Cut list only when you ask for AI video. |
+| [`cartesia-tts`](./skills/cartesia-tts) | Text to speech with Cartesia Sonic 3.6 (`cartesia voices / audition / say`): asks the tool, voice, speed and emotion first, then reads the script with exact word times for the plan. |
 | [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or ElevenLabs Scribe), with suggested visuals marked. |
 | [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
 | [`animated-video-production`](./skills/animated-video-production) | The Pixar-style 3D animation layer on `video-production`: look, character, place and product sheets, still and clip prompts, product mascots, on-camera speech. |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cartesia TTS"
+  short_description: "Text to speech with Cartesia Sonic: ask the voice first, then read with word times"
+  default_prompt: "Use $cartesia-tts to read this script; ask me the tool, voice and speed first."

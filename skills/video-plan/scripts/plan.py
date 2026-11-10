@@ -198,9 +198,15 @@ def heard_times(audio, lines):
         from transcribe import words
     except ImportError:
         die("needs the transcribe skill next to this one (skills/transcribe), used to time the real voiceover")
-    print(f"transcribing {audio.name} ...")
     norm = lambda w: re.sub(r"[^a-z0-9']", "", w.lower())
-    heard = [(norm(w), s, e) for w, s, e in words(audio) if norm(w)]
+    wj = audio.with_suffix(".words.json")  # `cartesia say` writes its own exact word times here
+    if wj.is_file() and wj.stat().st_mtime >= audio.stat().st_mtime:
+        print(f"word times from {wj.name}")
+        got = [(w["word"], w["start"], w["end"]) for w in json.loads(wj.read_text())]
+    else:
+        print(f"transcribing {audio.name} ...")
+        got = words(audio)
+    heard = [(norm(w), s, e) for w, s, e in got if norm(w)]
     script = [(i, norm(w)) for i, line in enumerate(lines) for w in line.split() if norm(w)]
     matched = {}
     sm = difflib.SequenceMatcher(None, [s[1] for s in script], [h[0] for h in heard], autojunk=False)

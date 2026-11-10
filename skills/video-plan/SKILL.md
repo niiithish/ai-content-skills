@@ -1,6 +1,6 @@
 ---
 name: video-plan
-description: Turn a client's video brief into an approved production plan before anything is generated. Writes PLAN.md and a matching PLAN.pdf in one fixed layout — a title and summary line, short paragraphs (concept, look, camera, cast, sheets, on camera, end card) and a Shot | Time | Voiceover | What we show table timed from a real voiceover read (Cartesia scratch read, the client's recording or the song). Fills in the visuals the brief leaves out. Works for any style (3D animation, claymation, photoreal, UGC) and then hands over to that style's skill. Use when a client sends a brief, script or message for a new AI video, when starting a video in an empty client folder, or when the user asks for a plan, treatment, shot list or storyboard. Not for a single prompt with no brief.
+description: Turn a client's video brief into an approved production plan before anything is generated. Writes PLAN.md and a matching PLAN.pdf in one fixed layout — a title and summary line, short paragraphs (concept, look, camera, cast, sheets, on camera, end card) and a Shot | Time | Voiceover | What we show table timed from a real voiceover read (a Cartesia read in a voice the user picked, the client's recording or the song). Fills in the visuals the brief leaves out. Works for any style (3D animation, claymation, photoreal, UGC) and then hands over to that style's skill. Use when a client sends a brief, script or message for a new AI video, when starting a video in an empty client folder, or when the user asks for a plan, treatment, shot list or storyboard. Not for a single prompt with no brief.
 ---
 
 # Video Plan
@@ -21,8 +21,14 @@ Run every command yourself: they take seconds. `<skill-dir>` is the folder holdi
 4. **Time the voiceover.**
    - **Ask the speed up front** for a talking head or voiceover (the user's ads run at 1.1x): the timing, the clip lengths and the edit are built at that speed from the start. Video-23 sped up after the edit was built and every time on the timeline had to be redone.
    - Copy the script to `video-N/voiceover/script.md`, one spoken line per row, in story order, word for word from the brief's `.md` (or the client's message). Every sentence of the script is in it; leave nothing out because it looks like a note.
-   - Run `plan.py voiceover <video-folder>`. It times the client's recording at `voiceover/recording.wav` (or `.mp3`/`.m4a`) with Parakeet (the `transcribe` skill's helper, local). Without one, it reads each line with Cartesia into `voiceover/scratch.wav`. The Cartesia key comes from `~/.config/cartesia/api_key`.
-   - Match the read to the brief's tone: `CARTESIA_SPEED=0.9` in `video-N/project.conf` for slow storytelling. `plan.py voiceover <video-folder> --voices narrat` lists voices; set one with `CARTESIA_VOICE=<id>`.
+   - **The voice comes before the plan, and the user picks it first.** If the client sent a recording, it goes at `voiceover/recording.wav` (or `.mp3`/`.m4a`); skip to the next point. Otherwise, before making anything, ask the user in one message (the `cartesia-tts` skill):
+     - the tool: Cartesia by default, or one they name
+     - 3–5 voices that fit the brief, with their samples saved to `voiceover/voices/`
+     - the speed
+     - the emotion
+
+     Wait for the answer. If they want to compare, audition the first two lines in each voice. Then read the whole script with `cartesia say --script voiceover/script.md --voice <id> --speed <s> --out voiceover/recording.wav`. It also writes `recording.words.json` with Cartesia's exact word times.
+   - Run `plan.py voiceover <video-folder>`. It times every line of `voiceover/recording.*` from `recording.words.json` when there is one; otherwise it transcribes the recording with Parakeet (the `transcribe` skill's helper, local). Its old fallback, a Cartesia scratch read in a default voice, is for a quick estimate only, never for the plan you send.
    - The result is `voiceover/timing.md`: each line's in and out time and its slot (until the next line starts). The shot table's Time column comes from it.
    - **Characters who speak their lines on camera** (Flow generates the voice inside each clip): run `plan.py voiceover <video-folder> --on-camera` instead. No Cartesia read, since its pacing isn't Flow's: it times each line from its word count at the rate Flow was measured speaking (3.2 words a second) and gives the clip length, or how many 10 s clips a long line needs.
    - **A sung ad** (the song replaces the voiceover): write the song and get the chosen take first (the uninstalled song-ad method, stages 1–2, is still at `~/Work/ai-content-skills/skills/song-ad/SKILL.md`). `song.py lyrics --video` writes `script.md` from the lyric sheet, and the take is `voiceover/recording.wav`; then run `plan.py voiceover` as usual.
