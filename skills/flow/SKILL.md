@@ -58,6 +58,7 @@ For independent bulk jobs, use `flow batch` with one manifest entry per output. 
 
 What the errors mean:
 - Signed-out accounts are not empty accounts. `flow batch` and `flow images` renew stale saved sessions themselves and print `renewed N stale session(s)` or `N account(s) signed out (...)`. A QUOTA error with `details.signedOut` means those accounts' credits are unknown: run `flow account refresh --only accX` once, rerun the same command, and if one still fails tell the user to run `flow account open accX`. Never report that as "out of credits".
+- `LOGIN_REQUIRED` with `details.signInFailed` means those accounts have the credits but their Flow browser won't sign in. Tell the user to run `flow account open accX`, sign in until Flow shows the app, and then rerun the same command. Never call it out of credits, and don't retry it in a loop. `flow account refresh` flags these accounts too ("Flow's page shows it signed out in its browser").
 - A final `QUOTA` means the live account pool lacks enough credits. When every account is out (`details.allOut`, or `"outOfCredits": true` in a batch summary), stop and tell the user: Google refills free accounts daily, so ask them to run `flow account refresh` and then rerun the same command. Do not run the refresh yourself or retry in a loop.
 - `TIMEOUT` means an accepted job may still be resumable.
 - A clip Google drops, or leaves generating for 4 minutes, is regenerated once on another account in the same run (`lost by Google · regenerating on another account`). Let it run; don't stop or rerun the batch.
