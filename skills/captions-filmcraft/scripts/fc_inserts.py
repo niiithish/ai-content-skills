@@ -47,13 +47,17 @@ def run(proj, cmds):
 
 def layout(proj):
     """(video tracks, insert track indices, ticks per frame, fps)"""
-    v = fc(proj, "inspect", "sequence")["video"]
+    s = fc(proj, "inspect", "sequence")
+    v = s["video"]
     # the caption track is the top one with text on it: an empty track or an image overlay (an emoji) above it is not
     while len(v) > 1 and not any(e["effect"] == "graphic_text" for c in v[-1]["items"] for e in c["effects"]):
         v = v[:-1]
     if len(v) < 3:
         sys.exit("need V1, at least one insert track and a caption track on top")
-    fpt = v[0]["items"][0]["duration"] // v[0]["items"][0]["durationFrames"]
+    # ticks per frame from the sequence rate: a V1 clip's duration/durationFrames is off on a sped-up clip (1.1x gave
+    # +1.4 %, so every timeline.move landed frames late and overwrote the next insert; video-27, 2026-11-16)
+    fr = s.get("settings", {}).get("frame_rate")
+    fpt = (254016000000 * fr["den"] // fr["num"]) if fr else v[0]["items"][0]["duration"] // v[0]["items"][0]["durationFrames"]
     return v, range(1, len(v) - 1), fpt, 254016000000 / fpt
 
 

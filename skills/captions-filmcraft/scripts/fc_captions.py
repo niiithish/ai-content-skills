@@ -95,6 +95,17 @@ STYLES = {
               lines=[1098, 1173], boxes=dict(pad=[17, 7], radius=16, color="#ffffff"),
               props={"align": "center", "fill_color": "#000000", "stroke": False, "shadow": False,
                      "background": False, "position": [540, 1136]}),
+    # Doctor tier-list look (Aleo video-6 reference, Koriderm ad, 2026-11-13, user: "copy the exact style"). Measured
+    # at 720x1280, x1.5: black (#030303) sentence-case TikTok Sans SemiBold (ink mass 0.387 = SemiBold 0.39,
+    # ExtraBold 0.45), "Not the formula" 288 px ink at 41 pt = size 62; no stroke, no shadow, no punctuation; one
+    # line on a white box 80 px tall (= 1.3 x size, so no vertical pad), 6 px past the advance width a side,
+    # radius 12, box centre y 1367 (baseline 1386). Build with --one-line; 2-5 word phrases, back to back.
+    "11": dict(about="Sentence-case black TikTok Sans SemiBold 62 on one white rounded box, one line, box centre y 1367, "
+                     "no punctuation (Aleo video-6 reference; build --one-line)",
+               font="TikTok Sans 24pt", fontStyle="SemiBold", size=62, caps=False, bare=True, file="TikTokSans-SemiBold.ttf",
+               lines=[1386, 1386], single=1386, boxes=dict(pad=[6, 0], radius=12, color="#ffffff"),
+               props={"align": "center", "fill_color": "#000000", "stroke": False, "shadow": False,
+                      "background": False, "position": [540, 1386]}),
     # Word-by-word podcast-clip look (Aleo video-4 reference ad, 2026-10-27). Measured on the reference at 720x1280,
     # scaled to 1080x1920: cap height 60 px ("VERY" 233 px wide), baseline y 1306, a thin black outline and a hard
     # black drop shadow down-right with no blur. One word a caption, two when a short word leads ("OR YOUR",
@@ -129,6 +140,33 @@ STYLES = {
               props={"align": "center", "fill_color": "#ffffff", "stroke": False, "shadow": True,
                      "shadow_angle": 90, "shadow_distance": 2, "shadow_blur": 8, "shadow_opacity": 70,
                      "shadow_color": "#000000", "position": [540, 1415]}),
+    # Podcast-ad captions (Mysa video-24 reference DCT#29, user 2026-11-10 "exactly same shadow, same colours").
+    # Measured at 720x1280, x1.5: sentence case with punctuation, white Montserrat Bold ("Watch what happens"
+    # 421 px at 720 = size 38 -> 57), baseline y 1342, centred, 2-4 words a page back to back. Dark edge reaches
+    # 5 px above and below the white: 5 px black stroke plus a soft shadow straight down (4 px, blur 8, 85%).
+    # Matched to the reference frame within 4 px wide and 1 px high. Hook headline: see video-24 edit/hook_title.py
+    # (white ALL CAPS Montserrat ExtraBold 58 on red #c80403 rounded boxes per line, emoji as an image).
+    "10": dict(about="Sentence-case white Montserrat Bold 57, 5 px black outline, soft shadow straight down "
+                     "(4 px, blur 8, 85%), baseline y 1342, 2-4 words a page",
+               font="Montserrat", fontStyle="Bold", size=57, caps=False, file="Montserrat-Bold.ttf",
+               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 5,
+                      "stroke_color": "#000000", "shadow": True, "shadow_angle": 90, "shadow_distance": 4,
+                      "shadow_blur": 8, "shadow_opacity": 85, "shadow_color": "#000000",
+                      "position": [540, 1342]}),
+    # Talking-head running captions (Mysa video-26 reference DCT#31, user 2026-11-14 "copy exactly 100%"). Measured
+    # at 720x1280, x1.5: white TikTok Sans SemiBold at the default optical size (not 24pt: "tanning drops" 234 px
+    # wide and 31 px of fill tall only fit the default cut at 35 pt -> 52.5), 2 px black outline (-> 3) with a slight
+    # soft edge, no punctuation, lowercase except a sentence's first word, numbers spelled out, 1-3 words a page,
+    # centred, fill top 874 -> baseline 901 at 720 = y 1351. Its hook title and white keyword boxes are built by
+    # video-26 edit/dct31_overlays.py.
+    "12": dict(about="White TikTok Sans SemiBold 52.5, 3 px black outline, slight soft edge, baseline y 1351, "
+                     "no punctuation, 1-3 words a page (plan --max-words 3)",
+               font="TikTok Sans", fontStyle="SemiBold", size=52.5, caps=False, bare=True,
+               file="TikTokSans-SemiBold.ttf",
+               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 3,
+                      "stroke_color": "#000000", "shadow": True, "shadow_angle": 90, "shadow_distance": 0,
+                      "shadow_blur": 4, "shadow_opacity": 60, "shadow_color": "#000000",
+                      "position": [540, 1351]}),
 }
 # Meta-ready, same as the filmcraft skill's fc.py export: 2 min ~ 90 MB, ~2.4x faster than 40 Mb/s 2-pass max quality
 EXPORT = {"bitrateKbps": 6000, "maxBitrateKbps": 9000, "bitrateMode": "vbr1Pass", "gpuRendering": "auto",

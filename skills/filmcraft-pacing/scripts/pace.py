@@ -235,14 +235,18 @@ def cmd_tighten(a):
     v1 = s["video"][0]["items"]
     ranges = [(x, y) for x, y in ranges if any(c["startFrame"] <= x and c["endFrame"] >= y for c in v1)
               or all(any(c["startFrame"] <= f < c["endFrame"] for c in v1) for f in range(x, y))]
-    # an existing cut inside or next to a pause: cut up to it, so no sliver of a frame or two is left over
+    # an existing cut within 2 frames of either end of a pause cut: move that end onto it, so no sliver of a frame or
+    # two is left over. A cut further inside the pause is just deleted with it (it used to stop the cut there, which
+    # left a 1.14 s pause 3 frames shorter on an already-cut talking track, calvin video-27 2026-11-16).
     seams = sorted({c["startFrame"] for c in v1} | {c["endFrame"] for c in v1})
     snapped = []
     for x, y in ranges:
-        near = [f for f in seams if x - 2 <= f <= y + 2]
-        if near:
-            f = near[0]
-            x, y = (x, f) if f > x else (f, y)
+        nx = [f for f in seams if abs(f - x) <= 2 and f < y]
+        ny = [f for f in seams if abs(f - y) <= 2 and f > x]
+        if nx:
+            x = min(nx, key=lambda f: abs(f - x))
+        if ny:
+            y = min(ny, key=lambda f: abs(f - y))
         if y - x >= 1:
             snapped.append((x, y))
     ranges = snapped
