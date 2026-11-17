@@ -16,6 +16,7 @@ This is how the user and I edit every ad in FilmCraft. The principles below held
 | [references/new-machine.md](references/new-machine.md) | A new PC, or a missing tool or font |
 | `assets/` | Shared overlays: iPhone 🤯, red CTA arrows, the click sound; `assets/screens/` screen-UI templates and approved examples |
 | `scripts/setup/filmcraft-update` | Install or update FilmCraft |
+| `scripts/audit.py` | The pre-export audit: run before every export and after every scripted edit |
 
 Also load `filmcraft` (CLI, bridge, export) and `captions-filmcraft` (`fc_captions.py`, `fc_inserts.py`). `filmcraft-pacing` cuts dead air and adds motion. The client folder's `AGENTS.md` / `CLAUDE.md` (playbook, taste log) and the video's own file win over this skill. Newest feedback wins over older notes.
 
@@ -68,6 +69,7 @@ Also load `filmcraft` (CLI, bridge, export) and `captions-filmcraft` (`fc_captio
 
 ## Checks before anything goes back
 
+0. **`python3 ~/.claude/skills/edit-style/scripts/audit.py edit/<hook>.fcproj --baseline edit/backup-<latest>/<hook>.fcproj`** (and for hooks 2/3 `--body-of edit/hook-1.fcproj --offset O --from F`). It fails on a transition or effect that vanished since the baseline (Aleo Loom 21: a later edit dropped one light-leak flash and kept its click), a clip with a fractional start or length (a 0.00001-frame tail showed the cutout on the next picture), missing media, and a hook 2/3 body that differs from hook 1. It warns on sources under 720p (Loom 18: a 360p draft scaled up). Read every INFO line on moved clips.
 1. **`fc_inserts.py check edit/<hook>.fcproj`**: 0 changes under 8 frames, and no new mid-caption changes compared with before your edit. Look at every FLASH (the speaker showing under 18 frames between two pictures or at the end) and JUMP (a jump cut on her with no zoom change) it warns about, and fix it or say why it stays: on video-23 the user found these by eye ("weird cut… just after that b roll end").
 2. **Positions**: every clip you didn't mean to touch is where it was. After a cut, everything after it moved by exactly the cut.
 3. **V1 has no gaps.** Every jump cut sits under a picture or on a caption start.
@@ -81,6 +83,7 @@ python3 ~/.claude/skills/filmcraft/scripts/fc.py export edit/hook-N.fcproj -o de
 ```
 
 - Run it in the background, one hook after another.
+- Run `~/.claude/skills/edit-style/scripts/audit.py` on every hook first; export only when it passes.
 - Move old exports to `deliverables/pre-<what>/` first.
 - Output: 1080×1920 H.264 + AAC, about 45 MB a minute.
 - Afterwards check each file with `ffprobe` (duration and audio stream).

@@ -1,4 +1,4 @@
-# Client rules (Max, Aleo), Looms 1–12
+# Client rules (Max, Aleo), Looms 1–21
 
 Max sends Loom videos plus screenshots. He is direct, praises what works and names "very small details". He measures everything against his competitor's winning ad. Each rule below is one he gave, or one the user gave while fixing his notes. They hold for every video unless a video's `AGENTS.md` overrides one.
 
@@ -38,3 +38,31 @@ From the user, on top of the Looms:
 - When a client measurement collides with a visible problem (a title at his y covering her face), make the obvious fix, show the frame and say so.
 
 DCT-2190 was signed off on 2026-11-03 ("he loved it", via the user) after the Loom 11–12 fixes. He praises good inserts even while asking for a change ("the clip is amazing… it's great"), so a change request isn't a rejection of the style.
+
+## Video-6 (tier list, format D): Looms 13–21 (his max-loom1–9 = Looms 13–21, 2026-11-15 to 11-17)
+
+| Loom | Rule | Why (his words or what he saw) |
+|---|---|---|
+| 13 | Every insert shows its line literally and the cellulite is clearly visible; if a clip doesn't show it, replace it | "cellulite hard to see", a pinch that "isn't cellulite" |
+| 13 | White US women of 50+ only in results and problem inserts | a Black woman on "softer skin, same dimples" |
+| 13 | The product section shows smooth legs, not dimpled ones | dimpled legs on "past the surface" |
+| 13 | No jump cuts on her full shot; no head jerk at a cut | "not clean" |
+| 13 | Spoken letters must be heard right ("C tier", not "E tier"); re-take the word | a lisp |
+| 13 | The cutout switches sides, balanced, never per clip and never right for minutes | "jumps left/right too much", then "boring" |
+| 15 | When no clip fits a line, show her full face (the inspo does) | random bathroom/boardwalk clips |
+| 15 | Cellulite stages match his screenshot: soft = loose, wavy, shallow; fibrous = deep fixed dimples, orange peel; edematous = puffy, swollen legs and knees | "each clip must show that stage" |
+| 15–17 | Cuts sit in the silence between sentences, cutout and background on the same frame | "the cutout jump and the background cut don't land together" |
+| 14, 16 | Tier board: the board stays, only the ranked product swooshes in; same animation every time; no swoosh elsewhere | "the swish feels off and off-timing" |
+| 15–16 | A cream is a cream jar or tube, never a lotion bottle; the device without its gel; the product stays in S after it is ranked | board items |
+| 15–16 | Never show her cutout over her own full shot | "beginner mistake" (two of her) |
+| 18 | On the cutout, no head move, blink or nod right after a picture change; trim those frames | "she looks straight, then her head moves" |
+| 18 | A zoom-out transition moves the picture and the cutout together, every time | "only her cutout zooms out" |
+| 18–19 | Real brands exactly, with their names, on the board and in the inserts (his links) | Palmer's, Cellu, Sculpiflex |
+| 18 | No low-resolution clip anywhere | a 360p draft at 3:40 |
+| 18 | Board cutouts must be clean (no holes, no grey blobs) | "badly cut out" |
+| user | A freeze or stutter on the cutout is a defect, even a 2-frame hold | user after Loom 19: "like 3 fps" |
+| 20 | Her cutout must stop with her sentence, never vanish before the cut or keep talking after it | "isn't saying 'same dimples', then she vanishes" |
+| 20 | A card shows the product of that card (the Palmer's clip on CELLULITE CREAMS) | his Loom |
+| 21 | Every Camera Click pivot has its light-leak flash | "the screen gets a bit brighter… we also want it here" |
+
+From the user, on video-6: show stills before clips and one strong option at a time ("dogshit" for weak stills); a packaging shot uses the same branded box already seen in the edit, not a new one.

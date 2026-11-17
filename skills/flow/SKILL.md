@@ -143,6 +143,8 @@ Use absolute paths for prompt files, ingredients and outputs. Inspect every refe
 
 ## Prompt hygiene
 
+- **Check every clip for a cut inside it.** Flow sometimes cuts to a new angle or a close-up mid-clip, often after 2 s. Take the mean absolute difference of neighbouring frames on small grey frames; anything over about 8 is a cut. Use only the part before it, or remake the clip. Also check for warped limbs and vanishing objects late in the clip, and use only the clean part.
+
 - Never write "TikTok" or name any social app, phone interface or on-screen UI in a prompt: the model draws the app's buttons into the frame. Say "vertical short film" instead.
 - Image prompts describe one composed frame, not a reference-sheet layout.
 

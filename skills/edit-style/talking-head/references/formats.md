@@ -1,8 +1,8 @@
-# The two approved formats
+# The approved formats
 
 Pick the one the client's reference ad looks like, and copy the reference's pacing, layout and severity as closely as you can. The client judges every cut against his winning ad, so the closer the copy, the fewer rounds.
 
-## Shared body (both formats)
+## Shared body (every format)
 
 1. **Credentials.** Her face, then pictures of her world.
 2. **Problem.** Severe, real cellulite in plain home phone photos under the ceiling light: deep dents, not bumps, never smooth or AI-looking. Then the things that failed: creams, exercise, weight loss.
@@ -49,9 +49,29 @@ Hooks 2 and 3 are clones of the approved hook 1 with only the opening swapped. T
 - **Hook opening:** one continuous slow zoom across its jump cuts (no ×1.08 steps), a cut pause put back at 1.5x with a quick ×1.08 zoom instead of a hard jump cut (`dct-28/fill_jumpcuts.py`), and a FilmCraft `zoom_blur` transition (8 frames on V1, 4 on a split's listener) on the hook-to-body cut.
 - **Scripts (`dct-28/`, video-23's own; set the paths and shot lists at the top):** `build_hook1.py` (the whole hook-1 build: talking pieces, inserts, splits, pushes), `seam_captions.py`, `make_focus_screens.py`, `make_219_scroll.py`, `build_hooks23.py` + `add_opening_captions.py` (hooks 2–3), `fill_jumpcuts.py`. `speech_ranges.py` + `build_speaker_projects.py` + `check_exports.py` were the first voice-change route (one continuous track per speaker, silences over 0.3 s squeezed); `voice_change.py` replaces them.
 
-## Building a fourth format
+## Format D: tier list with a speaker cutout (Aleo video-6, Koriderm inspo, Loom 21 "amazing job", 2026-11-17)
 
-When a new reference ad doesn't fit A or B:
+- **Look.** She talks straight to the lens at a desk in a white coat. The full-screen inserts keep her green-screen cutout in a bottom corner; see [cutout.md](cutout.md) for its rules.
+- **Captions.** Template 11: black TikTok Sans SemiBold 62, sentence case, no punctuation, one line on a white box 80 px tall, box centre y 1367.
+- **Pace.** The talking head is sped up to the inspo's words per minute (204 wpm = 1.242x) and the voice is at the inspo's loudness (about −14.5 LUFS). Pauses are cut to about 0.17 s (`cut_silence.py`, `find_gaps.py`).
+- **Tier board** (S/A/B/C/D, labels Best value / Worth it / Decent / Average / Overpriced): `make_boards.py`.
+  - The board stays put. Only the product being ranked slides in from the right over 6 f, with a Cartoon Swipe on it. It is the same animation every time and there is no swoosh anywhere else (Loom 4).
+  - Items sit in the row's left half and stay clear of her cutout.
+  - The product lands in S, and stays in S on every board after it.
+  - Board items are the real brands, cut out cleanly (rembg isnet-general-use).
+- **Name cards** ("CELLULITE CREAMS"):
+  - They show the picture and the card only, with no caption and no cutout.
+  - Each comes in with a zoom_blur, 8 f centred on the cut.
+  - The insert and the cutout must blur out together (Loom 6).
+  - Text is centred on its bar by the caps block.
+- **Pivots** ("I've been a dermatologist", "Now, the one exception", "This one takes"): a light_leak (amber 1/0.62/0.22, amount 75, 8 f centred) with a Camera Click 6 f before. Each click needs its flash (Loom 9).
+- **Hook to body:** zoom_blur, 8 f centred on the first insert, with the cutout coming in 2 f later.
+- **No fitting clip means her full face.** The inspo stays on her full shot for seconds at a time, so don't fill a line with a random clip (Loom 3).
+- **Scripts:** `scripts/video-6/`. The main ones are `build_hook1_full.py` (the whole build), `build_hooks23.py` (body 100 % hook-1's) and `board_items.py`.
+
+## Building a new format
+
+When a new reference ad doesn't fit A–D:
 
 1. Break it down with `video-breakdown`.
 2. Measure from its frames: the title position, caption height and length, pictures per second, the hook structure.

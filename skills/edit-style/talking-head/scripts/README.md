@@ -54,3 +54,26 @@ Video-23's own scripts, kept as working examples: set the paths, shot lists and 
 | `fill_jumpcuts.py PROJECT C [C…]` | Generic: puts a cut pause back at 1.5x with a ×1.08 zoom, moving everything after |
 | `build_hooks23.py N` + `add_opening_captions.py N` | Hooks 2–3 from the user's hook 1: only the opening replaced |
 | `speech_ranges.py`, `build_speaker_projects.py`, `check_exports.py` | The first voice-change route (one track per speaker, silences ≤ 0.3 s). Replaced by `voice_change.py` in talking-head-video-production |
+
+## video-6/: format D, the tier list with her cutout (Aleo video-6, Koriderm inspo)
+
+Video-6's own scripts, kept as working examples. Set the paths, frames and shot maps at the top before reuse. The cutout rules they enforce are in `references/cutout.md`.
+
+| Script | Does |
+|---|---|
+| `build_hook1_full.py` | The whole hook-1 build: inserts on V2, her keyed green-screen cutout on V3 (scale 70 %, graded), name cards on V4, music, zoom steps |
+| `build_hooks23.py N` + `make_hook_media.py` | Hooks 2–3: only the opening replaced, every body clip on hook-1's frame. After it, redo opening-only fixes and run `audit.py --body-of` |
+| `retime_speed.py` | Moves a whole edit to a new talking speed (1.1x to 1.242x for the inspo's wpm), keeping every caption, picture and the cutout on their words |
+| `cut_silence.py A B [PROJECT]` + `find_gaps.py` | Ripple-cut frames [A, B) on every track (music shortened at its seam); list every pause over 0.25 s. `FC_HEADLESS=1` when the app is closed |
+| `find_late_jumps.py PROJECT` | Cutout cuts where her head jump lands 1–2 f after the picture change |
+| `find_blink_cuts.py PROJECT` | Cutout cuts whose first frames show her eyes shut |
+| `skip_blinks.py PROJECT clip` | Starts a cutout piece K frames later at (L-K)/L speed, so it still ends in sync (the fix for both) |
+| `cutout_hold.py A:B:G` | One-frame hold so a jump inside the file lands on the cut. Use sparingly: 2+ f holds read as freezes |
+| `dedupe_green.py` | Rebuilds a Canva 30 fps export of 24 fps footage at 24 fps from the real frames |
+| `cutout_sides.py`, `card_shots.py` | Cutout spot per stretch; name-card shots without caption or cutout |
+| `make_boards.py` + `board_items.py` | Tier board PNGs, items and slide-in clips; the ranked product slides in with the swipe, nothing else swooshes |
+| `blur_cards.py`, `push_blur.py`, `leak_296.py`, `sfx_pass.py` | zoom_blur card and first-insert transitions, the light leak from her shot into an insert, the SFX pass (pivot light leak + Camera Click) |
+| `swap_inserts.py` | Swaps V2 inserts in their slots, scaled to fill, nothing else moves |
+| `fit_take.py`, `splice_word.py` | Fit a re-taken ElevenLabs line or one word into the voice, in sync, unstretched |
+
+Not kept (they made it worse): `freeze_joins.py`, `cutout_continuity.py` and `smooth_cutout.py`. Their holds, 1.5x pieces and speed ramps read as freezes and twitches.
