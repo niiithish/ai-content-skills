@@ -42,6 +42,8 @@ A single ASR engine alone was 0.16 s (4 frames) late on part of a voiceover, and
    ```
 
    It deletes every other audio track in memory, exports the voice as `captions/<stem>.vo.wav` and never saves the project.
+
+   **A song** (a sung ad: on by itself when the video folder has `song/`, or pass `--vocals`): the exported track is the song as edited (trims, moves and speed changes included), so `words` keeps it as `<stem>.vo.mix.wav`, splits the vocals out of it with the transcribe skill's `vocals` (about 1 min on the GPU) and writes the stem as `<stem>.vo.wav`. `plan`, the onsets, the pauses and the waveform audit then all run on the voice alone; in the mix the music filled the gaps between sung lines and only 10 of 37 line starts could be found (2026-11-20). The project's own audio is never touched. Use the lyric sheet's lead lines as the script.
 3. Blocks. Put the voiceover script for this edit (each hook has its own first lines) in a text file, then:
 
    ```bash

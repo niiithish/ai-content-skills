@@ -46,7 +46,7 @@ Follow "Generating the song" in `song-craft.md`. **Suno (a paid plan) is the def
    python3 <skill-dir>/scripts/song.py lyrics video-N/song/lyrics-v1.md --video video-N
    ```
 
-5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with Parakeet (the `transcribe` skill). A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. If many are missing, set `WHISPER_MODEL=medium.en` in `project.conf`, or use the vocal stem the music tool exports.
+5. Time it with `video-plan`: `plan.py voiceover video-N` finds each sung line in the take with Parakeet (the `transcribe` skill). A line it can't find was probably dropped or mangled by the singer: tell the user which ones to listen to. It times from the song's vocal stem by itself (the project has `song/`, so `plan.py` splits the take with the transcribe skill's `vocals`, about 1 min on the GPU): the music hides where sung lines start and stop. If many lines are missing, set `WHISPER_MODEL=medium.en` in `project.conf`.
 
 ## Stage 3: plan
 
@@ -72,7 +72,7 @@ Plan with `video-plan`, with the song in place of the voiceover. Its Music row r
 
 ## Edit and captions
 
-The user edits: the full song on the bottom track, uncut, every clip muted above it. Never use the audio a video model outputs. After the edit, add captions with `captions-filmcraft` when asked. Never run `filmcraft-pacing` tighten on a song ad: the song is the timing. For a song, the wording is the lyric sheet's lead lines. The references show one lyric line per caption; one line per caption is fine.
+The user edits: the full song on the bottom track, uncut, every clip muted above it. Never use the audio a video model outputs. After the edit, add captions with `captions-filmcraft` when asked: its `words` step splits the vocals out of the song as it sits on the timeline (any trim or move of the song included) and times every caption from the voice alone; the song on A1 is never replaced. Never run `filmcraft-pacing` tighten on a song ad: the song is the timing. For a song, the wording is the lyric sheet's lead lines. The references show one lyric line per caption; one line per caption is fine.
 
 ## Rules
 

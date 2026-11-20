@@ -204,8 +204,9 @@ def heard_times(audio, lines):
         print(f"word times from {wj.name}")
         got = [(w["word"], w["start"], w["end"]) for w in json.loads(wj.read_text())]
     else:
-        print(f"transcribing {audio.name} ...")
-        got = words(audio)
+        song = (audio.parent.parent / "song").is_dir()   # a sung ad: time the separated vocals, not the mix
+        print(f"transcribing {audio.name}{' (vocal stem: song)' if song else ''} ...")
+        got = words(audio, vocals=song)
     heard = [(norm(w), s, e) for w, s, e in got if norm(w)]
     script = [(i, norm(w)) for i, line in enumerate(lines) for w in line.split() if norm(w)]
     matched = {}

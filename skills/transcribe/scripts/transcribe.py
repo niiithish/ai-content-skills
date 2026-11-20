@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Speech to text with word timestamps, fully local. Parakeet TDT 0.6B v3 on the Intel GPU, CPU fallbacks.
 
-  transcribe.py MEDIA [MEDIA ...] [--srt] [--out-dir DIR] [--verify] [--engine NAME]
+  transcribe.py MEDIA [MEDIA ...] [--srt] [--out-dir DIR] [--verify] [--engine NAME] [--vocals]
+
+--vocals: for a song, split off the sung voice first (vocals.py, MelBand RoFormer on the Arc GPU) and transcribe
+that stem. The stem keeps the song's timeline, so the times are the song's times.
 
 Takes any audio or video file and writes next to it (or in --out-dir):
   <stem>.txt         the transcript
@@ -189,7 +192,7 @@ def _run(name, path, seconds):
     return _venv("--onnx-words" if name == "parakeet-onnx" else "--whisper-words", path, seconds), LABELS[name]
 
 
-def words(path, engine="auto", verify=None):
+def words(path, engine="auto", verify=None, vocals=False):
     """[(word, start, end), ...] for any audio or video file. Word text keeps its punctuation.
 
     Engines run in ENGINES order; a crash, hang, missing install or a result that fails sane() moves on to the
@@ -198,6 +201,10 @@ def words(path, engine="auto", verify=None):
     CPU and keeps the CPU words unless both agree on every word and every start (within one step)."""
     if verify is None:
         verify = os.environ.get("TRANSCRIBE_VERIFY", "0") == "1"
+    if vocals:   # a song: the music hides held word ends and onsets, so transcribe the voice alone (same timeline)
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from vocals import vocals as split_vocals
+        path = split_vocals(path)
     seconds = duration(path)
     order = ENGINES[ENGINES.index(engine):] if engine in ENGINES else ENGINES
     for i, name in enumerate(order):
@@ -255,6 +262,8 @@ def main():
     ap.add_argument("--engine", choices=["auto", *ENGINES], default="auto", help="start the chain at this engine")
     ap.add_argument("--verify", action="store_true",
                     help="re-run a GPU result on the CPU and keep the CPU words unless both agree (use for captions)")
+    ap.add_argument("--vocals", action="store_true",
+                    help="a song: transcribe its separated vocal stem (<stem>.vocals.wav, written next to it)")
     a = ap.parse_args()
     if a.onnx_words:
         return print(json.dumps(_onnx_words(a.onnx_words)))
@@ -264,7 +273,7 @@ def main():
         ap.error("give at least one media file")
     for m in a.media:
         t = time.time()
-        ws = words(m, a.engine, True if a.verify else None)
+        ws = words(m, a.engine, True if a.verify else None, a.vocals)
         d = a.out_dir or m.parent
         d.mkdir(parents=True, exist_ok=True)
         base = d / m.stem

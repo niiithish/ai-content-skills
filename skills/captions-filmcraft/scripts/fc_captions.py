@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Captions as text clips inside a FilmCraft project, each one starting on the frame its phrase is spoken.
 
-  fc_captions.py words  PROJECT [--vo A1] [--fast]    the voiceover track as WAV, then word times from Parakeet and
+  fc_captions.py words  PROJECT [--vo A1] [--fast] [--vocals]
+                                                    the voiceover track as WAV (a song: its vocal stem, split
+                                                    from the timeline mix; on by itself when the video has song/), then word times from Parakeet and
                                                     faster-whisper (Parakeet only with --fast) -> captions/<stem>.vo.wav, .pk.json, .fw.json
   fc_captions.py plan   PROJECT [--script S] [--fixes F] [--hide 0.4]
                                                     caption blocks with start and end frames -> captions/<stem>.captions.json
@@ -167,6 +169,46 @@ STYLES = {
                       "stroke_color": "#000000", "shadow": True, "shadow_angle": 90, "shadow_distance": 0,
                       "shadow_blur": 4, "shadow_opacity": 60, "shadow_color": "#000000",
                       "position": [540, 1351]}),
+    # One-word pop captions (Aleo video-7 reference, Quasi hydrogel mask ad, user 2026-11-18 "replicate 100%", a new
+    # template). Measured at 720x1280, x1.5: white Montserrat ExtraBold ("collagen" 242 px ink, 53 px tall; ink mass
+    # 0.403 vs ExtraBold 0.406, Bold 0.348) = size 54 -> 81; one word a caption, sentence case, the first word after
+    # any comma or full stop capitalised ("face" / "Here's"), apostrophes kept, no other punctuation, numbers as digits
+    # ("40", "8"); ink top 962 -> baseline 1001 at 720 = y 1502; a solid black edge 5 px at 720 (-> 7.5) fading into a
+    # soft dark shadow a further ~6 px, heavier down-right. Same spot on every shot.
+    "13": dict(about="White Montserrat ExtraBold 81, one word a caption, 7.5 px black outline, soft shadow down-right, "
+                     "baseline y 1502, no punctuation except apostrophes (plan --max-words 1)",
+               font="Montserrat", fontStyle="ExtraBold", size=81, caps=False, bare=True, keep_hyphen=True,
+               file="Montserrat-ExtraBold.ttf",
+               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 7.5,
+                      "stroke_color": "#000000", "shadow": True, "shadow_angle": 45, "shadow_distance": 3,
+                      "shadow_blur": 9, "shadow_opacity": 85, "shadow_color": "#000000",
+                      "position": [540, 1502]}),
+    # TikTok native captions on a talking head (Mysa video-28 reference DCT#33, user 2026-11-19 "copy it exactly
+    # 100%"). Measured at 720x1280, x1.5: white TikTok Sans Medium ("the absolute last thing I" 602 px -> size 53),
+    # ~3 px black outline, lowercase except I and names, commas kept, no full stops or question marks, phrases of
+    # up to ~15 words a page, each line filled to 780 px before wrapping: baselines y 1293 / 1353, three lines 1263 /
+    # 1323 / 1383, one line 1323.
+    "14": dict(about="White TikTok Sans Medium 53, 3 px black outline, lowercase whole phrases (up to ~15 words), commas kept "
+                     "mid-page, filled TikTok-style to 780 px: 2 lines at baselines 1293/1353, 3 at 1263/1323/1383, one at 1323 (plan --max-words 15)",
+               font="TikTok Sans", fontStyle="Medium", size=53, caps=False, bare=True, keep_comma=True, fill=True,
+               file="TikTokSans-Medium.ttf", lines=[1293, 1353], lines3=[1263, 1323, 1383], single=1323, wrap_px=780,
+               props={"align": "center", "fill_color": "#ffffff", "stroke": True, "stroke_width": 5,
+                      "stroke_color": "#000000", "shadow": True, "shadow_angle": 90, "shadow_distance": 0,
+                      "shadow_blur": 4, "shadow_opacity": 50, "shadow_color": "#000000",
+                      "position": [540, 1323]}),
+    # AI drama one-word captions (Aleo video-8 reference, Kivora elevator drama, user 2026-11-20 "100% clone of the
+    # ref video's captions"). Measured at 720x1280, x1.5: golden-yellow #E6C01F Avenir Next Demi Bold ("balm" 99x35 px
+    # ink at 720 = size 45.5 -> 68; glyph-matched against 25 fonts: G, ?, y, a, t), one word a caption as spoken,
+    # sentence case, apostrophes and question marks kept, no commas or full stops; a thin dark edge (~1.3 px at 720)
+    # and a hard 3D drop shadow straight down, no blur (user 2026-11-20). FilmCraft shadow_angle: 0 up, 180 down. Baseline y 818/1280 = 1227; moved per shot (edit/caption_pos.py).
+    "15": dict(about="Golden-yellow #E6C01F Avenir Next Demi Bold 68, one word a caption, 1.5 px dark outline, hard 3D drop shadow "
+                     "straight down (6 px, no blur), baseline y 1227, ? and apostrophes kept (plan --max-words 1)",
+               font="Avenir Next", fontStyle="Demi Bold", size=68, caps=False, bare=True, keep_q=True, keep_hyphen=True,
+               file="AvenirNext-DemiBold.ttf",
+               props={"align": "center", "fill_color": "#e6c01f", "stroke": True, "stroke_width": 1.5,
+                      "stroke_color": "#241605", "shadow": True, "shadow_angle": 190, "shadow_distance": 6,
+                      "shadow_blur": 0, "shadow_opacity": 100, "shadow_color": "#000000",
+                      "position": [540, 1227]}),
 }
 # Meta-ready, same as the filmcraft skill's fc.py export: 2 min ~ 90 MB, ~2.4x faster than 40 Mb/s 2-pass max quality
 EXPORT = {"bitrateKbps": 6000, "maxBitrateKbps": 9000, "bitrateMode": "vbr1Pass", "gpuRendering": "auto",
@@ -295,6 +337,14 @@ def cmd_words(a):
     sys.path.insert(0, str(HERE.parent.parent / "transcribe" / "scripts"))
     sys.path.insert(0, str(Path.home() / ".claude/skills/transcribe/scripts"))
     import transcribe as T
+    song = a.vocals if a.vocals is not None else (P["vo.wav"].parent.parent / "song").is_dir()
+    if song:   # a sung track: words and every waveform check run on the voice alone (vocals.py, same timeline).
+        # The mix was just exported from the edited timeline, so any trim, move or speed change of the song is in it.
+        from vocals import vocals as split_vocals
+        mix = P["vo.wav"].with_name(P["vo.wav"].stem + ".mix.wav")      # <stem>.vo.mix.wav: the song as edited
+        shutil.move(P["vo.wav"], mix)
+        shutil.copy(split_vocals(mix), P["vo.wav"])                     # <stem>.vo.wav is now the vocal stem
+        print(f"song: vocals split from the mix -> {P['vo.wav']} (the mix is {mix.name}; the project is untouched)")
     pk = T.words(str(P["vo.wav"]), verify=True)   # Vulkan GPU, re-checked on the CPU; CPU engines if it fails
     json.dump(pk, open(P["pk.json"], "w"))
     print(f"Parakeet: {len(pk)} words -> {P['pk.json']}")
@@ -845,6 +895,13 @@ def greedy_lines(st, text):
     if text_width(st, flat, st["size"]) <= st["wrap_px"]:
         return [flat]
     w = flat.split()
+    if st.get("fill"):  # TikTok's own wrap: fill the first line, the rest goes below (DCT#33 "...a few months / ago")
+        out = []
+        while w:
+            k = max(k for k in range(1, len(w) + 1) if k == 1 or text_width(st, " ".join(w[:k]), st["size"]) <= st["wrap_px"])
+            out.append(" ".join(w[:k])); w = w[k:]
+        print(f"  wraps: {' / '.join(out)}")
+        return out
     opts = [(" ".join(w[:k]), " ".join(w[k:])) for k in range(1, len(w))]
     ok = [o for o in opts if not any(len(x) <= 4 and " " not in x for x in o)] or opts
     best = min(ok, key=lambda o: max(text_width(st, x, st["size"]) for x in o))
@@ -945,13 +1002,17 @@ def cmd_build(a):
                               size, pos + [[540, pr["lines"][1 - row]]]))
             continue
         if st.get("bare"):  # the reference shows no commas, full stops or word hyphens
-            text = re.sub(r"[,.!?;:]+(?=\s|$)", "", text)
+            if st.get("keep_q"):  # question marks stay (Aleo video-8 reference: "Grandpa's?", "78?")
+                text = re.sub(r"[,.!;:]+(?=\s|$|\?)", "", text)
+            else:
+                text = re.sub(r"[.!?;:]+(?=\s|$)" if st.get("keep_comma") else r"[,.!?;:]+(?=\s|$)", "", text)
             # "third-generation" -> "third generation" (video-23 user: the reference writes THIRD GENERATION);
             # a hyphen before a digit stays (omega-7)
-            text = re.sub(r"(?<=[A-Za-z])-(?=[A-Za-z])", " ", text)
+            if not st.get("keep_hyphen"):
+                text = re.sub(r"(?<=[A-Za-z])-(?=[A-Za-z])", " ", text)
         ls = (greedy_lines(st, text) if st.get("wrap_px") else two_lines(text, a.one_line)) if st.get("lines") else [text]
         size = min(fit_size(st, t) for t in ls)
-        ys = st["lines"] if len(ls) == 2 else [st.get("single") or (st["lines"][-1] if st.get("lines") else st["props"]["position"][1])]
+        ys = st["lines3"] if len(ls) == 3 and st.get("lines3") else st["lines"] if len(ls) == 2 else [st.get("single") or (st["lines"][-1] if st.get("lines") else st["props"]["position"][1])]
         pos = [[st["props"]["position"][0], y] for y in ys]
         cmds.append({"id": "graphics.newText", "params": {
             "text": ls[0], "position": pos[0], "size": size, "font": st["font"],
@@ -969,10 +1030,11 @@ def cmd_build(a):
                                                               "font": st["font"], "fontStyle": st["pair"]["fontStyle"], "clip": clip}},
                        {"id": "graphics.set", "params": {"clip": clip, "layer": 1, "props": dict(
                            st["props"], position=pos[1], opacity=st["pair"]["opacity"])}}]
-        elif len(ls) == 2:
-            second += [{"id": "graphics.newText", "params": {"text": ls[1], "position": pos[1], "size": size,
-                                                              "font": st["font"], "fontStyle": st["fontStyle"], "clip": clip}},
-                       {"id": "graphics.set", "params": {"clip": clip, "layer": 1, "props": dict(st["props"], position=pos[1])}}]
+        elif len(ls) >= 2:
+            for k in range(1, len(ls)):
+                second += [{"id": "graphics.newText", "params": {"text": ls[k], "position": pos[k], "size": size,
+                                                                  "font": st["font"], "fontStyle": st["fontStyle"], "clip": clip}},
+                           {"id": "graphics.set", "params": {"clip": clip, "layer": k, "props": dict(st["props"], position=pos[k])}}]
         if st.get("boxes"):   # after the text: each box goes to the back, so text is always on top
             second += box_cmds(st, clip, ls, size, pos)
     if second:
@@ -1067,6 +1129,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     w = sub.add_parser("words"); w.add_argument("project"); w.add_argument("--vo", default="A1")
+    w.add_argument("--vocals", action=argparse.BooleanOptionalAction, default=None,
+                   help="a song: time from its separated vocals (default: on when the video folder has song/)")
     w.add_argument("--fast", action="store_true",
                    help="Parakeet only (about 25 s instead of 80 s for 95 s of voice; mid-phrase starts can run 2-7 frames off)")
     p = sub.add_parser("plan"); p.add_argument("project"); p.add_argument("--script"); p.add_argument("--fixes")
