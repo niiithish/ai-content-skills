@@ -49,7 +49,7 @@ Core references (load on demand):
 
 ## 3. Autonomous Pre-Review QA Gate (Before Showing the User)
 
-After every batch, run `make.py review stills|clips|finals` and inspect **every tile** before reporting to the user. Auto-fix (regenerate from scratch once as the next version) if any tile fails:
+After every batch, run `make.py review stills|clips|finals` to build grouped labeled contact sheets (6–10 tiles per sheet), **but do your own agent QA at full resolution** — inspect individual full-res stills for detail-sensitive shots (labels, pill counts, hands, faces, anatomy) so shrunk thumbnails don't hide defects. Auto-fix (regenerate from scratch once as the next version) if any shot fails:
 
 - [ ] **No burned-in captions, UI chrome, watermarks, or sheet grey backdrops.**
 - [ ] **Object & anatomy counts:** exact number of pills, softgels, papers, bottles, limbs, and characters from start to end frame.
@@ -60,7 +60,7 @@ After every batch, run `make.py review stills|clips|finals` and inspect **every 
 
 **Capability-aware video QA fast-path:** If your runtime supports native video input (e.g., Gemini / Antigravity), watch generated `.mp4` clips directly (especially complex motion or flagged shots) to catch temporal defects contact sheets miss — disappearing/reappearing items, auto-closing doors or trays, wrong walk direction, morphing objects, and AI physics glitches. Text/image-only agents fall back seamlessly to `make.py review` contact sheets and extracted frames.
 
-For human review, start the local review board if installed (`${REVIEW_BOARD_BIN:-review} <project>`, or see `media-utils`) and read flags with `${REVIEW_BOARD_BIN:-review} flags <project>`. Keep chat replies terse: a short status table + one line on what is next.
+**For human review:** Always present the **grouped labeled contact sheet(s)** from `review/` (6–10 stills per sheet, shown directly in chat/artifact) so the user can scan all scenes in one glance without checking files one by one, plus start the local review board if installed (`${REVIEW_BOARD_BIN:-review} <project>`, or see `media-utils`) and read flags with `${REVIEW_BOARD_BIN:-review} flags <project>`. Keep chat replies terse: contact sheet(s) + short status table + one line on what is next.
 
 ## 4. Pipeline Phases
 
