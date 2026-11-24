@@ -22,3 +22,4 @@ skills-lock.json
 /examples/flow-skill-samples/*-v*.jpg
 /examples/flow-skill-samples/*-v*.json
 __pycache__/
+*.pyc
