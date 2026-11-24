@@ -24,11 +24,13 @@ Google Flow (`flow`) is our primary engine. Use ElevenLabs Creative when a proje
 
 ## Hard Credit & Quality Locks (Non-Negotiable)
 
-1. **ALWAYS set explicit aspect ratio AND `quantity=1`**:
+1. **NEVER auto-route or spend ElevenLabs credits without explicit user confirmation**:
+   - ElevenLabs is significantly more expensive than Flow. Never fall back to ElevenLabs automatically when Flow blocks or blurs a shot — first report which shots failed (with credit estimate via `estimate_only: true` when applicable) and wait for the user to approve, or only run when the user explicitly says to use ElevenLabs.
+2. **ALWAYS set explicit aspect ratio AND `quantity=1`**:
    - ElevenLabs Creative defaults to **`aspect_ratio: auto`** and **`quantity: 4`**, silently burning 4× credits per call.
    - Every image or video node MUST explicitly pass `aspect_ratio` (e.g., `"9:16"` for vertical ads) and `quantity: 1` unless the user explicitly asks for multiple variants.
-2. **From-scratch regeneration**: Never feed a broken generation (photoshopped product, warped anatomy, bad gaze) back as a reference image to "fix" it. Regenerate from scratch using the clean original character/product sheet and a simplified prompt.
-3. **Verify before downloading finals**: Inspect outputs before attaching them to downstream video nodes or FilmCraft timelines.
+3. **From-scratch regeneration**: Never feed a broken generation (photoshopped product, warped anatomy, bad gaze) back as a reference image to "fix" it. Regenerate from scratch using the clean original character/product sheet and a simplified prompt.
+4. **Verify before downloading finals**: Inspect outputs before attaching them to downstream video nodes or FilmCraft timelines.
 
 ## Passing Local Reference Images (`cloudflared` Quick Tunnel)
 
