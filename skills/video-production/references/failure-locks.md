@@ -1,54 +1,35 @@
-# Failure locks: every style
+# Shared Failure Locks (Every Style)
 
-Known ways Flow batches, reviews and hand-offs go wrong, with the fix that worked, for any style. The style skill has its own file for still and clip prompts (`animated-video-production` or `photoreal-video-production`, `references/failure-locks.md`); read both. Add a row whenever a fix works that isn't here yet.
+Cross-style QA checklist and known failure modes for Flow, ElevenLabs fallbacks, batching, and delivery. Read this alongside your loaded style module in `references/styles/`.
 
-## QA checklist for review sheets
+## Autonomous Pre-Review QA Checklist
 
+Check every tile in `make.py review` before showing the user:
 
-For every tile, check:
+1. **Identity & Demographics:** Faces, hair, age, and outfits match approved sheets and `PROJECT_STATE.json` cast locks.
+2. **Before/After Arc:** For transformation/beauty/health products, early "problem" shots visibly show the problem state; "after" glow appears only post-product.
+3. **Counts & Permanence:** Exact count of characters, pills, softgels, bottles, and papers from first frame to last — nothing multiplies or vanishes.
+4. **Anatomy & Real-Life Logic:** Products applied to the right body part (e.g., cellulite on thighs, never calves); monitors/drawers face their user; hands/limbs look natural; mirrors reflect the exact same pose and outfit (never draw a second person in a mirror).
+5. **No Burned-In Artifacts:** Zero captions, subtitles, UI buttons, watermarks, film gear (cameras/tripods), or grey reference-sheet backdrops.
+6. **Printed Text & Branding:** Product labels match the real pack photo (`--ref`); other brands have believable colored fictional labels (never plain blank white boxes).
+7. **Spatial & Background Continuity:** Adjacent shots in the same location share walls, lighting, and left/right character placement (pin characters to room landmarks, not "left/right").
+8. **Start State & Motion:** Still shows the state *before* the clip's action; clips actually move (never a frozen still-image clip) and never exceed Flow's simple-action comfort zone (avoid writing/ticking calendars, complex spins, or simultaneous multi-step hand choreography).
+9. **Eyeline & Tone:** Nobody stares into the camera unless the plan says so; facial expression matches the VO emotion (never smiling on a pain/problem line).
+10. **Talking Clips (Audio Check):** Transcribe with `transcribe` and diff against the script — every word said once, zero dropped/repeated words, zero mid-word cutoffs.
 
-1. **Identity:** faces and outfits match the sheets (moustache, eye colour, stripes, badge).
-2. **Count:** exactly the number of characters and props the shot needs.
-3. **Scale:** relative sizes as in `AGENTS.md`, and the main subject large enough to read.
-4. **Light:** matches the location's hero still and the project's agreed look (warm and motivated by default for animation); no unmotivated sunset drift, not grey or flat, not too dark.
-5. **Render:** 3D CG like the sheets, not 2D or outlined, not photoreal.
-6. **Layout:** no sheet panels, headless bodies or grey backdrop.
-7. **Text:** in-world text (papers, signs, labels, packaging) is readable and spelled as the prompt quotes it; no captions, UI or watermarks.
-8. **Geometry:** nobody inside a wall, bench or prop, and doors and props look real and sit in the known layout.
-9. **Start state:** the still works as the first frame of the clip's action.
-10. **Eyelines:** everyone faces and looks where the plan says: at the pie, at each other, at the dog. Nobody poses for the camera unless the plan asks for it.
-11. **Real-life logic:** things sit and face the way they would in life (a monitor faces the person using it), and props keep their count and never appear from nowhere or vanish, from the first frame to the last.
-12. **Tone:** the face and body match the line spoken over the shot (no smile on a "problem" line).
-13. **New picture:** the camera differs from the shot before and from the look still. A still that is the look still again with small changes is a reject.
-14. **Clips:** the frame stays put from start to end (or makes its one smooth move in a talking clip), everyone moves, and props don't multiply or vanish. A talking clip says its whole line, each word once, with no gaps.
-15. **Finals:** the same content as the draft.
+## Engine & Batch Failure Locks
 
-## Flow and batches
-
-| Symptom | Fix |
-|---|---|
-| `lost by Google · regenerating on another account` | Normal: Google dropped the clip or left it stuck for 5 minutes, and flow is regenerating it once in the same run. Let the batch finish; don't stop or rerun it. |
-| `NOT_FOUND` after that regeneration | Put a new `"seed"` on the job and rerun: the batch resumes jobs by prompt, ingredients and seed, so an unchanged rerun won't retry it. |
-| Scene stills come out landscape (1376×768) though the video is 9:16 (Mysa video-13, 2026-10-19) | A still job written without `"aspect"`, and flow defaults to landscape. `make.py` now fills in `"aspect": "9:16"` for any still or clip job that leaves it out; refresh an older video's copy with `init-project.sh ... --update-scripts`. Only sheets are 16:9 (`make.py sheet` sets it). Still write `"aspect": "9:16"` in every job. |
-| `QUEUE_STALLED` after that regeneration | Rerun the batch once later; if it stalls again, put a new `"seed"` on the job. |
-| `PROMPT_REJECTED` | Google discarded that exact clip on two accounts. Simplify or rewrite the shot's prompt. |
-| `BATCH_WORKER_FAILED` | Rerun the same command. |
-| A character sheet or still `UNSAFE_GENERATION` on every rewrite while other characters pass (Mysa video-18: 8 Dave sheets) | Bisect with one-line test prompts on `flow image` in the scratchpad (plain clay man passed; "about 60, bald on top" was blocked). For older men, drop the age number and "bald": "middle-aged, salt-and-pepper hair" passed. Remove the trigger from the still prompts too. |
-| The same shots `PROMPT_REJECTED` or `NOT_FOUND` ("media vanished", "not visible to this account") on every account and seed while the rest succeed (Mysa video 3: 4 of 31) | Google's content filter took the finished clip down, not flow. Stop rerunning (each try spends credits on another account). Soften the still and the prompt: clothed or abstract figures, no bedroom or couple-in-bed staging, no quoted intimate label text (Mysa 8 went through as the couple at the bathroom sink). Tell the user the changes before rerunning as a new version. |
-| Manifests, `.flow-batch.json` state and `batch-*.log` files piling up beside the media, one per retry round (video-3: about 80 in `clips/` and `stills/`) | Only `make.py` batches, and it keeps its run files, flow state and logs in `.flow/`. A retry is a new version's job in the one manifest plus `make.py clips 3b 7a`, never a new manifest. `make.py status` lists files outside the layout. |
-| A job stuck with no progress; there is no cancel command | Stop and report it to the user (command, last output, what you think is stuck); don't wait it out. See `flow`. |
-| A chained clip's opening frame soft or different | Frame taken from the 360p draft, or redrawn with an image model | `make.py lastframe` from the approved clip's 1080p final. |
-| A 1080p final differs from the approved draft | Finals are new generations. Review finals against drafts; rename the bad one `rejected-…`, change the seed, rerun that shot. |
-| The 1080p upsample fails or costs credits | It is free only on a paid account; flow sends upsample jobs only to paid accounts; if none has credits, finals fail with a hint. A 360p draft cannot be upscaled. |
-| A batch interrupted | Rerun the same command; outputs that exist are skipped and accepted jobs resume. |
-
-## Edit and delivery
-
-| Symptom | Fix |
-|---|---|
-| Full subtitles delivered when the client wanted a few captions | Reread the brief's caption section before any edit deliverable; use the client's exact wording at the moments they name; quote the brief back to the user. |
-| Time spent building an edit tool, or cutting the edit, when the user edits | The user stitches and times the edit themselves (our cut got about 90% there, not good enough). Deliver ordered clips; never offer to edit. |
-| Captions took seven rounds to land (video-3) | The `captions-filmcraft` skill on FilmCraft edits: its locked templates, and `check` frames before the user exports. |
-| Clips shorter than their voiceover line, regenerated longer | Time the voiceover with `video-plan` before the shot list; each line's clips cover its slot plus 1 s. Longer is only trimmed. |
-| Shots added after the finals (a third of Milo video 1) | Story lock with the approved `PLAN.md`; check voiceover coverage with the animatic before any clips. |
-| A still picks up a pose, outfit, room or light from nowhere: an extra reference was passed only because it was in the folder (Aleo 127a v29: a still of a woman in a yellow robe from another shot) | Each reference needs one job no other reference covers; name it before adding the image, and leave out anything without one. |
+| Symptom | Root Cause | Fix |
+|---|---|---|
+| **Broken/glitched still keeps repeating its flaws** | Rejected image fed back as a reference | **From-Scratch Regeneration Lock:** never pass a broken image as ref. Regenerate cleanly from canonical sheets + simplified prompt. |
+| **Clip opens on wrong pose or jumps backward** | End-state still passed as `start_frame`, or `ingredient` confused with start-frame | Default to **reference-image (`ingredient`)** mode. Only use `start_frame` when the still is explicitly frame 0. |
+| **ElevenLabs burns 4x credits or returns sideways/cropped 16:9** | ElevenLabs defaults to `quantity=4` and `aspect_ratio=auto/16:9` | Always set explicit `aspect_ratio: 9:16` (or target ratio) and **`generations_count: 1`**. Check output dimensions immediately. |
+| **Flow `PROMPT_REJECTED` / `NOT_FOUND` on bed, intimacy, thighs/cellulite, or child scenes** | Google safety filter | Do not burn 5+ retries rewording on Flow. Try once without character sheet (scene still only) if safe, otherwise route that shot to `elevenlabs-creative` (`Seedance 2.0 Mini`, `Kling 4.0`, or `MiniMax H3 Max`). Never silently rewrite the client's script to bypass a filter. |
+| **Flow `UNSAFE_GENERATION` on older men ("60, bald") or legal/religious text** | Keyword trigger in prompt | Drop age numbers + "bald" → "middle-aged, salt-and-pepper hair"; soften formal legal/religious prop text ("DIVORCE AGREEMENT", plain book). |
+| **Flow launches/closes Chrome in a loop or hangs >10 min** | Stale session/cookie or stalled queue | Stop immediately (`flow` skill recovery). Report exact command, error code, and last log lines to user; do not poll endlessly. |
+| **Scene stills come out landscape (1376×768)** | Missing `"aspect": "9:16"` in job | `make.py` auto-fills `"aspect": "9:16"` for stills/clips; sheets stay 16:9. |
+| **Camera/tripod appears inside the scene** | Prompt said "locked off on a tripod" | Never name camera gear in clip prompts. Write "Camera: static, exact framing of @image1; no cameras, tripods, or film gear." |
+| **Stray manifests / logs piling up in `scenes/` or `clips/`** | Ad-hoc `flow batch` calls outside `make.py` | Always use `make.py`; all run files and logs stay in `.flow/`. Run `make.py status` to catch stray files. |
+| **Still/clip picks up random outfit or background** | Unneeded extra reference passed | Every ingredient must have one explicit job named in the prompt; remove any reference that isn't strictly needed. |
+| **Regenerated an already-approved shot after compaction** | Lost conversation history | Check `PROJECT_STATE.json` (`approved_stills` / `approved_clips`) before writing any batch job. |
+| **Clips slowed to 77% or stretched audio in edit** | Clip generated shorter than VO line | Time every shot from the real VO/song before generating; pick the shortest Flow length (4/6/8/10 s) that covers the slot + 1 s buffer. Never slow normal action clips to 77%. |

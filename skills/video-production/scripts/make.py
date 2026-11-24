@@ -6,9 +6,11 @@ Run from anywhere; it works on the video folder that contains this scripts/ fold
   make.py status                       every shot: newest still, clip, final
   make.py stills [shots] [--dry-run]   generate stills in scenes/stills-batch.json (jobs whose
                                        ingredient is an unmade still wait for it)
-  make.py clips  [shots] [--dry-run]   generate 360p drafts in clips/clips-batch.json
+  make.py clips  [shots] [--draft] [--into DIR] [--dry-run]
+                                       direct 1080p clips by default (native 720p + 1080p upsample);
+                                       pass --draft for opt-in 360p drafts
   make.py finals [shots] [--into DIR] [--no-draft] [--dry-run]
-                                       native 720p + 1080p upsample of each clip
+                                       alias for direct 1080p finals (works with or without 360p drafts)
   make.py sheet PROMPT [--ref IMG ...] [--seed N] [--dry-run]
                                        one reference sheet from assets/characters/, environments/ or
                                        props/<name>/prompts/<name>-vK.md, saved as <name>/<name>-vK.jpg
@@ -340,9 +342,10 @@ def cmd_finals(args):
     if reused:
         print(f"reused, no final made: {', '.join(reused)} (make.py reuse copied the source's 1080p when it had one)")
     jobs = [j for j in jobs if "reused_from" not in j]
-    no_draft = [j["id"] for j in jobs if not Path(j["output"]).is_file()]
-    if no_draft and not args.no_draft:
-        die(f"no approved draft for {', '.join(no_draft)}: make or pick it, name only the shots that have one, or pass --no-draft")
+    if getattr(args, "require_draft", False):
+        no_draft = [j["id"] for j in jobs if not Path(j["output"]).is_file()]
+        if no_draft:
+            die(f"no approved draft for {', '.join(no_draft)}: make or pick it, or omit --require-draft for direct 1080p")
     for j in jobs:
         draft = Path(j["output"])
         finals.append({
@@ -357,18 +360,19 @@ def cmd_finals(args):
     hd = [Path(f["output"]).with_name(Path(f["output"]).stem + "-1080p.mp4") for f in finals]
     finals = [f for f, h in zip(finals, hd) if not (Path(f["output"]).is_file() and h.is_file())]
     check_inputs(finals)
-    print(f"{len(finals)} finals to make, {len(hd) - len(finals)} already there")
+    print(f"{len(finals)} 1080p clips to make, {len(hd) - len(finals)} already there")
     finals and run_batch(finals, "finals", args.dry_run)
     args.dry_run or report(hd)
     sync()
-    if args.into and not args.dry_run:
-        dest = VIDEO / "clips" / args.into
+    into = getattr(args, "into", None)
+    if into and not args.dry_run:
+        dest = VIDEO / "clips" / into
         dest.mkdir(parents=True, exist_ok=True)
         for p in hd:
             if p.is_file():
                 shutil.copy2(p, dest / p.name)
-                print(f"copied  {p.name} -> clips/{args.into}/")
-    print("\nFinals are new generations: run `make.py review finals` and compare them with the drafts.")
+                print(f"copied  {p.name} -> clips/{into}/")
+    print("\nRun `make.py review finals` to visually QA every 1080p clip before showing the user.")
 
 
 def cmd_sheet(args):
@@ -752,14 +756,19 @@ def cmd_status(args):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("stills", "clips"):
-        p = sub.add_parser(name)
-        p.add_argument("shots", nargs="*")
-        p.add_argument("--dry-run", action="store_true")
+    p = sub.add_parser("stills")
+    p.add_argument("shots", nargs="*")
+    p.add_argument("--dry-run", action="store_true")
+    p = sub.add_parser("clips")
+    p.add_argument("shots", nargs="*")
+    p.add_argument("--draft", action="store_true", help="opt-in 360p draft mode instead of direct 1080p")
+    p.add_argument("--into")
+    p.add_argument("--dry-run", action="store_true")
     p = sub.add_parser("finals")
     p.add_argument("shots", nargs="*")
     p.add_argument("--into")
-    p.add_argument("--no-draft", action="store_true")
+    p.add_argument("--no-draft", action="store_true", help="default behavior (kept for backward compatibility)")
+    p.add_argument("--require-draft", action="store_true", help="refuse to run if a 360p draft does not exist")
     p.add_argument("--dry-run", action="store_true")
     p = sub.add_parser("sheet")
     p.add_argument("prompt")
@@ -784,7 +793,7 @@ def main():
     args = ap.parse_args()
     {
         "stills": lambda: cmd_generate("stills", args),
-        "clips": lambda: cmd_generate("clips", args),
+        "clips": lambda: cmd_generate("clips", args) if args.draft else cmd_finals(args),
         "finals": lambda: cmd_finals(args),
         "sheet": lambda: cmd_sheet(args),
         "pick": lambda: cmd_pick(args),

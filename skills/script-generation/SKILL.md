@@ -1,6 +1,10 @@
 ---
 name: script-generation
-description: Write spoken TikTok, Reels, and Shorts UGC ad scripts that sound like a real person and are built to hold a scroll. Use when the user wants a script, hook, ad concept, video idea, voiceover, talking-head copy, or a product-page-to-ad. Trigger on phrases like "write a script", "UGC script", "TikTok script", "ad script", "give me hooks", "script for this product", "video idea", "write the voiceover". Default is a spoken script. Produce a numbered AI cut list only when they ask for animation, AI video, or a storyboard.
+description: Write spoken TikTok, Reels, and Shorts UGC ad scripts that sound like a real person and hold a scroll. Use when the user wants an ad script, hooks, ad concept, video idea, voiceover copy, talking-head script, or product-page-to-ad. Default is a spoken script; produce an AI cut list only when asked for AI video, animation, or a storyboard. Not for shot timing, visual production plans (use video-plan), or video editing.
+compatibility: No external tools required.
+metadata:
+  author: ai-content-skills
+  version: "2.0"
 ---
 
 # Script Generation

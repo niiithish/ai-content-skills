@@ -1,4 +1,0 @@
-interface:
-  display_name: "Animated Video Production"
-  short_description: "3D feature-animation look and prompts for Flow videos, on the shared video-production pipeline"
-  default_prompt: "Use $animated-video-production (with $video-production) to make this animated video: sheets, stills, 360p clips and finals with make.py."

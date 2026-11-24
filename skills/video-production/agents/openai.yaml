@@ -1,4 +1,4 @@
 interface:
   display_name: "Video Production"
-  short_description: "Shared Flow video pipeline: project layout, make.py batches, review gates and hand-off"
-  default_prompt: "Use $video-production with the project's style skill to run this video from its approved plan: sheets, stills, 360p clips and 1080p finals with make.py."
+  short_description: "Multi-style AI video production hub: sheets, stills, direct 1080p clips, QA gate, and edit hand-off"
+  default_prompt: "Use $video-production and load the matching references/styles/<style>.md module to produce sheets, stills, and direct 1080p clips from an approved PLAN.md via make.py."

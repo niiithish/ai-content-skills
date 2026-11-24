@@ -33,7 +33,7 @@ import wave
 from pathlib import Path
 
 RATE = 16000
-PCPP = Path.home() / ".local/share/parakeet-cpp"            # parakeet.cpp Vulkan build, see SKILL.md
+PCPP = Path(os.environ.get("PARAKEET_DIR", Path.home() / ".local/share/parakeet-cpp"))  # parakeet.cpp Vulkan build, see SKILL.md
 PCPP_MODEL = PCPP / "model/tdt-0.6b-v3-f16.gguf"
 VK_DEVICE = os.environ.get("TRANSCRIBE_VK_DEVICE", "Vulkan0")
 VENV_PY = Path.home() / ".local/share/transcribe-venv/bin/python"   # has onnx-asr and faster-whisper

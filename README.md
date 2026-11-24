@@ -1,116 +1,118 @@
 # AI Content Skills
 
-Agent skills for the short-form video pipeline: **script** → **character / place / product** sheets → **AI video** on Google Flow, plus a talking-head remake path for cloning winning UGC ads and a Gemini 3.1 Pro JSON video decode.
+Cross-agent skill suite for end-to-end short-form AI video production: **script** → **reference breakdown** → **production plan** → **stills & 1080p clips** (Google Flow + ElevenLabs Creative) → **FilmCraft edit, pacing & frame-exact captions**.
 
-Compatible with the [Agent Skills](https://agentskills.io/) open standard and installable via [skills.sh](https://skills.sh).
+Built strictly to the [Agent Skills (`agentskills.io`)](https://agentskills.io/) open standard — flat `skills/<name>/SKILL.md` layout with progressive-disclosure `references/` and `scripts/`, working cleanly across **Claude Code**, **OpenAI Codex**, **Gemini CLI**, and **Antigravity**.
 
 [![skills.sh](https://skills.sh/b/niiithish/ai-content-skills)](https://skills.sh/niiithish/ai-content-skills)
 
-## Install
+---
+
+## Quickstart
+
+### Option A: Local Clone + Cross-Agent Bootstrap (Recommended)
 
 ```bash
-# Install all skills
-npx skills add niiithish/ai-content-skills --all
-
-# Or pick specific skills
-npx skills add niiithish/ai-content-skills --skill script-generation
-npx skills add niiithish/ai-content-skills --skill video-production
-npx skills add niiithish/ai-content-skills --skill animated-video-production
-npx skills add niiithish/ai-content-skills --skill photoreal-video-production
-npx skills add niiithish/ai-content-skills --skill talking-head-video-production
-npx skills add niiithish/ai-content-skills --skill edit-style
-npx skills add niiithish/ai-content-skills --skill talking-head-edit
-npx skills add niiithish/ai-content-skills --skill voiceover-edit
-npx skills add niiithish/ai-content-skills --skill captions-filmcraft
-npx skills add niiithish/ai-content-skills --skill filmcraft
-npx skills add niiithish/ai-content-skills --skill filmcraft-pacing
-npx skills add niiithish/ai-content-skills --skill song-ad
-npx skills add niiithish/ai-content-skills --skill clay-video-production
-npx skills add niiithish/ai-content-skills --skill ugc-ad-remake
-npx skills add niiithish/ai-content-skills --skill simple-talking-head
-npx skills add niiithish/ai-content-skills --skill video-breakdown
-npx skills add niiithish/ai-content-skills --skill flow
-npx skills add niiithish/ai-content-skills --skill transcribe
+git clone https://github.com/niiithish/ai-content-skills.git ~/Work/ai-content-skills
+bash ~/Work/ai-content-skills/scripts/install.sh
+bash ~/Work/ai-content-skills/scripts/doctor.sh
 ```
 
-List without installing:
+`scripts/install.sh` auto-discovers every skill in `skills/`, symlinks them into `~/.agents/skills`, `~/.claude/skills`, `~/.gemini/skills`, `~/.gemini/config/skills`, and `~/.codex/skills`, installs `~/.local/bin/` CLI wrappers (`transcribe`, `vocals`, `cartesia`, `rembg-cutout`), and installs caption fonts.
+
+### Option B: Install via `skills.sh`
 
 ```bash
+# Install all 11 skills
+npx skills add niiithish/ai-content-skills --all
+
+# Or list available skills first
 npx skills add niiithish/ai-content-skills --list
 ```
 
-## Skills
+### Validate Repo Spec Compliance
 
+```bash
+python3 scripts/validate_skills.py
+```
+
+Moving to a new SSD or fresh Linux/Arch/Omarchy machine? See **[docs/new-ssd-migration.md](./docs/new-ssd-migration.md)** for the full backup, restore, and Intel Arc GPU optimization guide.
+
+---
+
+## Skills (11)
+
+### Pre-Production & Strategy
 | Skill | Description |
 | --- | --- |
-| [`script-generation`](./skills/script-generation) | Spoken TikTok/Reels UGC scripts. Cut list only when you ask for AI video. |
-| [`cartesia-tts`](./skills/cartesia-tts) | Text to speech with Cartesia Sonic 3.6 (`cartesia voices / audition / say`): asks the tool, voice, speed and emotion first, then reads the script with exact word times for the plan. |
-| [`video-plan`](./skills/video-plan) | Client brief to an approved PLAN.md + PLAN.pdf for any style: brief table, sheets to make, and a shot table timed from a real voiceover read (Cartesia or ElevenLabs Scribe), with suggested visuals marked. |
-| [`video-production`](./skills/video-production) | The shared pipeline from an approved plan to 1080p clips on Google Flow, any style: project layout, a `make.py` batch/review/reuse/hand-off tool, review gates and a failure-locks checklist. |
-| [`animated-video-production`](./skills/animated-video-production) | The Pixar-style 3D animation layer on `video-production`: look, character, place and product sheets, still and clip prompts, product mascots, on-camera speech. |
-| [`photoreal-video-production`](./skills/photoreal-video-production) | The photoreal ad layer on `video-production`: look, character and product sheets, JSON still prompts, clip prompts with a subtle camera move, real-life logic and content-filter lessons. |
-| [`talking-head-video-production`](./skills/video-production/talking-head) | The talking-head layer on `video-production`: one speaker carries the script to camera (master still, one line or one take per hook), voice-changed master, then the FilmCraft edit with box stills and full-screen inserts, clause-only jump cuts with zoom changes, dead air cut and captions. |
-| [`edit-style`](./skills/edit-style) | The house FilmCraft edit style for every ad, whatever is on screen: pictures change only on caption starts or cuts, cuts on first words, something new every 2–4 s, every still pushing, dead air cut, captions on the words, music under the voice, hooks 2–3 cloned from the user's hook 1; the user's working rules, checks, change recipes and a new-machine checklist. |
-| [`talking-head-edit`](./skills/edit-style/talking-head) | Sub-skill of `edit-style`: the client-approved talking-head format (full-screen picture per phrase, template-6 captions at y 1360, 100/110% talking steps, two hook formats, 12 Loom rules, edit scripts). |
-| [`voiceover-edit`](./skills/edit-style/voiceover) | Sub-skill of `edit-style`: many shots or stills under a voiceover or song (shots from plan times through the tightened voice, cuts rolled onto words, splits, song-take hook clones). |
-| [`captions-filmcraft`](./skills/captions-filmcraft) | Captions as editable text clips in a FilmCraft project: phrase blocks of at most 4 words, each starting on the frame its words are heard and on every cut (Parakeet + faster-whisper timing checked against the voiceover waveform), then export from FilmCraft. |
-| [`filmcraft`](./skills/filmcraft) | Edit with the user in FilmCraft: build hook timelines from approved clips, live edits in the open app over the bridge, clip swaps without Link Media popups, and Meta-ready exports (about 45 MB a minute) one hook after another. |
-| [`filmcraft-pacing`](./skills/filmcraft-pacing) | Pacing pass on a FilmCraft edit: dead air in the voice cut to a breath (pauses from the waveform), other tracks kept in sync, punch-ins at jump cuts, slow pushes on still shots and B-roll, before/after numbers. Calm or punchy style. |
-| [`song-ad`](./skills/song-ad) | AI singing ads: a sung story with a hook, real lyrics (rhyme, refrain, backing answers) and a music direction per section, the song generated first as the timing source, gapless lip-sync slices and animated B-roll. |
-| [`clay-video-production`](./skills/clay-video-production) | Claymation / stop-motion layer for Flow videos: the handmade plasticine look, clay sheets (including a clay version of the real product), still and clip prompts, failure locks, on the shared video-production pipeline. |
-| [`ugc-ad-remake`](./skills/ugc-ad-remake) | Still-first remake of a winning talking-head UGC ad with new talent and product. |
-| [`simple-talking-head`](./skills/simple-talking-head) | Raw iPhone 9:16 talking-head prompt: one line, selfie or tripod, no product in hand. |
-| [`video-breakdown`](./skills/video-breakdown) | Send the clip to Gemini 3.1 Pro for a remake-bible JSON (pattern, hook, one scene per cut, how each builds on the spoken words), then check it against contact sheets of the real frames. |
-| [`flow`](./skills/flow) | Run Google Flow via the local Labflow `flow` CLI: Nano Banana Pro 1K images, Omni Flash video, `flow batch` manifests, seeds, and 1080p upsample. Rotates saved accounts on quota. |
-| [`transcribe`](./skills/transcribe) | Speech to text with word timestamps for any audio or video: ElevenLabs Scribe by default (Parakeet offline, then faster-whisper as fallbacks), writing a transcript, words.json and SRT. The captions and video-plan scripts use it. |
+| [`script-generation`](./skills/script-generation) | Spoken TikTok/Reels/Shorts UGC ad scripts that sound like a real person and hold a scroll (optional cut list for AI video). |
+| [`video-breakdown`](./skills/video-breakdown) | Local reference-video decoder (ffmpeg cut detection, shot clustering, local Parakeet word timing, contact sheets, rhythm map) — no Gemini required. |
+| [`video-plan`](./skills/video-plan) | Client brief to approved `PLAN.md` + `PLAN.pdf` timed from a real voiceover or song read, with cast demographics, before/after arc, and reuse audit locked before generation. |
 
-## Pipeline
-
-```text
-script-generation      →  spoken UGC script (+ cut list if AI video)
-    ↓
-flow                   →  stills and clips on Google Flow
-```
-
-Photoreal, animated and clay projects run on one shared pipeline, with a style layer on top. Each style skill holds its own character, place and product sheet rules, still and clip prompts and failure locks; the sheet layouts every style shares live in `video-production/references/sheets/`:
-
-```text
-video-plan → video-production + photoreal-, animated- or clay-video-production
-  sheets (character / place / product) → stills → 360p clips (agent runs and reviews)
-  → 1080p finals (user runs) → hand-off → FilmCraft edit → pacing → captions      (generation via flow)
-```
-
-| Stage | Delivers |
+### Production & Generation Engines
+| Skill | Description |
 | --- | --- |
-| **script-generation** | Spoken UGC script for TikTok/Reels. Optional ≤3s cut list for AI video. |
-| **photoreal-** / **animated-** / **clay-video-production** | A whole photoreal, animated or clay project on `video-production`: sheets, stills, 360p drafts, 1080p finals, ordered clips for the editor. |
-| **captions-filmcraft** | Frame-exact captions as text clips in the user's FilmCraft project, exported from FilmCraft. |
-| **filmcraft** | Live edits in the user's open FilmCraft project, clip swaps, Meta-ready exports. |
-| **filmcraft-pacing** | Dead air out and motion in, on the user's FilmCraft edit, before captions. |
-| **ugc-ad-remake** | Beat map, 9:16 product-swap stills, then Gemini Omni talking-head clips. |
-| **simple-talking-head** | One-line raw iPhone talking-head prompt (selfie or tripod). |
-| **video-breakdown** | Gemini 3.1 Pro JSON → form + one rebuildable scene per hard cut (not a props dump). |
-| **flow** | Generate the still/clip on Google Flow (`flow image` / `flow generate`). |
-| **transcribe** | ElevenLabs Scribe transcript and word times for any audio or video. |
+| [`video-production`](./skills/video-production) | Unified production hub (`make.py`, `PROJECT_STATE.json`, direct 1080p default, concurrency 10–12, autonomous QA gate) with 9 on-demand visual style modules in `references/styles/` (`photoreal`, `pixar-3d`, `claymation`, `talking-head`, `ai-singing`, `ai-drama`, `medical-cgi`, `hybrid-ugc`, `storybook-2d`). |
+| [`flow`](./skills/flow) | Google Flow generation via the local Labflow `flow` CLI (Nano Banana 2.1/Pro images, Omni Flash video, batch manifests, automatic account rotation, 1080p upsample). |
+| [`elevenlabs-creative`](./skills/elevenlabs-creative) | ElevenLabs Creative fallback and specialist engine (Seedream 5.5, Seedance 2.0 Mini, Kling, MiniMax H3 Max, Voice Isolator) with mandatory `quantity=1`, explicit aspect ratio, and `cloudflared` local image tunnel helpers. |
 
-## Layout
+### Audio & Media Utilities
+| Skill | Description |
+| --- | --- |
+| [`cartesia-tts`](./skills/cartesia-tts) | Cartesia Sonic 3.6 TTS (`cartesia voices / audition / say`) with exact word timestamps (`OUT.words.json`) for plan timing and voiceovers. |
+| [`transcribe`](./skills/transcribe) | 100% local speech-to-text (`transcribe`, Parakeet TDT 0.6B v3 on Intel Arc Vulkan → CPU → faster-whisper) and vocal stem separation (`vocals`, MelBand RoFormer on Arc XPU) for sung ads. |
+| [`media-utils`](./skills/media-utils) | Local media helpers: `rembg` background removal & clean cutouts (`rembg_cutout.py`), headless browser screen recording (`agent-browser`), and side-by-side review board workflows. |
 
-Each skill is a focused agent prompt (`SKILL.md`) plus optional load-on-demand references:
+### Editing & Captions
+| Skill | Description |
+| --- | --- |
+| [`filmcraft-edit`](./skills/filmcraft-edit) | Unified FilmCraft editing hub: house edit style, live bridge (`fc.py`), talking-head and voiceover/song edit formats, waveform-driven pacing & motion (`fc_pace.py`), pre-export audit (`audit.py`), and Meta-ready GPU exports. |
+| [`captions-filmcraft`](./skills/captions-filmcraft) | Frame-exact editable text-clip captions in FilmCraft (`fc_captions.py`, `fc_inserts.py`), calibrated against the voiceover/vocal-stem waveform and snapped to cuts and inserts. |
+
+---
+
+## Pipeline Overview
 
 ```text
-skills/
-├── <skill>/
-│   ├── SKILL.md
-│   ├── agents/openai.yaml
-│   ├── references/        load-on-demand blueprints and checklists
-│   ├── scripts/           helper scripts (video-breakdown, video-production, captions, song-ad, transcribe, filmcraft)
-│   └── templates/         project files (video-production)
+brief / reference video
+  ├─► video-breakdown (local rhythm + pattern)
+  ├─► script-generation (spoken script / hooks)
+  ├─► cartesia-tts / transcribe / vocals (real audio + word timing)
+  └─► video-plan (approved PLAN.md + PLAN.pdf)
+        ↓
+  video-production (+ style module in references/styles/<style>.md)
+    ├─► flow (primary engine)
+    ├─► elevenlabs-creative (specialist / fallback engine)
+    └─► media-utils (rembg cutouts, screen recordings, review board)
+        ↓
+  filmcraft-edit (timeline, pacing, motion, audit)
+        ↓
+  captions-filmcraft (frame-exact captions + insert snap)
+        ↓
+  filmcraft-edit export (1080×1920 H.264 VA-API + AAC)
 ```
 
-- `SKILL.md` — name, description (auto-invoke triggers), actionable instructions
-- `references/` — blueprints and tables loaded when the skill runs
-- `agents/openai.yaml` — optional agent UI metadata
-- `scripts/`, `templates/` — files the skill runs or copies into a project
+---
+
+## Repository Layout
+
+```text
+ai-content-skills/
+├── README.md
+├── skills.sh.json
+├── docs/
+│   └── new-ssd-migration.md        # SSD swap backup, restore & Intel Arc optimization guide
+├── scripts/
+│   ├── install.sh                  # Cross-agent symlink + CLI wrapper + font installer
+│   ├── doctor.sh                   # Environment, GPU, model & symlink health check
+│   └── validate_skills.py          # Strict agentskills.io spec & Python syntax validator
+└── skills/
+    └── <skill-name>/
+        ├── SKILL.md                # Strict agentskills.io frontmatter + core instructions (<500 lines)
+        ├── references/             # On-demand style modules, checklists, and templates (1 level deep)
+        ├── scripts/                # Executable CLI helpers
+        └── assets/ | fonts/        # Static assets
+```
 
 ## License
 

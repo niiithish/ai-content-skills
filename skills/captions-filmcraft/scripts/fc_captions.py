@@ -30,9 +30,10 @@ import argparse, datetime, difflib, json, math, os, re, shutil, statistics, subp
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-for _d in (HERE.parent.parent / "transcribe" / "scripts", HERE.parent.parent / "filmcraft" / "scripts",
-           Path.home() / ".claude/skills/transcribe/scripts", Path.home() / ".claude/skills/filmcraft/scripts"):
-    sys.path.insert(0, str(_d))
+for _d in (HERE.parent.parent / "transcribe" / "scripts", HERE.parent.parent / "filmcraft-edit" / "scripts",
+           Path.home() / ".agents/skills/transcribe/scripts", Path.home() / ".agents/skills/filmcraft-edit/scripts"):
+    if str(_d) not in sys.path:
+        sys.path.insert(0, str(_d))
 TAIL = 2  # frames a caption stays up after the last word before a pause
 EARLY_POP = 3  # frames a one/two-word pop caption leads its voice (matched to the raw-Parakeet demo, 2026-11-07)
 MIN_POP = 5  # frames: the shortest a pop caption gets from the lead (template 7 merges anything shorter)
@@ -334,8 +335,9 @@ def cmd_words(a):
     cmds.append({"id": "file.exportMedia", "params": {"path": str(P["vo.wav"]), "format": "wav", "wait": True}})
     cli(a.project, cmds)
     print(f"voiceover ({a.vo}) -> {P['vo.wav']}")
-    sys.path.insert(0, str(HERE.parent.parent / "transcribe" / "scripts"))
-    sys.path.insert(0, str(Path.home() / ".claude/skills/transcribe/scripts"))
+    for _td in (HERE.parent.parent / "transcribe" / "scripts", Path.home() / ".agents/skills/transcribe/scripts"):
+        if str(_td) not in sys.path:
+            sys.path.insert(0, str(_td))
     import transcribe as T
     song = a.vocals if a.vocals is not None else (P["vo.wav"].parent.parent / "song").is_dir()
     if song:   # a sung track: words and every waveform check run on the voice alone (vocals.py, same timeline).
@@ -1107,8 +1109,8 @@ def cmd_check(a):
 
 def cmd_export(a):
     """The filmcraft skill's export: saves the open copy first, burns caption tracks, checks the file."""
-    fcpy = next((d / "fc.py" for d in (HERE.parent.parent / "filmcraft" / "scripts",
-                                        Path.home() / ".claude/skills/filmcraft/scripts") if (d / "fc.py").exists()), None)
+    fcpy = next((d / "fc.py" for d in (HERE.parent.parent / "filmcraft-edit" / "scripts",
+                                        Path.home() / ".agents/skills/filmcraft-edit/scripts") if (d / "fc.py").exists()), None)
     if fcpy:
         sys.exit(subprocess.run([sys.executable, str(fcpy), "export", a.project, "-o", a.out]
                                 + (["--kbps", str(a.kbps)] if a.kbps else [])).returncode)

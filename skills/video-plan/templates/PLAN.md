@@ -5,7 +5,7 @@
 
 **Concept.** The format (voiceover ad, sung ad, talking head) and its voice or song, then the story in three or four sentences: whose story it is, what goes wrong, how the product fixes it, and the feeling at the end.
 
-**Look.** The style and how it renders (faces, skin, hair, fabric), the light and its colour, and any visual device that tracks the story (a pain glow that grows, then fades from shot N).
+**Look.** The style, engine routing (default: Google Flow direct 1080p; note any ElevenLabs Creative overrides such as Seedream 5.5 1K for sheets or Seedance/Kling/MiniMax fallbacks), how it renders (faces, skin, hair, fabric), light/colour, and for transformation/beauty/health products the **Before/After visual arc** (before state → mechanism → after payoff).
 
 **Camera.** How shots move (push-ins, tilt-ups, pull-outs, arcs, pans) and which stay locked; the cuts, naming the shots that get a special transition (whip pan, wipe, fade).
 
@@ -19,7 +19,7 @@
 
 **On camera.** Who speaks or sings on camera (lip-sync) and in which shots; everything else is B-roll under the voiceover.
 
-**End card.** The end card text and the shot it sits over, and the captions (template, which words). Both are added in the edit, never generated.
+**End card.** The end card text, verified brand/CTA hex colors (from live site/brand assets), the shot it sits over, and the captions (template, font, wording). Both are added in the edit, never generated.
 
 **Open questions.** What the brief doesn't settle, short enough to paste to the client. Delete this paragraph when there are none.
 

@@ -2,58 +2,38 @@
   "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
   "groupings": [
     {
-      "title": "AI Content Generation",
-      "description": "An end-to-end short-form video pipeline: ad scripts, a brief-to-plan step with voiceover timing, video production in photoreal, animated or claymation style (each with its own character, place and product sheets and still and clip prompts), and captions on the final edit.",
+      "title": "Pre-Production & Strategy",
+      "description": "Write scroll-stopping UGC scripts, decode reference ads locally with ffmpeg and Parakeet, and lock a voiceover-timed production plan before spending generation credits.",
       "skills": [
         "script-generation",
-        "video-plan",
+        "video-breakdown",
+        "video-plan"
+      ]
+    },
+    {
+      "title": "Video Production & Generation Engines",
+      "description": "Unified multi-style video production hub (9 visual style modules: photoreal, Pixar 3D, claymation, talking-head, AI singing, AI drama, medical CGI, hybrid UGC, storybook 2D) powered by Google Flow and ElevenLabs Creative.",
+      "skills": [
         "video-production",
-        "animated-video-production",
-        "photoreal-video-production",
-        "talking-head-video-production",
-        "edit-style",
-        "talking-head-edit",
-        "voiceover-edit",
-        "clay-video-production",
-        "captions-filmcraft",
-        "filmcraft",
-        "filmcraft-pacing",
-        "transcribe"
+        "flow",
+        "elevenlabs-creative"
       ]
     },
     {
-      "title": "Song ads",
-      "description": "Sung video sales letters over 3D animation: story and hook, real song lyrics with music direction, the generated song as the timing source, gapless lip-sync slices and silent B-roll.",
+      "title": "Audio & Media Utilities",
+      "description": "Cartesia Sonic 3.6 voiceovers with word timestamps, 100% local Parakeet STT and MelBand RoFormer vocal separation, plus local rembg cutouts and browser screen capture.",
       "skills": [
-        "song-ad"
+        "cartesia-tts",
+        "transcribe",
+        "media-utils"
       ]
     },
     {
-      "title": "UGC Remakes",
-      "description": "Clone a winning talking-head UGC ad with a new product and talent: beat map, product-swap stills, then locked Gemini Omni clips.",
+      "title": "FilmCraft Editing & Captions",
+      "description": "Unified FilmCraft editing workflow (house style, talking-head and voiceover/song formats, waveform pacing, live bridge, pre-export audit, GPU export) and frame-exact editable captions.",
       "skills": [
-        "ugc-ad-remake"
-      ]
-    },
-    {
-      "title": "Simple talking head",
-      "description": "Short raw-iPhone talking-head prompts: one line, selfie or tripod, no product in hand.",
-      "skills": [
-        "simple-talking-head"
-      ]
-    },
-    {
-      "title": "Video analysis",
-      "description": "Decode a local clip via Gemini 3.1 Pro: compact JSON of cuts, transcript, and action beats.",
-      "skills": [
-        "video-breakdown"
-      ]
-    },
-    {
-      "title": "Google Flow",
-      "description": "Run the unofficial flow CLI: Nano Banana Pro 1K images, Omni Flash videos, batch manifests and 1080p upsample. The CLI rotates saved Google accounts on quota.",
-      "skills": [
-        "flow"
+        "filmcraft-edit",
+        "captions-filmcraft"
       ]
     }
   ]

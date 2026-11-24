@@ -1,0 +1,32 @@
+{
+  "project": "<client>/<video-N>",
+  "style": "photoreal",
+  "aspect_ratio": "9:16",
+  "engines": {
+    "sheets_human": "elevenlabs:seedream-5.5-1k",
+    "sheets_other": "flow:default",
+    "stills": "flow:default",
+    "clips": "flow:omni-1080p",
+    "safety_fallback": "elevenlabs:seedance-2.0-mini-720p"
+  },
+  "brand": {
+    "name": "",
+    "cta_hex_bg": "",
+    "cta_hex_text": "",
+    "cta_hex_accent": "",
+    "logo_path": ""
+  },
+  "cast_locks": {
+    "target_demographics": "",
+    "before_after_arc": ""
+  },
+  "locked_rules": [
+    "Direct 1080p clips by default (360p draft only if --draft requested)",
+    "Concurrency 10-12 default (never 1-at-a-time unless shot chains from previous)",
+    "From-scratch regeneration only (never feed a broken still/clip back as ref)",
+    "Reference-image mode by default (never start-frame unless explicitly requested)"
+  ],
+  "approved_stills": [],
+  "approved_clips": [],
+  "reused_assets": []
+}

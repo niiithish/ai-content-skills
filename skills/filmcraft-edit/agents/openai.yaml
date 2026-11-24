@@ -1,0 +1,4 @@
+interface:
+  display_name: "FilmCraft Edit"
+  short_description: "Edit, pace, audit, and export short-form video ads in FilmCraft"
+  default_prompt: "Use $filmcraft-edit to build, pace, audit, or export this FilmCraft (.fcproj) video edit."
