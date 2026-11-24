@@ -31,6 +31,7 @@ Suno often adds a 1–5 s instrumental intro before the first sung word, and ins
 2. **Split vocals first** using `vocals` (MelBand RoFormer via `transcribe` skill) so timing and captions run on the isolated voice stem alone.
 3. **Check exact vocal onset:** If there is an instrumental intro before the first lyric, either trim the intro head cleanly OR plan dedicated silent establishing/beat-synced shots for those opening seconds — **never have a character start lip-syncing at `0.0 s` while only instruments are playing.**
 4. Time every lyric line with `video-plan` (`plan.py voiceover video-N`). Flag any line ASR can't find so the user can check if the singer dropped or mangled it.
+5. **Capability-aware audio fast-path:** If your runtime supports native audio input (e.g., Gemini / Antigravity), listen directly to the Suno `.mp3` and separated `vocals.wav` to verify the intro swell, exact vocal onset, held notes, and musical phrasing when matching visuals to beats — still relying on `vocals` → `transcribe` for exact timestamps. Text-only agents rely on `vocals` + `transcribe` + `pauses.py`.
 
 ## 4. Visual Planning & Production
 

@@ -82,6 +82,8 @@ filmcraft-cli --project edit/hook-1.fcproj render --seconds 1.5 --out /tmp/check
 
 Fix any `FAIL` (black frames, offline media, fractional clips, dropped transitions, unrequested silence gaps) before replying.
 
+**Capability-aware multimodal QA fast-path:** After `fc_qa.py` passes deterministic checks, if your runtime supports native video+audio input (e.g., Gemini / Antigravity), watch and listen to the exported preview `.mp4` end-to-end to catch wrong-clip-on-VO mismatches, robotic/stretched audio, accent mismatches, or awkward head-nod cuts before handing back. Text/image-only agents rely on `fc_qa.py`, `audit.py`, and rendered check frames.
+
 ## Hard Rules (Non-Negotiable)
 
 - **Bridge safety:** Never save from a headless `filmcraft-cli --project X --save` while the FilmCraft app has `X` open. Always use `fc.py` (`fc.save_live` / `fc.reload_live`). Run `scripts/setup.sh` once if `fc.py status` shows `bridge: down`.

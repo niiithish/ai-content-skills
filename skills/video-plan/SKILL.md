@@ -47,6 +47,7 @@ Lock these five items in `PLAN.md` **before** generating a single still or clip:
   - **Sung ads (AI singing)** → follow `video-production/references/styles/ai-singing.md` first to lock lyrics and chosen Suno take as `voiceover/recording.wav` (split vocals via `vocals` / `transcribe --vocals` for accurate timing).
   - No spoken words → skip voiceover timing and time shots by action.
 - Run `plan.py voiceover <video-folder>` to produce `voiceover/timing.md` (uses `recording.words.json` or local `transcribe` Parakeet).
+- **Capability-aware audio fast-path:** If your runtime supports native audio input (e.g., Gemini / Antigravity), listen directly to `voiceover/recording.*` (or the Suno `.mp3`) while planning shots so visual beats match vocal delivery, emotional arc, tempo shifts, and beat drops — while still using `transcribe` / `vocals` for exact timestamps. Text-only agents fall back seamlessly to `timing.md` and `recording.words.json`.
 
 ### 4. Build the Shot Table (`Shot | Time | Voiceover | What we show`)
 - **Time**: `12.6 – 14.4 s`, back-to-back from `0.0 s` to end of audio. Max 10 s per clip (shortest Flow length: 4, 6, 8, or 10 s).

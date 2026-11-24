@@ -58,6 +58,8 @@ After every batch, run `make.py review stills|clips|finals` and inspect **every 
 - [ ] **Background & spatial continuity:** adjacent shots in the same room keep consistent walls, props, lighting, and left/right character positions.
 - [ ] **Voiceover / action match:** facial expression matches the VO emotion (no smiling on a problem line) and motion actually happens (no static "still image" clip).
 
+**Capability-aware video QA fast-path:** If your runtime supports native video input (e.g., Gemini / Antigravity), watch generated `.mp4` clips directly (especially complex motion or flagged shots) to catch temporal defects contact sheets miss — disappearing/reappearing items, auto-closing doors or trays, wrong walk direction, morphing objects, and AI physics glitches. Text/image-only agents fall back seamlessly to `make.py review` contact sheets and extracted frames.
+
 For human review, start the local review board if installed (`${REVIEW_BOARD_BIN:-review} <project>`, or see `media-utils`) and read flags with `${REVIEW_BOARD_BIN:-review} flags <project>`. Keep chat replies terse: a short status table + one line on what is next.
 
 ## 4. Pipeline Phases

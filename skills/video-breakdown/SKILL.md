@@ -79,6 +79,7 @@ Hand off `pattern-on-script.md` and `BREAKDOWN.md` to `video-plan`.
 - Never generate a split screen as one image; plan each half as its own still/clip and composite in FilmCraft.
 - **Side-by-side comparison:** when reviewing a remake or rip against the original, serve original vs. ours side-by-side on a local review page (see `media-utils` for the localhost review board + shot-number overlay workflow) so pacing, transitions, and visual arc can be checked frame-for-frame.
 
-## Optional Video-Model Double-Check
+## Capability-Aware Multimodal Fast-Path
 
-Contact sheets sample 3 frames per shot and cannot hear music/SFX. If the user wants to double-check fast camera moves, subtle physical action, or audio transitions with a video-capable model (e.g., Gemini Pro), export or use the structured prompt in [references/gemini-prompt.md](references/gemini-prompt.md). Treat that output as supplemental motion/audio notes on top of the local breakdown — never as a replacement for `shots.json` / `rhythm.md`.
+- **Video/audio-native agents (e.g., Gemini / Antigravity):** Watch the reference `.mp4` directly to verify camera motion (e.g., single continuous zoom-out vs. a cut), transitions, SFX/music cues, and pacing/energy — while still running local `breakdown.py` (`ffmpeg` + `transcribe`) for exact cut timestamps, `shots.json`, and `rhythm.md`.
+- **Text/image-only agents (e.g., Claude Code / Codex):** Rely on the local `clusters_NN.jpg` / `shots_NN.jpg` contact sheets + Parakeet transcript. If the user wants a video-model double-check on motion or audio between sampled frames, use [references/gemini-prompt.md](references/gemini-prompt.md) as supplemental notes on top of `rhythm.md` (never as a replacement for `shots.json`).
