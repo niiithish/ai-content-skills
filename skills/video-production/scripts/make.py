@@ -261,9 +261,16 @@ def sync(quiet=False):
             for p in finals or files:  # once a final exists, all/ holds only the final
                 dest = all_dir / p.name
                 keep.add(dest.name)
-                if not dest.exists() or dest.stat().st_size != p.stat().st_size:
+                rel = os.path.relpath(p, dest.parent)
+                if dest.is_symlink() and os.readlink(dest) == rel and dest.exists():
+                    continue
+                if dest.exists() or dest.is_symlink():
+                    dest.unlink()
+                try:
+                    os.symlink(rel, dest)
+                except OSError:
                     shutil.copy2(p, dest)
-                    quiet or print(f"added   {k['folder']}/all/{dest.name}")
+                quiet or print(f"added   {k['folder']}/all/{dest.name}")
         for old in all_dir.iterdir():
             if name.match(old.name) and old.name not in keep:
                 old.unlink()
