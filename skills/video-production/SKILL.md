@@ -60,7 +60,7 @@ After every batch, run `make.py review stills|clips|finals` to build grouped lab
 
 **Capability-aware video QA fast-path:** If your runtime supports native video input (e.g., Gemini / Antigravity), watch generated `.mp4` clips directly (especially complex motion or flagged shots) to catch temporal defects contact sheets miss — disappearing/reappearing items, auto-closing doors or trays, wrong walk direction, morphing objects, and AI physics glitches. Text/image-only agents fall back seamlessly to `make.py review` contact sheets and extracted frames.
 
-**For human review:** Always present the **grouped labeled contact sheet(s)** from `review/` (6–10 stills per sheet, shown directly in chat/artifact) so the user can scan all scenes in one glance without checking files one by one, plus start the local review board if installed (`${REVIEW_BOARD_BIN:-review} <project>`, or see `media-utils`) and read flags with `${REVIEW_BOARD_BIN:-review} flags <project>`. Keep chat replies terse: contact sheet(s) + short status table + one line on what is next.
+**For human review:** Always present the **grouped labeled contact sheet(s)** from `review/` directly in chat/artifact so the user can scan scenes in one glance without opening files one by one — use **`make.py review compare`** whenever cloning a reference video (5 columns: **top row = extracted reference frames, bottom row = our generated stills** directly underneath) and `make.py review stills` (6–10 tiles/sheet) otherwise. Also start the local review board if installed (`${REVIEW_BOARD_BIN:-review} <project>`, or see `media-utils`) and read flags with `${REVIEW_BOARD_BIN:-review} flags <project>`. Keep chat replies terse: contact sheet(s) + short status table + one line on what is next.
 
 ## 4. Pipeline Phases
 
@@ -78,9 +78,9 @@ After every batch, run `make.py review stills|clips|finals` to build grouped lab
 3. **Gate:** user approves sheets. Record approved paths in `AGENTS.md` and `PROJECT_STATE.json`.
 
 ### Phase 3: Scene Stills
-1. Write one prompt per shot (`scenes/scene-N/scene-Nx/prompts/scene-Nx-v1.md`) using the loaded style module.
+1. Write one prompt per shot (`scenes/scene-N/scene-Nx/prompts/scene-Nx-v1.md`) using the loaded style module. **Reference-video clones:** extract the matching reference frame from the reference video and pass it in `ingredient` alongside your character/product sheets so framing, camera angle, and lighting match automatically.
 2. Populate `scenes/stills-batch.json` (`"aspect": "9:16"`, `"variants": 1`) and run `video-N/scripts/make.py stills` in the background.
-3. Run `make.py review stills`, complete the Pre-Review QA Gate, fix obvious rejects once from scratch, then present to the user.
+3. Run `make.py review compare` (for reference clones: 5-wide top=REF / bottom=ours) or `make.py review stills`, complete the Pre-Review QA Gate at full resolution, fix obvious rejects once from scratch, then present the contact sheet(s) to the user.
 4. Optionally generate `make.py animatic` over the voiceover/song to verify pacing before clip spend.
 5. **Gate:** user approves stills → record IDs in `PROJECT_STATE.json` and `scenes/all/APPROVED.md`.
 
@@ -108,7 +108,7 @@ After every batch, run `make.py review stills|clips|finals` to build grouped lab
 | `finals [shots] [--into DIR]` | Alias for 1080p generation / upscaling of existing drafts |
 | `reuse SHOT SRC` | Import an approved still/clip from another video or `../assets/` |
 | `lastframe FROM TO` | Extract frame 0.5 s before end of `FROM`'s 1080p final for chained shot `TO` |
-| `review stills\|clips\|finals [shots]` | Build labeled contact sheets in `review/` |
+| `review stills\|compare\|clips\|finals [shots]` | Build labeled contact sheets in `review/` (`compare` = 5-wide top=REF / bottom=ours) |
 | `animatic` | Build `edit/animatic.mp4` over `voiceover/recording.*` |
 | `handoff` | Export story-ordered clips + `ORDER.txt` into `edit/clips/` |
 | `sync` | Refresh `scenes/all/` and `clips/all/` to newest versions |

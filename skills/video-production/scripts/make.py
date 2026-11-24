@@ -562,9 +562,26 @@ def montage(tiles, cols, size, dest):
     return dest
 
 
+def _pick_ref_frame(job):
+    """Best-effort pick of the extracted reference-video frame from a still job's ingredients."""
+    explicit = job.get("ref_frame")
+    if explicit and Path(explicit).is_file():
+        return Path(explicit)
+    ings = [Path(p) for p in job.get("ingredient", []) if Path(p).is_file()]
+    non_sheets = [p for p in ings if "sheets" not in [part.lower() for part in p.parts]]
+    for p in non_sheets:
+        low = str(p).lower()
+        if any(k in low for k in ("ref-frame", "ref_frame", "reference", "breakdown", "/brief/", "/refs/", "frame")):
+            return p
+    for p in non_sheets:
+        if "assets" not in [part.lower() for part in p.parts]:
+            return p
+    return None
+
+
 def cmd_review(args):
     kind = args.kind
-    base = "clips" if kind == "finals" else kind
+    base = "clips" if kind == "finals" else ("stills" if kind == "compare" else kind)
     jobs = select(load_jobs(base), args.shots)
     if not jobs:
         die("nothing to review")
@@ -584,6 +601,33 @@ def cmd_review(args):
 def review_sheets(kind, jobs, out_dir, tmp):
     stamp = f"{datetime.now():%Y%m%d-%H%M%S}"
     rows, missing = [], []  # each row: list of (label, path)
+    if kind == "compare":
+        pairs = []
+        blank = None
+        for j in jobs:
+            s, v = shot(j), version(j)
+            out = Path(j["output"])
+            candidates = [(f"{s} v{v}", out)] if out.is_file() else [
+                (f"{s} v{v} take {take_no(p)}", p) for p in variant_paths(out) if p.is_file()]
+            if not candidates:
+                missing.append(f"{s} v{v}")
+                continue
+            ref = _pick_ref_frame(j)
+            if ref is None:
+                if blank is None:
+                    blank = tmp / "no-ref.jpg"
+                    subprocess.run(["magick", "-size", "300x533", "xc:#111114", str(blank)], check=True)
+                ref_tile = (f"REF {s} (none)", blank)
+            else:
+                ref_tile = (f"REF {s}", ref)
+            for label, path in candidates:
+                pairs.append((ref_tile, (label, path)))
+        sheets = []
+        for i in range(0, len(pairs), 5):
+            chunk = pairs[i:i + 5]
+            tiles = [p[0] for p in chunk] + [p[1] for p in chunk]
+            sheets.append(montage(tiles, len(chunk), "300x533", out_dir / f"compare-{stamp}-{i // 5 + 1}.jpg"))
+        return sheets, missing
     for j in jobs:
         s, v = shot(j), version(j)
         out = Path(j["output"])
@@ -793,7 +837,7 @@ def main():
     p.add_argument("shot")
     p.add_argument("src")
     p = sub.add_parser("review")
-    p.add_argument("kind", choices=["stills", "clips", "finals"])
+    p.add_argument("kind", choices=["stills", "compare", "clips", "finals"])
     p.add_argument("shots", nargs="*")
     for name in ("animatic", "handoff", "sync", "status"):
         sub.add_parser(name)
