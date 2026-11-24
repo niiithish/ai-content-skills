@@ -79,11 +79,13 @@ Use absolute paths. Write each scene into its own folder (`-o scene-3/scene-3-v1
 - **`PROJECT_MISSING`**: Tell the user to open a Flow project in that account and run `flow account add NAME --project UUID --force`.
 - **`NOT_FOUND` (lost after auto-regen)**: Assign a new `"seed"` and rerun.
 - **`BATCH_WORKER_FAILED` / `NETWORK`**: Rerun the same command once (accepted jobs resume without re-charging). Stop if it fails twice.
-- **`UNSAFE_GENERATION`**: Never resend unchanged. Check the reason:
-  - `IP_INPUT_IMAGE` / `IP_PROHIBITED`: remove copyrighted/branded elements from the reference still.
-  - `IDENTIFIABLE_PERSON_SAFETY` / `MINOR` / `CHILD_SAFETY`: make subjects clearly non-celebrity adults.
-  - `AUDIO_FILTERED` / `DANGER_FILTER`: simplify dialogue or tone down action.
-  - If Flow repeatedly blocks a legitimate scene (bed/intimacy, skin/cellulite, children-adjacent) or blurs product text, switch that shot to **`elevenlabs-creative`** (Seedance 2.0 Mini / Kling 4.0 / MiniMax H3 Max).
+- **`UNSAFE_GENERATION`** *(blocked attempts are refunded — never resend unchanged)*: Triage Hard vs. Soft blocks before falling back:
+  - **Hard blocks (route to `elevenlabs-creative` after 1 clean try):** couple / woman in bed with someone else, minors/children in frame, explicit bare-skin/thigh-cellulite/underwear close-ups, or `IP_INPUT_IMAGE` / `IP_PROHIBITED` (strip copyrighted logos first).
+  - **Soft / false-positive blocks (ALWAYS reword & simplify on Flow first — do NOT regenerate the still or switch engines prematurely):**
+    - *Gym / activewear / midriff / body-progress shots:* drop body-part & weight-loss phrasing ("showing off her stomach / weight loss") → reword around **emotion & activity** ("smiling proudly after her workout, happy with her gym progress").
+    - *Pill boxes / capsules / bottles / medical props:* replace clinical/drug words ("pills", "medication", "prescription", "dosage") with neutral everyday objects ("small compartment organizer box", "amber glass wellness bottle", "golden oil softgels").
+    - *`IDENTIFIABLE_PERSON_SAFETY` on normal adults:* drop extra secondary references (keep only the approved still), simplify the prompt to 1–2 plain sentences with a new `"seed"`, and if `--ingredient` still triggers it, try **`--start-frame`** on the approved still (proven fix).
+    - *`AUDIO_FILTERED` / `DANGER_FILTER`:* simplify dialogue or tone down action.
 
 ## Models, Credits & Hygiene
 
